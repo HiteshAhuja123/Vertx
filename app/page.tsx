@@ -124,12 +124,12 @@ export default function Home() {
             <span className="font-sans text-[10px] sm:text-xs font-bold tracking-[0.16em] text-vortx-white uppercase">HYBRID ATHLETE LINE INITIATED</span>
           </div>
 
-          <h1 className="font-sans text-6xl sm:text-8xl lg:text-9xl font-black tracking-tight leading-none text-vortx-white select-none">
-            LIMITLESS<br />ATHLETICS
+          <h1 className="font-sans text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight leading-none text-vortx-white select-none uppercase">
+            TRAIN HARD.<br />WEAR VORTX.
           </h1>
 
-          <p className="font-sans text-sm md:text-base text-vortx-gray tracking-wide uppercase font-semibold max-w-md mx-auto">
-            "FOR WARRIORS, NOT WATCHERS."
+          <p className="font-sans text-xs sm:text-sm tracking-[0.25em] text-vortx-gray uppercase font-bold max-w-xl mx-auto">
+            Premium Gym Wear Built For Lifters.
           </p>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 pt-5 sm:pt-6 w-full max-w-sm sm:max-w-none mx-auto">
@@ -137,7 +137,7 @@ export default function Home() {
               href="/shop"
               className="inline-flex items-center justify-center w-full sm:w-auto px-8 py-4 bg-vortx-white text-vortx-black font-sans text-xs font-bold tracking-widest hover:bg-vortx-white/90 active:scale-95 transition-all duration-300 shadow-xl"
             >
-              SHOP NOW
+              SHOP COLLECTION
             </Link>
             <Link 
               href="/shop?filter=preorder"
