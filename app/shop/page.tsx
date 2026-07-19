@@ -2,12 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useStore } from '@/components/StoreContext';
 import { mockDb } from '@/lib/supabase';
 import { ShoppingBag, Eye, SlidersHorizontal, Search, RefreshCw } from 'lucide-react';
 import { formatPrice } from '@/products';
 
 export default function Shop() {
+  const router = useRouter();
   const { addToCart, preOrderMode, togglePreOrderMode } = useStore();
   const [dbProducts, setDbProducts] = useState<any[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
@@ -193,7 +195,11 @@ export default function Shop() {
                   const totalStock = prod.variants?.reduce((acc: number, v: any) => acc + v.stock, 0) || 0;
 
                   return (
-                    <div key={prod.id} className="group flex flex-col border border-vortx-white/15 bg-vortx-dark/30 rounded overflow-hidden hover:border-vortx-white/30 transition-all duration-300">
+                    <div 
+                      key={prod.id} 
+                      onClick={() => router.push(`/product/${prod.slug}`)}
+                      className="group flex flex-col border border-vortx-white/15 bg-vortx-dark/30 rounded overflow-hidden hover:border-vortx-white/30 transition-all duration-300 cursor-pointer"
+                    >
                       {/* Image cover */}
                       <div className="aspect-[4/5] bg-vortx-gray-dark relative overflow-hidden">
                         <img 
@@ -206,24 +212,28 @@ export default function Shop() {
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-3 transition-opacity duration-300">
                           <Link 
                             href={`/product/${prod.slug}`}
+                            onClick={(e) => e.stopPropagation()}
                             className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-105 active:scale-95 transition"
                           >
                             <Eye className="w-4 h-4" />
                           </Link>
                           <button 
-                            onClick={() => addToCart({
-                              id: prod.id,
-                              variantId: firstVariant.id,
-                              name: prod.name,
-                              price: prod.price,
-                              mrp: prod.mrp,
-                              size: firstVariant.size,
-                              color: firstVariant.color,
-                              image: prod.images?.[0] || '',
-                              sku: firstVariant.sku,
-                              isPreOrder: isPreOrder,
-                              preOrderDate: prod.pre_order_date
-                            }, 1)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              addToCart({
+                                id: prod.id,
+                                variantId: firstVariant.id,
+                                name: prod.name,
+                                price: prod.price,
+                                mrp: prod.mrp,
+                                size: firstVariant.size,
+                                color: firstVariant.color,
+                                image: prod.images?.[0] || '',
+                                sku: firstVariant.sku,
+                                isPreOrder: isPreOrder,
+                                preOrderDate: prod.pre_order_date
+                              }, 1);
+                            }}
                             className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-105 active:scale-95 transition"
                             title={isPreOrder ? "Place Pre-Order" : "Add to Cart"}
                           >
@@ -268,7 +278,7 @@ export default function Shop() {
                             )}
                           </div>
                           
-                          <Link href={`/product/${prod.slug}`}>
+                          <Link href={`/product/${prod.slug}`} onClick={(e) => e.stopPropagation()}>
                             <h3 className="font-sans text-sm font-bold tracking-wide text-vortx-white mt-1 hover:underline truncate">
                               {prod.name.toUpperCase()}
                             </h3>

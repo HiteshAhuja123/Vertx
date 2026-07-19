@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { mockDb } from '@/lib/supabase';
 import { useStore } from '@/components/StoreContext';
 import { ArrowRight, Play, Star, ChevronLeft, ChevronRight, X, Clock, ShoppingBag, Eye } from 'lucide-react';
@@ -17,6 +18,7 @@ const RANDOM_PURCHASES = [
 ];
 
 export default function Home() {
+  const router = useRouter();
   const { addToCart, preOrderMode } = useStore();
   const [products, setProducts] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
@@ -254,7 +256,11 @@ export default function Home() {
             {filteredProducts.slice(0, 3).map((prod) => {
               const isPreOrder = prod.pre_order_available;
               return (
-                <div key={prod.id} className="group flex flex-col border border-vortx-white/15 bg-vortx-dark/40 overflow-hidden relative transition hover:border-vortx-white/30">
+                <div 
+                  key={prod.id} 
+                  onClick={() => router.push(`/product/${prod.slug}`)}
+                  className="group flex flex-col border border-vortx-white/15 bg-vortx-dark/40 overflow-hidden relative transition hover:border-vortx-white/30 cursor-pointer"
+                >
                   {/* Image wrapper */}
                   <div className="aspect-[4/5] bg-vortx-gray-dark relative overflow-hidden">
                     <img 
@@ -267,25 +273,29 @@ export default function Home() {
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-3 transition-opacity duration-300">
                       <Link 
                         href={`/product/${prod.slug}`}
+                        onClick={(e) => e.stopPropagation()}
                         className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-105 active:scale-95 transition"
                         title="View Details"
                       >
                         <Eye className="w-4 h-4" />
                       </Link>
                       <button 
-                        onClick={() => addToCart({
-                          id: prod.id,
-                          variantId: prod.variants?.[0]?.id || prod.id,
-                          name: prod.name,
-                          price: prod.price,
-                          mrp: prod.mrp,
-                          size: prod.variants?.[0]?.size || 'M',
-                          color: prod.variants?.[0]?.color || 'Black',
-                          image: prod.images?.[0] || '',
-                          sku: prod.variants?.[0]?.sku || '',
-                          isPreOrder: isPreOrder,
-                          preOrderDate: prod.pre_order_date
-                        }, 1)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCart({
+                            id: prod.id,
+                            variantId: prod.variants?.[0]?.id || prod.id,
+                            name: prod.name,
+                            price: prod.price,
+                            mrp: prod.mrp,
+                            size: prod.variants?.[0]?.size || 'M',
+                            color: prod.variants?.[0]?.color || 'Black',
+                            image: prod.images?.[0] || '',
+                            sku: prod.variants?.[0]?.sku || '',
+                            isPreOrder: isPreOrder,
+                            preOrderDate: prod.pre_order_date
+                          }, 1);
+                        }}
                         className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-105 active:scale-95 transition"
                         title={isPreOrder ? "Pre-Order Item" : "Add to Cart"}
                       >
@@ -314,9 +324,11 @@ export default function Home() {
                       <span className="text-[8px] text-vortx-gray font-mono uppercase tracking-widest">
                         {prod.category}
                       </span>
-                      <h3 className="font-syne text-xs font-bold tracking-wider text-vortx-white mt-1">
-                        {prod.name.toUpperCase()}
-                      </h3>
+                      <Link href={`/product/${prod.slug}`} onClick={(e) => e.stopPropagation()}>
+                        <h3 className="font-syne text-xs font-bold tracking-wider text-vortx-white mt-1 hover:underline">
+                          {prod.name.toUpperCase()}
+                        </h3>
+                      </Link>
                     </div>
                     <div className="flex items-center gap-2.5 mt-3 font-mono">
                       <span className="text-xs font-bold text-vortx-white">{formatPrice(prod.price)}</span>

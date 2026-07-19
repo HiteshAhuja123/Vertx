@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore, Order } from '@/components/StoreContext';
-import { mockDb } from '@/lib/supabase';
+import { mockDb, isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { 
   ShieldAlert, LayoutDashboard, Plus, Trash2, Edit3, ClipboardList, 
-  Tag, Download, ArrowLeftRight, Check, X, ShieldCheck, DollarSign 
+  Tag, Download, ArrowLeftRight, Check, X, ShieldCheck, DollarSign,
+  UploadCloud, Loader2
 } from 'lucide-react';
 import { formatPrice } from '@/products';
 import { logAutomation } from '@/lib/email';
@@ -31,7 +32,87 @@ export default function AdminDashboard() {
   const [pSizes, setPSizes] = useState<string[]>(['S', 'M', 'L', 'XL']);
   const [pColors, setPColors] = useState<string[]>(['Black']);
   const [pStock, setPStock] = useState(20);
-  const [pImageInput, setPImageInput] = useState('https://images.unsplash.com/photo-1556906781-9a412961a6cc?w=800&q=80');
+  const [pImageInput, setPImageInput] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+  const [showManualUrl, setShowManualUrl] = useState(false);
+
+  // Drag & drop file handlers
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      await uploadFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      await uploadFile(e.target.files[0]);
+    }
+  };
+
+  const uploadFile = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload an image file (PNG, JPG, JPEG, WEBP)');
+      return;
+    }
+
+    setUploading(true);
+
+    try {
+      if (isSupabaseConfigured) {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random().toString(36).substring(2, 9)}_${Date.now()}.${fileExt}`;
+        const filePath = `products/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('product-images')
+          .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
+
+        if (uploadError) {
+          throw uploadError;
+        }
+
+        const { data: urlData } = supabase.storage
+          .from('product-images')
+          .getPublicUrl(filePath);
+
+        setPImageInput(urlData.publicUrl);
+        logAutomation('SYSTEM', `🛡️ Storage Engine: Uploaded "${file.name}" to Supabase bucket.`);
+      } else {
+        // Fallback for local demo mode when Supabase is offline/not configured
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (e.target?.result) {
+            setPImageInput(e.target.result as string);
+            logAutomation('SYSTEM', `🛡️ Storage Engine: Created local data preview for "${file.name}".`);
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    } catch (err: any) {
+      console.error('Upload failed:', err);
+      alert(`Upload failed: ${err.message || err}`);
+    } finally {
+      setUploading(false);
+    }
+  };
   
   // Tracking edit states for Orders
   const [editingOrderId, setEditingOrderId] = useState('');
@@ -92,6 +173,11 @@ export default function AdminDashboard() {
       return;
     }
 
+    if (!pImageInput) {
+      alert('Please upload an image or enter a direct image URL');
+      return;
+    }
+
     const slug = pName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     const discount = pMrp > pPrice ? Math.round(((pMrp - pPrice) / pMrp) * 100) : 0;
 
@@ -136,6 +222,7 @@ export default function AdminDashboard() {
     setPPrice(3999);
     setPMrp(4999);
     setPBadge('NEW DROP');
+    setPImageInput('');
     alert('Product created and catalog updated!');
   };
 
@@ -387,15 +474,109 @@ export default function AdminDashboard() {
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-[9px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1 font-mono">SUPABASE STORAGE IMAGE LINK</label>
-                    <input 
-                      type="text" 
-                      value={pImageInput}
-                      onChange={(e) => setPImageInput(e.target.value)}
-                      className="w-full bg-vortx-black border border-vortx-white/20 px-3 py-2 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-mono"
-                      required
-                    />
+                  {/* Drag-and-drop Image Upload Zone */}
+                  <div className="space-y-2">
+                    <label className="block text-[9px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1 font-mono">
+                      PRODUCT IMAGE
+                    </label>
+                    
+                    <div 
+                      onDragEnter={handleDrag}
+                      onDragOver={handleDrag}
+                      onDragLeave={handleDrag}
+                      onDrop={handleDrop}
+                      className={`relative border-2 border-dashed rounded p-6 flex flex-col items-center justify-center transition-all min-h-[160px] cursor-pointer ${
+                        dragActive 
+                          ? 'border-vortx-white bg-vortx-white/10' 
+                          : 'border-vortx-white/20 bg-vortx-black/30 hover:border-vortx-white/40'
+                      }`}
+                    >
+                      <input 
+                        type="file"
+                        id="image-file-input"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="hidden"
+                        disabled={uploading}
+                      />
+                      
+                      {uploading ? (
+                        <div className="flex flex-col items-center gap-2 text-center text-vortx-gray text-xs font-mono">
+                          <Loader2 className="w-8 h-8 animate-spin text-vortx-white" />
+                          <span className="uppercase tracking-wider">UPLOADING IMAGE...</span>
+                        </div>
+                      ) : pImageInput ? (
+                        <div className="flex flex-col items-center gap-3 w-full">
+                          <div className="relative group w-20 h-24 border border-vortx-white/20 rounded overflow-hidden bg-vortx-black">
+                            <img 
+                              src={pImageInput} 
+                              alt="Upload preview" 
+                              className="w-full h-full object-cover"
+                            />
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setPImageInput('');
+                              }}
+                              className="absolute top-1 right-1 p-1 rounded bg-black/80 hover:bg-black text-red-500 border border-red-500/30 transition shadow-lg"
+                              title="Remove image"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                          <span className="text-[10px] text-vortx-gray font-mono text-center uppercase tracking-wider">
+                            IMAGE LOADED SUCCESSFULLY
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => document.getElementById('image-file-input')?.click()}
+                            className="px-3 py-1.5 border border-vortx-white/20 hover:border-vortx-white text-[9px] font-syne font-bold tracking-widest text-vortx-white uppercase transition"
+                          >
+                            CHANGE IMAGE
+                          </button>
+                        </div>
+                      ) : (
+                        <div 
+                          onClick={() => document.getElementById('image-file-input')?.click()}
+                          className="flex flex-col items-center gap-2 text-center text-vortx-gray hover:text-vortx-white transition w-full h-full py-4"
+                        >
+                          <UploadCloud className="w-8 h-8 mb-1" />
+                          <p className="font-syne font-bold text-[10px] tracking-wider uppercase">
+                            DRAG & DROP IMAGE HERE
+                          </p>
+                          <p className="text-[8px] font-mono uppercase tracking-widest text-vortx-gray/60">
+                            OR CLICK TO BROWSE FILE
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Fallback Paste URL Trigger */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <button
+                        type="button"
+                        onClick={() => setShowManualUrl(!showManualUrl)}
+                        className="text-[9px] font-syne font-bold tracking-widest text-vortx-gray hover:text-vortx-white uppercase transition"
+                      >
+                        {showManualUrl ? '[-] HIDE DIRECT URL OPTION' : '[+] PASTE DIRECT IMAGE URL'}
+                      </button>
+                    </div>
+
+                    {showManualUrl && (
+                      <div className="mt-1 transition-all">
+                        <label className="block text-[8px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1 font-mono">SUPABASE STORAGE IMAGE LINK / URL</label>
+                        <input 
+                          type="text" 
+                          value={pImageInput}
+                          onChange={(e) => setPImageInput(e.target.value)}
+                          placeholder="https://example.com/image.jpg"
+                          className="w-full bg-vortx-black border border-vortx-white/20 px-3 py-2 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/20"
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <button
