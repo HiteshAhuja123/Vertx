@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import './globals.css';
 import { StoreProvider } from '@/components/StoreContext';
@@ -26,7 +27,9 @@ export default function RootLayout({
     <html lang="en" className="h-full scroll-smooth">
       <body className="min-h-screen bg-vortx-black text-vortx-white flex flex-col antialiased">
         <StoreProvider>
-          <Navbar />
+          <Suspense fallback={<div className="h-20 bg-vortx-black border-b border-vortx-white/10 w-full" />}>
+            <Navbar />
+          </Suspense>
           <main className="flex-grow flex flex-col">
             {children}
           </main>

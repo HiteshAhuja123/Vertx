@@ -51,9 +51,15 @@ export default function Footer() {
           
           {/* Logo & Slogan info */}
           <div className="lg:col-span-2 space-y-8">
-            <Link href="/" className="inline-block flex flex-col">
-              <span className="font-syne text-2xl font-extrabold tracking-[0.25em] text-vortx-white">VORTX</span>
-              <span className="text-xs font-bold tracking-[0.14em] text-vortx-gray/80 -mt-0.5">FOR WARRIORS, NOT WATCHERS.</span>
+            <Link href="/" className="group flex items-center gap-3">
+              <svg className="w-10 h-10 transition-transform duration-300 group-hover:scale-105" viewBox="0 0 115 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 10 18 L 95 18 L 82 38 L 38 25 Z" fill="#E60000" />
+                <path d="M 38 38 L 103 58 L 60 90 L 45 68 Z" fill="#E60000" />
+              </svg>
+              <div className="flex flex-col justify-center">
+                <span className="font-syne text-2xl font-extrabold tracking-[0.25em] text-vortx-white">VORTX</span>
+                <span className="text-xs font-bold tracking-[0.14em] text-vortx-gray/80 -mt-0.5">FOR WARRIORS, NOT WATCHERS.</span>
+              </div>
             </Link>
             <p className="text-base text-vortx-gray leading-relaxed max-w-lg">
               We design and engineer high-performance activewear for the hybrid athlete. VORTX is built on relentless drive, structural minimalism, and absolute performance. 

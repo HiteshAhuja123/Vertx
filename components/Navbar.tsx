@@ -2,17 +2,37 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useStore } from './StoreContext';
 import { ShoppingBag, Heart, User, LogOut, Menu, X, Trash2, ShieldAlert } from 'lucide-react';
 import { formatPrice } from '@/products';
 
 export default function Navbar() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [couponInput, setCouponInput] = useState('');
   const [couponError, setCouponError] = useState('');
+
+  const navLinks = [
+    { label: 'SHOP ALL', href: '/shop' },
+    { label: 'MEN', href: '/shop?gender=men' },
+    { label: 'WOMEN', href: '/shop?gender=women' },
+    { label: 'UNISEX', href: '/shop?gender=unisex' },
+    { label: 'ABOUT US', href: '/about' },
+  ];
+
+  const isLinkActive = (href: string) => {
+    if (href === '/shop') {
+      return pathname === '/shop' && !searchParams.get('gender');
+    }
+    if (href.startsWith('/shop?gender=')) {
+      const gender = href.split('=').pop();
+      return pathname === '/shop' && searchParams.get('gender') === gender;
+    }
+    return pathname === href;
+  };
 
   const { 
     user, 
@@ -47,10 +67,7 @@ export default function Navbar() {
     }
   };
 
-  const navLinks = [
-    { label: 'SHOP', href: '/shop' },
-    { label: 'ABOUT US', href: '/about' },
-  ];
+
 
   return (
     <>
@@ -59,27 +76,38 @@ export default function Navbar() {
           
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="group flex flex-col justify-center">
-              <span className="font-syne text-lg sm:text-xl md:text-2xl font-extrabold tracking-[0.22em] text-vortx-white transition group-hover:tracking-[0.3em]">
-                VORTX
-              </span>
-              <span className="text-[10px] sm:text-xs font-bold tracking-[0.1em] text-vortx-gray/80 -mt-0.5 whitespace-nowrap">
-                WARRIORS, NOT WATCHERS.
-              </span>
+            <Link href="/" className="group flex items-center gap-2.5 sm:gap-3">
+              <svg className="w-8 h-8 sm:w-9 sm:h-9 transition-transform duration-300 group-hover:scale-105" viewBox="0 0 115 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 10 18 L 95 18 L 82 38 L 38 25 Z" fill="#E60000" />
+                <path d="M 38 38 L 103 58 L 60 90 L 45 68 Z" fill="#E60000" />
+              </svg>
+              <div className="flex flex-col justify-center">
+                <span className="font-syne text-lg sm:text-xl md:text-2xl font-extrabold tracking-[0.22em] text-vortx-white transition group-hover:tracking-[0.25em]">
+                  VORTX
+                </span>
+                <span className="text-[10px] sm:text-xs font-bold tracking-[0.1em] text-vortx-gray/80 -mt-0.5 whitespace-nowrap">
+                  WARRIORS, NOT WATCHERS.
+                </span>
+              </div>
             </Link>
           </div>
 
           {/* Nav Menu Desktop */}
-          <nav className="hidden md:flex items-center gap-10">
+          <nav className="hidden md:flex items-center gap-6 lg:gap-10">
             {navLinks.map((link) => (
               <Link 
                 key={link.href} 
                 href={link.href}
-                className={`font-syne text-sm md:text-base font-bold tracking-widest transition duration-300 hover:text-vortx-white ${
-                  pathname === link.href ? 'text-vortx-white' : 'text-vortx-gray'
+                className={`font-syne text-xs md:text-sm font-bold tracking-widest transition duration-300 hover:text-vortx-white ${
+                  isLinkActive(link.href) ? 'text-vortx-white' : 'text-vortx-gray'
                 }`}
               >
-                {link.label}
+                <span className="relative pb-1">
+                  {link.label}
+                  {isLinkActive(link.href) && (
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-red-600 rounded-full" />
+                  )}
+                </span>
               </Link>
             ))}
             
@@ -132,7 +160,7 @@ export default function Navbar() {
             >
               <Heart className="w-5 h-5 md:w-5 md:h-5" />
               {wishlist.length > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-vortx-white text-vortx-black text-[7px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-red-600 text-vortx-white text-[7px] font-bold rounded-full flex items-center justify-center">
                   {wishlist.length}
                 </span>
               )}
@@ -170,7 +198,9 @@ export default function Navbar() {
                 key={link.href} 
                 href={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block text-vortx-gray hover:text-vortx-white py-2"
+                className={`block py-2 transition ${
+                  isLinkActive(link.href) ? 'text-vortx-white font-bold' : 'text-vortx-gray hover:text-vortx-white'
+                }`}
               >
                 {link.label}
               </Link>

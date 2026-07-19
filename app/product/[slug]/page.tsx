@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { mockDb } from '@/lib/supabase';
 import { useStore } from '@/components/StoreContext';
-import { Star, ShieldCheck, Truck, RefreshCw, Layers, Check, Ruler, Info, X } from 'lucide-react';
+import { Star, ShieldCheck, Truck, RefreshCw, Layers, Check, Ruler, Info, X, Heart } from 'lucide-react';
 import { formatPrice } from '@/products';
 import { logAutomation } from '@/lib/email';
 
@@ -400,9 +400,10 @@ export default function ProductDetail() {
               <button 
                 onClick={() => toggleWishlist(product.id)}
                 className={`w-full py-3.5 border font-sans text-xs sm:text-sm font-bold tracking-widest hover:bg-vortx-white/5 transition flex items-center justify-center gap-2 ${
-                  isInWishlist(product.id) ? 'border-vortx-white text-vortx-white bg-vortx-white/5' : 'border-vortx-white/20 text-vortx-gray hover:text-vortx-white'
+                  isInWishlist(product.id) ? 'border-red-600 text-red-500 bg-red-600/5' : 'border-vortx-white/20 text-vortx-gray hover:text-vortx-white'
                 }`}
               >
+                <Heart className={`w-4 h-4 ${isInWishlist(product.id) ? 'fill-red-500 text-red-500' : 'text-vortx-gray'}`} />
                 {isInWishlist(product.id) ? 'WISHLISTED' : 'ADD TO WISHLIST'}
               </button>
             </div>

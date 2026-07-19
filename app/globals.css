@@ -94,7 +94,7 @@ body {
   top: 0;
   left: 0;
   height: 2px;
-  background: #ffffff;
+  background: #E60000;
   z-index: 9999;
   animation: loading-pulse 2s ease-in-out infinite;
 }

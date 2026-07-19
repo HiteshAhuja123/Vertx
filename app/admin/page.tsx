@@ -201,6 +201,8 @@ export default function AdminDashboard() {
       mrp: Number(pMrp),
       discount_percent: discount,
       badge: pBadge,
+      category: pCategory,
+      gender: pGender,
       is_in_stock: pStock > 0,
       pre_order_available: pBadge === 'NEW DROP' || pBadge === 'LIMITED',
       pre_order_date: pBadge === 'NEW DROP' || pBadge === 'LIMITED' ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() : null,

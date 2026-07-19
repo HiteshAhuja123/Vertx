@@ -1,15 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/components/StoreContext';
 import { mockDb } from '@/lib/supabase';
 import { ShoppingBag, Eye, SlidersHorizontal, Search, RefreshCw } from 'lucide-react';
 import { formatPrice } from '@/products';
 
-export default function Shop() {
+function ShopContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { addToCart, preOrderMode, togglePreOrderMode } = useStore();
   const [dbProducts, setDbProducts] = useState<any[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
@@ -24,6 +25,23 @@ export default function Shop() {
   useEffect(() => {
     setDbProducts(mockDb.getProducts());
   }, []);
+
+  // Update filters based on query params (navbar links)
+  useEffect(() => {
+    const gender = searchParams.get('gender');
+    if (gender) {
+      setSelectedGender(gender);
+    } else {
+      setSelectedGender('all');
+    }
+
+    const category = searchParams.get('category');
+    if (category) {
+      setSelectedCategory(category);
+    } else {
+      setSelectedCategory('all');
+    }
+  }, [searchParams]);
 
   // Apply filters
   useEffect(() => {
@@ -123,7 +141,7 @@ export default function Shop() {
                     onClick={() => setSelectedCategory(cat)}
                     className={`block w-full text-xs font-medium tracking-wide text-left transition py-2 pl-3 border-l-2 ${
                       selectedCategory === cat 
-                        ? 'text-vortx-white font-bold border-vortx-white bg-vortx-white/5' 
+                        ? 'text-vortx-white font-bold border-red-600 bg-red-600/5' 
                         : 'text-vortx-gray hover:text-vortx-white border-transparent hover:bg-vortx-white/2'
                     }`}
                   >
@@ -143,7 +161,7 @@ export default function Shop() {
                     onClick={() => setSelectedGender(gen)}
                     className={`block w-full text-xs font-medium tracking-wide text-left transition py-2 pl-3 border-l-2 ${
                       selectedGender === gen 
-                        ? 'text-vortx-white font-bold border-vortx-white bg-vortx-white/5' 
+                        ? 'text-vortx-white font-bold border-red-600 bg-red-600/5' 
                         : 'text-vortx-gray hover:text-vortx-white border-transparent hover:bg-vortx-white/2'
                     }`}
                   >
@@ -261,7 +279,7 @@ export default function Shop() {
                         <div>
                           <div className="flex justify-between items-start">
                             <span className="text-[8px] font-mono text-vortx-gray uppercase tracking-widest">
-                              {prod.gender} | {prod.category}
+                              {[prod.gender, prod.category].filter(Boolean).join(' | ')}
                             </span>
                             
                             {/* Stock Indicator */}
@@ -308,5 +326,17 @@ export default function Shop() {
 
       </div>
     </div>
+  );
+}
+
+export default function Shop() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-vortx-black text-vortx-white flex items-center justify-center font-syne text-xs font-bold tracking-widest uppercase">
+        LOADING CATALOG...
+      </div>
+    }>
+      <ShopContent />
+    </Suspense>
   );
 }
