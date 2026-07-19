@@ -31,6 +31,7 @@ function ProfilePageContent() {
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState('');
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [reviewError, setReviewError] = useState('');
 
   useEffect(() => {
     if (!user) {
@@ -50,7 +51,16 @@ function ProfilePageContent() {
 
   const handleReviewSubmission = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!reviewComment.trim()) return;
+    setReviewError('');
+
+    if (!reviewComment.trim()) {
+      setReviewError('Review comment is required.');
+      return;
+    }
+    if (reviewComment.trim().length < 10) {
+      setReviewError('Review comment must be at least 10 characters long.');
+      return;
+    }
 
     const list = mockDb.getReviews();
     list.push({
@@ -421,11 +431,19 @@ function ProfilePageContent() {
                   <textarea
                     rows={4}
                     value={reviewComment}
-                    onChange={(e) => setReviewComment(e.target.value)}
+                    onChange={(e) => {
+                      setReviewComment(e.target.value);
+                      if (reviewError) setReviewError('');
+                    }}
                     placeholder="HOW DOES THE GEAR PERFORM? DESCRIBE FIT, FABRIC QUALITY, OR COMFORT."
-                    className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3 text-sm text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30 uppercase"
+                    className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3 text-sm text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30"
                     required
                   />
+                  {reviewError && (
+                    <p className="text-xs font-bold text-red-500 bg-red-500/10 border border-red-500/20 p-2 rounded mt-1">
+                      {reviewError}
+                    </p>
+                  )}
                 </div>
 
                 <button

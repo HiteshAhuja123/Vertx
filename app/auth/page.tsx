@@ -77,6 +77,12 @@ function AuthPortalContent() {
         setErrorMsg('Email address is required');
         return;
       }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        setErrorMsg('Please enter a valid email address (e.g., user@example.com).');
+        return;
+      }
       
       const success = await login(email);
       if (success) {
@@ -88,6 +94,17 @@ function AuthPortalContent() {
       // Sign Up Registration
       if (!email || !fullName || !phone) {
         setErrorMsg('All fields are required');
+        return;
+      }
+
+      if (fullName.trim().length < 3) {
+        setErrorMsg('Full name must be at least 3 characters long.');
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        setErrorMsg('Please enter a valid email address.');
         return;
       }
 
@@ -167,14 +184,14 @@ function AuthPortalContent() {
           {/* Registration Fields */}
           {!isLoginTab && (
             <>
-              <div>
+               <div>
                 <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-2.5">FULL NAME</label>
                 <input 
                   type="text" 
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="ENTER FULL NAME"
-                  className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3.5 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/50 uppercase"
+                  className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3.5 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/50"
                   required
                 />
               </div>
@@ -198,14 +215,14 @@ function AuthPortalContent() {
 
           {/* Email Address Field */}
           {(!useOtpMode || !isLoginTab) && (
-            <div>
+             <div>
               <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-2.5">EMAIL ADDRESS</label>
               <input 
                 type="email" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="ENTER EMAIL ADDRESS"
-                className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3.5 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/50 uppercase"
+                className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3.5 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/50"
                 required
               />
             </div>

@@ -42,7 +42,18 @@ function ShopContent() {
     } else {
       setSelectedCategory('all');
     }
-  }, [searchParams]);
+
+    const filter = searchParams.get('filter');
+    if (filter === 'preorder') {
+      if (!preOrderMode) {
+        togglePreOrderMode();
+      }
+    } else if (filter === 'instock') {
+      if (preOrderMode) {
+        togglePreOrderMode();
+      }
+    }
+  }, [searchParams, preOrderMode, togglePreOrderMode]);
 
   // Apply filters
   useEffect(() => {
@@ -89,129 +100,106 @@ function ShopContent() {
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
         
         {/* Page Header */}
-        <div className="border-b border-vortx-white/10 pb-10 mb-14 flex flex-col md:flex-row md:items-end justify-between gap-8">
-          <div>
-            <h1 className="font-sans text-4xl sm:text-5xl font-extrabold tracking-wide text-vortx-white uppercase">
-              {preOrderMode ? 'PRE-ORDERS CATALOG' : 'GEAR CATALOG'}
-            </h1>
-            <p className="text-xs text-vortx-gray mt-2 tracking-widest uppercase font-semibold">
-              {preOrderMode ? 'RESERVE NEXT GENERATION WARRIOR TECH' : 'ENGINEERED STRENGTH FOR HYBRID ATHLETES'}
-            </p>
-          </div>
-          
-          {/* Quick mode explanation banner */}
-          <div className="p-4 bg-vortx-white/5 border border-vortx-white/10 rounded flex items-center justify-between gap-4 max-w-md">
-            <div className="text-xs sm:text-sm text-vortx-gray leading-normal pr-2">
-              <span className="font-bold text-vortx-white">Catalog Toggle:</span> Switch between standard in-stock listings and pre-orders.
-            </div>
-            <button
-              onClick={togglePreOrderMode}
-              className="flex items-center gap-1.5 px-4 py-2 rounded bg-vortx-white text-vortx-black hover:bg-vortx-white/90 font-sans text-xs sm:text-sm font-bold tracking-wider transition flex-shrink-0"
-            >
-              <RefreshCw className="w-3.5 h-3.5" />
-              MODE SWITCH
-            </button>
-          </div>
+        <div className="border-b border-vortx-white/10 pb-8 mb-10">
+          <h1 className="font-sans text-4xl sm:text-5xl font-extrabold tracking-wide text-vortx-white uppercase">
+            {preOrderMode ? 'PRE-ORDERS CATALOG' : 'GEAR CATALOG'}
+          </h1>
+          <p className="text-xs text-vortx-gray mt-2 tracking-widest uppercase font-semibold">
+            {preOrderMode ? 'RESERVE NEXT GENERATION WARRIOR TECH' : 'ENGINEERED STRENGTH FOR HYBRID ATHLETES'}
+          </p>
         </div>
 
         {/* Filter Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-10 xl:gap-14">
           
-          {/* Mobile Filter Control Bar */}
-          <div className="lg:hidden flex gap-4 mb-6">
-            <div className="relative flex-grow flex items-center">
-              <Search className="absolute left-3.5 w-4 h-4 text-vortx-gray/50" />
-              <input 
-                type="text"
-                placeholder="SEARCH GEAR"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-vortx-dark border border-vortx-white/20 px-3.5 py-2.5 pl-10 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/50 uppercase"
-              />
-            </div>
-            <button 
-              onClick={() => setIsMobileFiltersOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-vortx-white text-vortx-black hover:bg-vortx-white/90 font-sans text-xs font-bold tracking-widest uppercase transition flex-shrink-0"
-            >
-              <SlidersHorizontal className="w-4 h-4" />
-              FILTERS
-            </button>
-          </div>
-
           {/* Left Side Sidebar Filters (Desktop Only) */}
-          <aside className="catalog-filters lg:col-span-1 border-r border-vortx-white/10 pr-10 hidden lg:flex lg:flex-col">
-            
-            {/* Search Input */}
-            <div className="relative flex items-center">
-              <Search className="absolute left-3.5 w-4 h-4 text-vortx-gray/50" />
-              <input 
-                type="text"
-                placeholder="SEARCH GEAR"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-vortx-dark border border-vortx-white/20 px-3.5 py-2.5 pl-10 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/50 uppercase"
-              />
-            </div>
-
-            {/* Category Filter */}
-            <div className="catalog-filter-group">
-              <h4 className="font-sans text-xs font-bold tracking-wider text-vortx-white mb-4 uppercase">CATEGORY</h4>
-              <div className="space-y-1">
-                {['all', 'tops', 'bottoms', 'outerwear'].map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`block w-full text-xs font-medium tracking-wide text-left transition py-2 pl-3 border-l-2 ${
-                      selectedCategory === cat 
-                        ? 'text-vortx-white font-bold border-red-600 bg-red-600/5' 
-                        : 'text-vortx-gray hover:text-vortx-white border-transparent hover:bg-vortx-white/2'
-                    }`}
-                  >
-                    {cat.toUpperCase()}
-                  </button>
-                ))}
+          <div className="hidden lg:block lg:col-span-1 border-r border-vortx-white/10 pr-10">
+            <aside className="catalog-filters">
+              
+              {/* Category Filter */}
+              <div className="catalog-filter-group">
+                <h4 className="font-sans text-xs font-bold tracking-wider text-vortx-white mb-4 uppercase">CATEGORY</h4>
+                <div className="space-y-1">
+                  {['all', 'tops', 'bottoms', 'outerwear'].map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setSelectedCategory(cat)}
+                      className={`block w-full text-xs font-medium tracking-wide text-left transition py-2 pl-3 border-l-2 ${
+                        selectedCategory === cat 
+                          ? 'text-vortx-white font-bold border-red-600 bg-red-600/5' 
+                          : 'text-vortx-gray hover:text-vortx-white border-transparent hover:bg-vortx-white/2'
+                      }`}
+                    >
+                      {cat.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* Gender Filter */}
-            <div className="catalog-filter-group">
-              <h4 className="font-sans text-xs font-bold tracking-wider text-vortx-white mb-4 uppercase">GENDER</h4>
-              <div className="space-y-1">
-                {['all', 'men', 'women', 'unisex'].map((gen) => (
-                  <button
-                    key={gen}
-                    onClick={() => setSelectedGender(gen)}
-                    className={`block w-full text-xs font-medium tracking-wide text-left transition py-2 pl-3 border-l-2 ${
-                      selectedGender === gen 
-                        ? 'text-vortx-white font-bold border-red-600 bg-red-600/5' 
-                        : 'text-vortx-gray hover:text-vortx-white border-transparent hover:bg-vortx-white/2'
-                    }`}
-                  >
-                    {gen.toUpperCase()}
-                  </button>
-                ))}
+              {/* Gender Filter */}
+              <div className="catalog-filter-group">
+                <h4 className="font-sans text-xs font-bold tracking-wider text-vortx-white mb-4 uppercase">GENDER</h4>
+                <div className="space-y-1">
+                  {['all', 'men', 'women', 'unisex'].map((gen) => (
+                    <button
+                      key={gen}
+                      onClick={() => setSelectedGender(gen)}
+                      className={`block w-full text-xs font-medium tracking-wide text-left transition py-2 pl-3 border-l-2 ${
+                        selectedGender === gen 
+                          ? 'text-vortx-white font-bold border-red-600 bg-red-600/5' 
+                          : 'text-vortx-gray hover:text-vortx-white border-transparent hover:bg-vortx-white/2'
+                      }`}
+                    >
+                      {gen.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* Sort Options */}
-            <div className="catalog-filter-group">
-              <h4 className="font-sans text-xs font-bold tracking-wider text-vortx-white mb-4 uppercase">SORT BY</h4>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="w-full bg-vortx-dark border border-vortx-white/20 px-3.5 py-2.5 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-sans font-bold tracking-wide"
-              >
-                <option value="featured">FEATURED</option>
-                <option value="price-asc">PRICE: LOW TO HIGH</option>
-                <option value="price-desc">PRICE: HIGH TO LOW</option>
-                <option value="newest">NEW RELEASES</option>
-              </select>
-            </div>
+              {/* Sort Options */}
+              <div className="catalog-filter-group">
+                <h4 className="font-sans text-xs font-bold tracking-wider text-vortx-white mb-4 uppercase">SORT BY</h4>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full bg-vortx-dark border border-vortx-white/20 px-3.5 py-2.5 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-sans font-bold tracking-wide"
+                >
+                  <option value="featured">FEATURED</option>
+                  <option value="price-asc">PRICE: LOW TO HIGH</option>
+                  <option value="price-desc">PRICE: HIGH TO LOW</option>
+                  <option value="newest">NEW RELEASES</option>
+                </select>
+              </div>
 
-          </aside>
+            </aside>
+          </div>
 
           {/* Right Side Catalog Grid */}
           <div className="lg:col-span-3">
+            
+            {/* Catalog Action Header Bar (Search & Mobile Filter Trigger) */}
+            <div className="flex gap-4 mb-6">
+              {/* Universal Search Input */}
+              <div className="relative flex-grow flex items-center">
+                <Search className="absolute left-3.5 w-4 h-4 text-vortx-gray/50" />
+                <input 
+                  type="text"
+                  placeholder="SEARCH GEAR"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-vortx-dark border border-vortx-white/20 px-3.5 py-2.5 pl-10 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/50 uppercase"
+                />
+              </div>
+
+              {/* Mobile Filter Button */}
+              <button 
+                onClick={() => setIsMobileFiltersOpen(true)}
+                className="lg:hidden flex items-center gap-2 px-4 py-2.5 bg-vortx-white text-vortx-black hover:bg-vortx-white/90 font-sans text-xs font-bold tracking-widest uppercase transition flex-shrink-0"
+              >
+                <SlidersHorizontal className="w-4 h-4" />
+                FILTERS
+              </button>
+            </div>
             
             {filteredProducts.length === 0 ? (
               <div className="h-64 flex flex-col items-center justify-center border border-dashed border-vortx-white/10 rounded">

@@ -82,6 +82,28 @@ export default function CheckoutPage() {
       return;
     }
 
+    if (addressLine1.trim().length < 5) {
+      setAddressError('Address Line 1 must be at least 5 characters.');
+      return;
+    }
+
+    if (city.trim().length < 2) {
+      setAddressError('City name must be at least 2 characters.');
+      return;
+    }
+
+    if (state.trim().length < 2) {
+      setAddressError('State name must be at least 2 characters.');
+      return;
+    }
+
+    // Pincode digit validation
+    const cleanPincode = postalCode.replace(/\D/g, '');
+    if (cleanPincode.length !== 6) {
+      setAddressError('Please enter a valid 6-digit pincode.');
+      return;
+    }
+
     // Phone number digit validation check
     const cleanPhone = phone.replace(/\D/g, '');
     if (cleanPhone.length !== 10) {
@@ -95,9 +117,9 @@ export default function CheckoutPage() {
       addressLine2,
       city,
       state,
-      postalCode,
+      postalCode: cleanPincode,
       country: 'India',
-      phone
+      phone: cleanPhone
     });
 
     // Reset fields
@@ -366,7 +388,7 @@ export default function CheckoutPage() {
                 value={addressLine1}
                 onChange={(e) => setAddressLine1(e.target.value)}
                 placeholder="HOUSE NO, BUILDING, ROAD"
-                className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30 uppercase"
+                className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30"
                 required
               />
             </div>
@@ -378,7 +400,7 @@ export default function CheckoutPage() {
                 value={addressLine2}
                 onChange={(e) => setAddressLine2(e.target.value)}
                 placeholder="LOCALITY, AREA, LANDMARK"
-                className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30 uppercase"
+                className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30"
               />
             </div>
 
@@ -390,7 +412,7 @@ export default function CheckoutPage() {
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   placeholder="CITY"
-                  className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30 uppercase"
+                  className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30"
                   required
                 />
               </div>
@@ -401,7 +423,7 @@ export default function CheckoutPage() {
                   value={state}
                   onChange={(e) => setState(e.target.value)}
                   placeholder="STATE"
-                  className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30 uppercase"
+                  className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30"
                   required
                 />
               </div>

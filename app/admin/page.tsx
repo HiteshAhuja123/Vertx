@@ -118,6 +118,7 @@ export default function AdminDashboard() {
   const [editingOrderId, setEditingOrderId] = useState('');
   const [courierName, setCourierName] = useState('Shiprocket');
   const [trackingNumber, setTrackingNumber] = useState('SR' + Math.floor(Math.random() * 9000000 + 1000000));
+  const [formError, setFormError] = useState('');
 
   // Access validation
   useEffect(() => {
@@ -168,18 +169,43 @@ export default function AdminDashboard() {
   // --- PRODUCTS CRUD LOGIC ---
   const handleCreateProduct = (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError('');
+
     if (!pName || !pDescription) {
-      alert('All required fields must be completed');
+      setFormError('All required fields must be completed.');
+      return;
+    }
+
+    if (pName.trim().length < 3) {
+      setFormError('Product name must be at least 3 characters.');
+      return;
+    }
+
+    if (pDescription.trim().length < 10) {
+      setFormError('Description must be at least 10 characters.');
       return;
     }
 
     if (!pImageInput) {
-      alert('Please upload an image or enter a direct image URL');
+      setFormError('Please upload an image or enter a direct image URL.');
+      return;
+    }
+
+    const priceNum = Number(pPrice);
+    const mrpNum = Number(pMrp);
+
+    if (isNaN(priceNum) || priceNum <= 0 || isNaN(mrpNum) || mrpNum <= 0) {
+      setFormError('Price and MRP must be valid numbers greater than zero.');
+      return;
+    }
+
+    if (priceNum > mrpNum) {
+      setFormError('Standard Price cannot be higher than Maximum Retail Price (MRP).');
       return;
     }
 
     const slug = pName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-    const discount = pMrp > pPrice ? Math.round(((pMrp - pPrice) / pMrp) * 100) : 0;
+    const discount = mrpNum > priceNum ? Math.round(((mrpNum - priceNum) / mrpNum) * 100) : 0;
 
     // Create variants mapping
     const variantsList = pSizes.flatMap(size => 
@@ -197,8 +223,8 @@ export default function AdminDashboard() {
       name: pName,
       slug,
       description: pDescription,
-      price: Number(pPrice),
-      mrp: Number(pMrp),
+      price: priceNum,
+      mrp: mrpNum,
       discount_percent: discount,
       badge: pBadge,
       category: pCategory,
@@ -268,6 +294,14 @@ export default function AdminDashboard() {
   };
 
   const handleUpdateShipping = (orderId: string) => {
+    if (!courierName.trim()) {
+      alert('Courier Name is required.');
+      return;
+    }
+    if (!trackingNumber.trim()) {
+      alert('Tracking Number is required.');
+      return;
+    }
     updateOrderStatus(orderId, 'shipped', courierName, trackingNumber);
     setEditingOrderId('');
     // generate new random tracking for next edit
@@ -383,9 +417,12 @@ export default function AdminDashboard() {
                     <input 
                       type="text" 
                       value={pName}
-                      onChange={(e) => setPName(e.target.value)}
-                      placeholder="E.G. COMPRESSION HOODIE"
-                      className="w-full bg-vortx-black border border-vortx-white/20 px-3 py-2 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30 uppercase"
+                      onChange={(e) => {
+                        setPName(e.target.value);
+                        if (formError) setFormError('');
+                      }}
+                      placeholder="E.g. Tactical Compression Vest"
+                      className="w-full bg-vortx-black border border-vortx-white/20 px-3 py-2 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30"
                       required
                     />
                   </div>
@@ -395,9 +432,12 @@ export default function AdminDashboard() {
                     <textarea 
                       rows={3}
                       value={pDescription}
-                      onChange={(e) => setPDescription(e.target.value)}
-                      placeholder="DESCRIPTION DETAILS"
-                      className="w-full bg-vortx-black border border-vortx-white/20 px-3 py-2 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30 uppercase"
+                      onChange={(e) => {
+                        setPDescription(e.target.value);
+                        if (formError) setFormError('');
+                      }}
+                      placeholder="Detailed warrior specifications"
+                      className="w-full bg-vortx-black border border-vortx-white/20 px-3 py-2 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30"
                       required
                     />
                   </div>
@@ -581,11 +621,17 @@ export default function AdminDashboard() {
                     )}
                   </div>
 
+                  {formError && (
+                    <p className="text-[10px] font-bold text-red-500 bg-red-500/10 border border-red-500/20 p-2.5 rounded text-center">
+                      {formError}
+                    </p>
+                  )}
+
                   <button
                     type="submit"
                     className="w-full py-3.5 bg-vortx-white text-vortx-black font-syne text-[10px] font-bold tracking-widest hover:bg-vortx-white/95 transition uppercase"
                   >
-                    SAVE & LAUNCH PRODUCT
+                    CREATE PRODUCT RECORD
                   </button>
                 </form>
 
