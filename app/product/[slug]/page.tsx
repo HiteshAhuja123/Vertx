@@ -242,7 +242,7 @@ export default function ProductDetail() {
               <span className="text-xs font-sans text-vortx-gray uppercase tracking-[0.2em] font-bold">
                 {product.category} | {product.gender}
               </span>
-              <h1 className="font-syne text-3xl font-extrabold tracking-wide text-vortx-white uppercase leading-none">
+              <h1 className="font-syne text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-wide text-vortx-white uppercase leading-none break-words">
                 {product.name}
               </h1>
               
@@ -367,20 +367,20 @@ export default function ProductDetail() {
 
             {/* Qty Selector and CTA Add Buttons */}
             <div className="space-y-4 pt-4 border-t border-vortx-white/10">
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 
                 {/* Qty edit box */}
-                <div className="flex items-center border border-vortx-white/20 rounded h-12">
+                <div className="flex items-center justify-between border border-vortx-white/20 rounded h-12 w-full sm:w-auto">
                   <button 
                     onClick={() => setQty(prev => Math.max(1, prev - 1))}
-                    className="px-4 text-sm font-bold hover:bg-vortx-white/10 transition"
+                    className="w-12 h-full flex items-center justify-center text-sm font-bold hover:bg-vortx-white/10 transition"
                   >
                     -
                   </button>
-                  <span className="px-4 font-mono font-bold text-xs">{qty}</span>
+                  <span className="font-mono font-bold text-xs">{qty}</span>
                   <button 
                     onClick={() => setQty(prev => prev + 1)}
-                    className="px-4 text-sm font-bold hover:bg-vortx-white/10 transition"
+                    className="w-12 h-full flex items-center justify-center text-sm font-bold hover:bg-vortx-white/10 transition"
                   >
                     +
                   </button>
@@ -390,7 +390,7 @@ export default function ProductDetail() {
                 <button
                   onClick={handleAddToCart}
                   disabled={!isPreOrder && stockAvailable === 0}
-                  className="flex-1 bg-vortx-white text-vortx-black font-sans text-xs sm:text-sm font-bold tracking-widest hover:bg-vortx-white/90 disabled:bg-vortx-white/25 disabled:text-vortx-gray active:scale-98 transition flex items-center justify-center"
+                  className="w-full sm:flex-1 py-3.5 bg-vortx-white text-vortx-black font-sans text-xs sm:text-sm font-bold tracking-widest hover:bg-vortx-white/90 disabled:bg-vortx-white/25 disabled:text-vortx-gray active:scale-98 transition flex items-center justify-center min-h-[48px]"
                 >
                   {isPreOrder ? 'PRE-ORDER NOW' : 'ADD TO CART'}
                 </button>

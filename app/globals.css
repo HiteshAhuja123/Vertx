@@ -6,9 +6,9 @@
   --font-syne: 'Syne', sans-serif;
   --spacing: 4px;
 
-  --color-vortx-black: #000000;
-  --color-vortx-dark: #0a0a0a;
-  --color-vortx-gray-dark: #121212;
+  --color-vortx-black: #0a0b0d;
+  --color-vortx-dark: #121417;
+  --color-vortx-gray-dark: #1b1e22;
   --color-vortx-gray: #8f8f8f;
   --color-vortx-gray-light: #f5f5f5;
   --color-vortx-white: #ffffff;
@@ -28,7 +28,7 @@
 }
 
 :root {
-  --background: #000000;
+  --background: #0a0b0d;
   --foreground: #ffffff;
   --spacing: 4px;
 }
@@ -46,7 +46,7 @@ a, button, select, input[type="submit"], [role="button"], label {
 }
 
 body {
-  background: #000000;
+  background: #0a0b0d;
   color: #ffffff;
   font-family: 'Outfit', sans-serif;
   overflow-x: hidden;
@@ -78,7 +78,7 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #000000;
+  background: #0a0b0d;
 }
 ::-webkit-scrollbar-thumb {
   background: #222222;
