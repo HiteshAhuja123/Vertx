@@ -97,11 +97,11 @@ function AuthPortalContent() {
   };
 
   return (
-    <div className="flex-1 flex items-center justify-center py-16 px-4 bg-vortx-black">
-      <div className="w-full max-w-md bg-vortx-dark border border-vortx-white/20 p-8 rounded shadow-2xl glassmorphism">
+    <div className="flex-1 flex items-center justify-center py-20 px-5 sm:px-8 bg-vortx-black">
+      <div className="w-full max-w-lg bg-vortx-dark border border-vortx-white/20 p-8 sm:p-10 rounded shadow-2xl glassmorphism">
         
         {/* Tab Headers */}
-        <div className="flex border-b border-vortx-white/10 text-xs font-syne font-bold tracking-widest mb-8">
+        <div className="flex border-b border-vortx-white/10 text-sm font-syne font-bold tracking-widest mb-10">
           <button
             onClick={() => {
               setIsLoginTab(true);
@@ -109,7 +109,7 @@ function AuthPortalContent() {
               setErrorMsg('');
               setSuccessMsg('');
             }}
-            className={`flex-1 pb-3 transition ${
+            className={`flex-1 pb-4 transition ${
               isLoginTab ? 'border-b-2 border-vortx-white text-vortx-white' : 'text-vortx-gray hover:text-vortx-white'
             }`}
           >
@@ -121,7 +121,7 @@ function AuthPortalContent() {
               setErrorMsg('');
               setSuccessMsg('');
             }}
-            className={`flex-1 pb-3 transition ${
+            className={`flex-1 pb-4 transition ${
               !isLoginTab ? 'border-b-2 border-vortx-white text-vortx-white' : 'text-vortx-gray hover:text-vortx-white'
             }`}
           >
@@ -130,15 +130,15 @@ function AuthPortalContent() {
         </div>
 
         {/* Brand Slogan */}
-        <div className="text-center mb-6">
-          <span className="font-syne text-[8px] font-black tracking-[0.25em] text-vortx-gray uppercase">VORTX SECURITY</span>
-          <h2 className="font-syne text-sm font-bold tracking-wider text-vortx-white mt-1 uppercase">
+        <div className="text-center mb-10">
+          <span className="font-syne text-xs font-black tracking-[0.2em] text-vortx-gray uppercase">VORTX SECURITY</span>
+          <h2 className="font-syne text-xl font-bold tracking-wider text-vortx-white mt-3 uppercase">
             {isLoginTab ? 'CHOOSE PERFORMANCE' : 'JOIN THE WARRIOR CLAN'}
           </h2>
         </div>
 
         {/* Form Container */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {errorMsg && (
             <div className="p-3 border border-red-500/20 bg-red-500/5 text-red-400 text-[10px] font-medium rounded">
               {errorMsg}
@@ -154,28 +154,28 @@ function AuthPortalContent() {
           {!isLoginTab && (
             <>
               <div>
-                <label className="block text-[10px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1.5">FULL NAME</label>
+                <label className="block text-xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-2.5">FULL NAME</label>
                 <input 
                   type="text" 
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="ENTER FULL NAME"
-                  className="w-full bg-vortx-black border border-vortx-white/20 px-3.5 py-2.5 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30 uppercase"
+                  className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3.5 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/50 uppercase"
                   required
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1.5">MOBILE NUMBER</label>
+                <label className="block text-xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-2.5">MOBILE NUMBER</label>
                 <div className="relative">
                   <input 
                     type="tel" 
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="ENTER 10-DIGIT MOBILE"
-                    className="w-full bg-vortx-black border border-vortx-white/20 px-3.5 py-2.5 pl-12 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30"
+                    className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3.5 pl-14 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/50"
                     required
                   />
-                  <span className="absolute left-3.5 top-3 text-xs text-vortx-gray font-mono font-bold">+91</span>
+                  <span className="absolute left-4 top-3.5 text-base text-vortx-gray font-mono font-bold">+91</span>
                 </div>
               </div>
             </>
@@ -184,13 +184,13 @@ function AuthPortalContent() {
           {/* Email Address Field */}
           {(!useOtpMode || !isLoginTab) && (
             <div>
-              <label className="block text-[10px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1.5">EMAIL ADDRESS</label>
+              <label className="block text-xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-2.5">EMAIL ADDRESS</label>
               <input 
                 type="email" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="ENTER EMAIL ADDRESS"
-                className="w-full bg-vortx-black border border-vortx-white/20 px-3.5 py-2.5 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30 uppercase"
+                className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3.5 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/50 uppercase"
                 required
               />
             </div>
@@ -251,7 +251,7 @@ function AuthPortalContent() {
           {/* CTA Buttons */}
           <button
             type="submit"
-            className="w-full py-3.5 bg-vortx-white text-vortx-black font-syne text-[10px] font-bold tracking-widest hover:bg-vortx-white/95 active:scale-98 transition flex items-center justify-center gap-1.5"
+            className="w-full py-4 bg-vortx-white text-vortx-black font-syne text-sm font-bold tracking-widest hover:bg-vortx-white/95 active:scale-98 transition flex items-center justify-center gap-2"
           >
             {isLoginTab ? (useOtpMode && !otpSent ? 'SEND CODE' : 'VERIFY & SIGN IN') : 'CREATE CLAN ACCOUNT'}
             <ArrowRight className="w-3.5 h-3.5" />
@@ -278,7 +278,7 @@ function AuthPortalContent() {
         </form>
 
         {/* Demo Details assistance panel */}
-        <div className="mt-8 pt-6 border-t border-vortx-white/10 text-center font-mono text-[9px] text-vortx-gray leading-normal space-y-1">
+        <div className="mt-10 pt-8 border-t border-vortx-white/10 text-center font-mono text-xs text-vortx-gray leading-relaxed space-y-3">
           <p className="font-bold text-vortx-white">SANDBOX TESTING DETAILS:</p>
           <p>Login with email: <span className="text-vortx-white font-bold select-all">admin@vortx.fit</span> to access the admin features.</p>
           <p>Enter any email for customer logins; signup generates code WELCOME10 automatically.</p>
