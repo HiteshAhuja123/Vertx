@@ -139,7 +139,7 @@ export default function ProductDetail() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Breadcrumbs */}
-        <div className="text-[10px] text-vortx-gray uppercase tracking-widest font-mono mb-8">
+        <div className="text-xs sm:text-sm text-vortx-gray uppercase tracking-wider font-sans mb-8">
           <Link href="/" className="hover:text-vortx-white">HOME</Link> /{' '}
           <Link href="/shop" className="hover:text-vortx-white">SHOP</Link> /{' '}
           <span className="text-vortx-white font-bold">{product.name}</span>
@@ -175,7 +175,7 @@ export default function ProductDetail() {
                   </div>
                   {/* Slider controller */}
                   <div className="absolute bottom-6 w-[80%] mx-auto font-mono text-center space-y-2">
-                    <div className="text-[9px] text-vortx-gray font-bold tracking-widest uppercase">
+                    <div className="text-xs text-vortx-gray font-bold tracking-widest uppercase">
                       DRAG ROTATION SLIDER // {rotationAngle}°
                     </div>
                     <input 
@@ -201,7 +201,7 @@ export default function ProductDetail() {
               {/* View Toggle */}
               <button 
                 onClick={() => setView360(!view360)}
-                className="absolute top-4 right-4 bg-vortx-black/80 hover:bg-vortx-white hover:text-vortx-black border border-vortx-white/20 rounded px-3 py-1.5 font-syne text-[8px] font-bold tracking-wider transition flex items-center gap-1.5"
+                className="absolute top-4 right-4 bg-vortx-black/80 hover:bg-vortx-white hover:text-vortx-black border border-vortx-white/20 rounded px-3 py-1.5 font-sans text-xs font-bold tracking-wider transition flex items-center gap-1.5"
               >
                 <RefreshCw className="w-3 h-3" />
                 {view360 ? 'STANDARD VIEW' : '360° INTERACTIVE'}
@@ -209,7 +209,7 @@ export default function ProductDetail() {
 
               {/* Badge */}
               {product.badge && !view360 && (
-                <span className="absolute top-4 left-4 px-2 py-1 bg-vortx-white text-vortx-black font-syne text-[8px] font-extrabold tracking-wider">
+                <span className="absolute top-4 left-4 px-2 py-1 bg-vortx-white text-vortx-black font-sans text-[10px] font-bold tracking-wider">
                   {product.badge}
                 </span>
               )}
@@ -239,7 +239,7 @@ export default function ProductDetail() {
             
             {/* Title / Badges */}
             <div className="space-y-2">
-              <span className="text-[10px] font-mono text-vortx-gray uppercase tracking-[0.2em]">
+              <span className="text-xs font-sans text-vortx-gray uppercase tracking-[0.2em] font-bold">
                 {product.category} | {product.gender}
               </span>
               <h1 className="font-syne text-3xl font-extrabold tracking-wide text-vortx-white uppercase leading-none">
@@ -251,12 +251,12 @@ export default function ProductDetail() {
                 <div className="flex items-center gap-1 text-vortx-white">
                   <Star className="w-3.5 h-3.5 fill-current text-vortx-white" />
                   <span className="text-xs font-mono font-bold">5.0</span>
-                  <span className="text-vortx-gray text-[10px] font-medium">(2 Reviews)</span>
+                  <span className="text-vortx-gray text-xs font-medium">(2 Reviews)</span>
                 </div>
 
                 {/* Preorder Switch */}
                 {product.pre_order_available && (
-                  <div className="flex items-center border border-vortx-white/20 rounded overflow-hidden text-[9px] font-bold font-syne tracking-wider">
+                  <div className="flex items-center border border-vortx-white/20 rounded overflow-hidden text-xs font-bold font-sans tracking-wider">
                     <button
                       onClick={() => setIsPreOrder(false)}
                       disabled={!product.is_in_stock}
@@ -300,13 +300,13 @@ export default function ProductDetail() {
               {/* Color Select */}
               {colors.length > 0 && (
                 <div>
-                  <h4 className="font-syne text-[10px] font-bold tracking-widest text-vortx-gray uppercase mb-2">COLOR</h4>
+                  <h4 className="font-sans text-xs font-bold tracking-wider text-vortx-gray uppercase mb-2">COLOR</h4>
                   <div className="flex gap-2.5">
                     {colors.map((color: string) => (
                       <button
                         key={color}
                         onClick={() => setSelectedColor(color)}
-                        className={`px-4 py-2 border font-mono text-[10px] font-bold tracking-wider rounded transition ${
+                        className={`px-4 py-2 border font-mono text-xs font-bold tracking-wider rounded transition ${
                           selectedColor === color 
                             ? 'border-vortx-white bg-vortx-white text-vortx-black' 
                             : 'border-vortx-white/20 text-vortx-gray hover:border-vortx-white hover:text-vortx-white'
@@ -323,10 +323,10 @@ export default function ProductDetail() {
               {sizes.length > 0 && (
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <h4 className="font-syne text-[10px] font-bold tracking-widest text-vortx-gray uppercase">SIZE</h4>
+                    <h4 className="font-sans text-xs font-bold tracking-wider text-vortx-gray uppercase">SIZE</h4>
                     <button 
                       onClick={() => setShowSizeGuide(true)}
-                      className="flex items-center gap-1 text-[10px] text-vortx-gray hover:text-vortx-white font-medium"
+                      className="flex items-center gap-1 text-xs text-vortx-gray hover:text-vortx-white font-medium font-sans"
                     >
                       <Ruler className="w-3.5 h-3.5" />
                       Size Guide
@@ -352,7 +352,7 @@ export default function ProductDetail() {
 
               {/* Stock notification labels */}
               {!isPreOrder && (
-                <div className="text-[10px] text-vortx-gray mt-2 flex items-center gap-1.5 font-mono">
+                <div className="text-xs text-vortx-gray mt-2 flex items-center gap-1.5 font-sans">
                   <span className={`h-2.5 w-2.5 rounded-full inline-block ${
                     stockAvailable === 0 ? 'bg-red-500' : stockAvailable < 5 ? 'bg-yellow-400 animate-pulse' : 'bg-green-500'
                   }`} />
@@ -390,7 +390,7 @@ export default function ProductDetail() {
                 <button
                   onClick={handleAddToCart}
                   disabled={!isPreOrder && stockAvailable === 0}
-                  className="flex-1 bg-vortx-white text-vortx-black font-syne text-[10px] font-bold tracking-widest hover:bg-vortx-white/90 disabled:bg-vortx-white/25 disabled:text-vortx-gray active:scale-98 transition flex items-center justify-center"
+                  className="flex-1 bg-vortx-white text-vortx-black font-sans text-xs sm:text-sm font-bold tracking-widest hover:bg-vortx-white/90 disabled:bg-vortx-white/25 disabled:text-vortx-gray active:scale-98 transition flex items-center justify-center"
                 >
                   {isPreOrder ? 'PRE-ORDER NOW' : 'ADD TO CART'}
                 </button>
@@ -399,7 +399,7 @@ export default function ProductDetail() {
               {/* Wishlist Toggle Button */}
               <button 
                 onClick={() => toggleWishlist(product.id)}
-                className={`w-full py-3.5 border font-syne text-[10px] font-bold tracking-widest hover:bg-vortx-white/5 transition flex items-center justify-center gap-2 ${
+                className={`w-full py-3.5 border font-sans text-xs sm:text-sm font-bold tracking-widest hover:bg-vortx-white/5 transition flex items-center justify-center gap-2 ${
                   isInWishlist(product.id) ? 'border-vortx-white text-vortx-white bg-vortx-white/5' : 'border-vortx-white/20 text-vortx-gray hover:text-vortx-white'
                 }`}
               >
@@ -408,27 +408,27 @@ export default function ProductDetail() {
             </div>
 
             {/* Shipping / Support assurances */}
-            <div className="grid grid-cols-3 gap-4 text-center text-[9px] font-mono font-medium text-vortx-gray border-y border-vortx-white/10 py-5">
+            <div className="grid grid-cols-3 gap-4 text-center text-xs sm:text-sm font-sans font-medium text-vortx-gray border-y border-vortx-white/10 py-6">
               <div className="space-y-1">
-                <Truck className="w-4 h-4 mx-auto mb-1.5 text-vortx-white" />
-                <span className="block text-vortx-white uppercase font-bold">EST. DELIVERY</span>
-                <span>{isPreOrder ? 'Starts Aug 15' : getDeliveryDate()}</span>
+                <Truck className="w-5 h-5 mx-auto mb-1.5 text-vortx-white" />
+                <span className="block text-vortx-white uppercase font-bold tracking-wide">EST. DELIVERY</span>
+                <span className="text-[11px] sm:text-xs text-vortx-gray">{isPreOrder ? 'Starts Aug 15' : getDeliveryDate()}</span>
               </div>
               <div className="space-y-1 border-x border-vortx-white/10">
-                <ShieldCheck className="w-4 h-4 mx-auto mb-1.5 text-vortx-white" />
-                <span className="block text-vortx-white uppercase font-bold">SECURED GATEWAY</span>
-                <span>SSL Encrypted Checkout</span>
+                <ShieldCheck className="w-5 h-5 mx-auto mb-1.5 text-vortx-white" />
+                <span className="block text-vortx-white uppercase font-bold tracking-wide">SECURED GATEWAY</span>
+                <span className="text-[11px] sm:text-xs text-vortx-gray">SSL Encrypted Checkout</span>
               </div>
               <div className="space-y-1">
-                <Layers className="w-4 h-4 mx-auto mb-1.5 text-vortx-white" />
-                <span className="block text-vortx-white uppercase font-bold">WARRIOR FIT</span>
-                <span>Sweat-proof Tech Weave</span>
+                <Layers className="w-5 h-5 mx-auto mb-1.5 text-vortx-white" />
+                <span className="block text-vortx-white uppercase font-bold tracking-wide">WARRIOR FIT</span>
+                <span className="text-[11px] sm:text-xs text-vortx-gray">Sweat-proof Tech Weave</span>
               </div>
             </div>
 
             {/* Details tabs accordion */}
             <div className="space-y-4">
-              <div className="flex gap-2 border-b border-vortx-white/10 text-[10px] font-syne font-bold tracking-widest">
+              <div className="flex gap-2 border-b border-vortx-white/10 text-xs sm:text-sm font-sans font-bold tracking-widest">
                 {['details', 'specs', 'shipping'].map((tab) => (
                   <button
                     key={tab}
@@ -441,16 +441,16 @@ export default function ProductDetail() {
                   </button>
                 ))}
               </div>
-              <div className="text-xs text-vortx-gray leading-relaxed font-medium">
+              <div className="text-sm sm:text-base text-vortx-gray leading-relaxed font-medium">
                 {activeTab === 'details' && (
                   <div className="space-y-2">
                     <p>{product.description}</p>
-                    <p className="text-[10px] text-vortx-white mt-2 font-semibold">FABRIC CONTENT:</p>
+                    <p className="text-xs sm:text-sm text-vortx-white mt-4 font-semibold">FABRIC CONTENT:</p>
                     <p className="italic">{fabricInfo}</p>
                   </div>
                 )}
                 {activeTab === 'specs' && (
-                  <ul className="space-y-1.5 font-mono text-[10px]">
+                  <ul className="space-y-1.5 font-mono text-xs sm:text-sm">
                     {Object.entries(specsInfo).map(([key, val]: any) => (
                       <li key={key} className="flex justify-between border-b border-vortx-white/5 pb-1">
                         <span className="uppercase text-vortx-white/60">{key}</span>
@@ -475,13 +475,13 @@ export default function ProductDetail() {
             <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowSizeGuide(false)} />
             <div className="relative w-full max-w-lg bg-vortx-dark border border-vortx-white/20 p-6 glassmorphism rounded shadow-2xl animate-in zoom-in-95 duration-200">
               <div className="flex justify-between items-center border-b border-vortx-white/10 pb-4 mb-4">
-                <span className="font-syne text-xs font-bold tracking-widest text-vortx-white">VORTX WARRIOR SIZE CHART</span>
+                <span className="font-sans text-sm sm:text-base font-bold tracking-wider text-vortx-white">VORTX WARRIOR SIZE CHART</span>
                 <button onClick={() => setShowSizeGuide(false)} className="text-vortx-gray hover:text-vortx-white transition">
                   <X className="w-4 h-4" />
                 </button>
               </div>
               
-              <table className="w-full text-center text-[10px] font-mono leading-loose">
+              <table className="w-full text-center text-xs font-mono leading-loose">
                 <thead>
                   <tr className="border-b border-vortx-white/15 text-vortx-white/60 uppercase">
                     <th className="py-2 text-left">SIZE</th>
@@ -524,7 +524,7 @@ export default function ProductDetail() {
                 </tbody>
               </table>
 
-              <div className="mt-4 p-3 bg-vortx-white/5 rounded border border-vortx-white/10 flex items-start gap-2.5 text-[9px] text-vortx-gray leading-normal">
+              <div className="mt-4 p-3 bg-vortx-white/5 rounded border border-vortx-white/10 flex items-start gap-2.5 text-xs text-vortx-gray leading-normal">
                 <Info className="w-4 h-4 text-vortx-white flex-shrink-0 mt-0.5" />
                 <p>
                   Measurements correspond to body dimensions. Compression shirts fit close to body; if you prefer a standard fit, we recommend sizing up.

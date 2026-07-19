@@ -56,12 +56,12 @@ export default function AboutPage() {
       <section className="py-20 border-b border-vortx-white/10 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=1600&q=80')] bg-cover bg-center opacity-10 grayscale" />
         <div className="max-w-4xl mx-auto text-center relative z-10 px-4 space-y-4">
-          <span className="font-syne text-[8px] font-black tracking-[0.3em] text-vortx-gray uppercase">THE CLAN GENESIS</span>
-          <h1 className="font-syne text-4xl sm:text-6xl font-extrabold tracking-wide uppercase leading-tight">
+          <span className="font-sans text-[11px] font-bold tracking-[0.2em] text-vortx-gray uppercase">THE CLAN GENESIS</span>
+          <h1 className="font-sans text-5xl sm:text-7xl font-extrabold tracking-wide uppercase leading-tight">
             FOR WARRIORS,<br />NOT WATCHERS.
           </h1>
           <div className="w-16 h-0.5 bg-vortx-white mx-auto my-6" />
-          <p className="text-xs sm:text-sm text-vortx-gray leading-relaxed max-w-xl mx-auto font-medium">
+          <p className="text-lg sm:text-xl text-vortx-gray leading-relaxed max-w-2xl mx-auto font-medium">
             VORTX was founded in 2026 with a single directive: build technical, high-performance athletic apparel that makes no concessions. We don't build for the watch list. We construct armor for hybrid athletes who push boundaries. 
           </p>
         </div>
@@ -71,8 +71,8 @@ export default function AboutPage() {
       <section id="faq" className="py-20 border-b border-vortx-white/10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 space-y-2">
-            <span className="font-syne text-[8px] font-black tracking-[0.25em] text-vortx-gray uppercase">FAQ CORE</span>
-            <h2 className="font-syne text-2xl font-bold tracking-wider uppercase">CLAN SUPPORT</h2>
+            <span className="font-sans text-[11px] font-bold tracking-[0.2em] text-vortx-gray uppercase">FAQ CORE</span>
+            <h2 className="font-sans text-3xl font-extrabold tracking-wider uppercase">CLAN SUPPORT</h2>
           </div>
 
           <div className="space-y-4">
@@ -83,7 +83,7 @@ export default function AboutPage() {
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full p-5 flex items-center justify-between text-left font-syne text-xs font-bold tracking-wider text-vortx-white hover:bg-vortx-white/5 transition"
+                  className="w-full p-5 flex items-center justify-between text-left font-sans text-sm font-bold tracking-wider text-vortx-white hover:bg-vortx-white/5 transition"
                 >
                   <span className="flex items-center gap-2">
                     <HelpCircle className="w-4 h-4 text-vortx-gray" />
@@ -92,7 +92,7 @@ export default function AboutPage() {
                   <ChevronDown className={`w-4 h-4 text-vortx-gray transition-transform duration-300 ${openFaq === idx ? 'rotate-180' : ''}`} />
                 </button>
                 {openFaq === idx && (
-                  <div className="p-5 border-t border-vortx-white/10 text-xs text-vortx-gray leading-relaxed font-medium bg-vortx-black/20">
+                  <div className="p-5 border-t border-vortx-white/10 text-sm text-vortx-gray leading-relaxed font-medium bg-vortx-black/20">
                     {faq.a}
                   </div>
                 )}
@@ -110,8 +110,8 @@ export default function AboutPage() {
             {/* Contact Details info panel (5/12) */}
             <div className="lg:col-span-5 space-y-12">
               <div>
-                <span className="font-syne text-xs font-black tracking-[0.18em] text-vortx-gray uppercase">CONNECT</span>
-                <h2 className="font-syne text-4xl font-extrabold tracking-wide uppercase mt-2">WAR ROOM CONTACT</h2>
+                <span className="font-sans text-sm font-bold tracking-[0.15em] text-vortx-gray uppercase">CONNECT</span>
+                <h2 className="font-sans text-4xl font-extrabold tracking-wide uppercase mt-2">WAR ROOM CONTACT</h2>
                 <p className="text-base text-vortx-gray mt-4 leading-relaxed max-w-lg">
                   Have questions about fit, pre-order queues, or custom sponsorships? Reach out directly. Our support squad runs Monday through Saturday.
                 </p>
@@ -173,7 +173,7 @@ export default function AboutPage() {
                   <form onSubmit={handleContactSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-3">YOUR NAME</label>
+                        <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-3">YOUR NAME</label>
                         <input 
                           type="text" 
                           value={name}
@@ -184,7 +184,7 @@ export default function AboutPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-3">YOUR EMAIL</label>
+                        <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-3">YOUR EMAIL</label>
                         <input 
                           type="email" 
                           value={email}
@@ -197,7 +197,7 @@ export default function AboutPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-3">MESSAGE QUERY</label>
+                      <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-3">MESSAGE QUERY</label>
                       <textarea 
                         rows={6}
                         value={message}

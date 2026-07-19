@@ -118,12 +118,11 @@ export default function Home() {
         <div className="relative z-10 text-center px-5 max-w-5xl mx-auto space-y-5 sm:space-y-6 md:space-y-8">
           <div className="inline-flex items-center gap-2 border border-vortx-white/20 px-3.5 py-1.5 bg-vortx-white/5 backdrop-blur-md rounded-full">
             <span className="h-1.5 w-1.5 bg-vortx-white rounded-full animate-ping" />
-            <span className="font-syne text-[10px] sm:text-xs font-bold tracking-[0.16em] text-vortx-white uppercase">HYBRID ATHLETE LINE INITIATED</span>
+            <span className="font-sans text-[10px] sm:text-xs font-bold tracking-[0.16em] text-vortx-white uppercase">HYBRID ATHLETE LINE INITIATED</span>
           </div>
 
-          <h1 className="font-syne text-5xl sm:text-7xl lg:text-8xl font-extrabold tracking-tight leading-none text-vortx-white select-none">
-            CHOOSE<br />
-            <span className="text-stroke-active">STRENGTH</span>
+          <h1 className="font-sans text-6xl sm:text-8xl lg:text-9xl font-black tracking-tight leading-none text-vortx-white select-none">
+            LIMITLESS<br />ATHLETICS
           </h1>
 
           <p className="font-sans text-sm md:text-base text-vortx-gray tracking-wide uppercase font-semibold max-w-md mx-auto">
@@ -133,13 +132,13 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 pt-5 sm:pt-6 w-full max-w-sm sm:max-w-none mx-auto">
             <Link 
               href="/shop"
-              className="inline-flex items-center justify-center w-full sm:w-auto px-8 py-4 bg-vortx-white text-vortx-black font-syne text-xs font-bold tracking-widest hover:bg-vortx-white/90 active:scale-95 transition-all duration-300 shadow-xl"
+              className="inline-flex items-center justify-center w-full sm:w-auto px-8 py-4 bg-vortx-white text-vortx-black font-sans text-xs font-bold tracking-widest hover:bg-vortx-white/90 active:scale-95 transition-all duration-300 shadow-xl"
             >
               SHOP NOW
             </Link>
             <Link 
               href="/shop?filter=preorder"
-              className="inline-flex items-center justify-center w-full sm:w-auto px-8 py-4 border border-vortx-white/30 text-vortx-white font-syne text-xs font-bold tracking-widest hover:bg-vortx-white/10 hover:border-vortx-white transition-all duration-300"
+              className="inline-flex items-center justify-center w-full sm:w-auto px-8 py-4 border border-vortx-white/30 text-vortx-white font-sans text-xs font-bold tracking-widest hover:bg-vortx-white/10 hover:border-vortx-white transition-all duration-300"
             >
               PRE-ORDER COLLECTION
             </Link>
@@ -148,7 +147,7 @@ export default function Home() {
 
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-2 opacity-50">
-          <span className="text-[8px] font-syne font-bold tracking-widest text-vortx-gray">SCROLL</span>
+          <span className="text-[8px] font-sans font-bold tracking-widest text-vortx-gray">SCROLL</span>
           <div className="w-1 h-12 border border-vortx-white/20 rounded-full relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1/2 bg-vortx-white rounded-full animate-bounce" />
           </div>
@@ -159,7 +158,7 @@ export default function Home() {
       <section className="bg-vortx-white text-vortx-black py-4 overflow-hidden border-y border-vortx-white select-none">
         <div className="flex whitespace-nowrap animate-marquee">
           {Array(10).fill("FOR WARRIORS, NOT WATCHERS. // VORTX ACTIVEWEAR // ").map((text, i) => (
-            <span key={i} className="font-syne text-xs font-black tracking-widest mx-10">
+            <span key={i} className="font-sans text-xs font-black tracking-widest mx-10">
               {text}
             </span>
           ))}
@@ -176,8 +175,8 @@ export default function Home() {
                 <Clock className="w-3.5 h-3.5" />
                 <span className="font-mono text-[9px] font-bold tracking-widest text-vortx-white">LIMITED DROP COUNTDOWN</span>
               </div>
-              <h2 className="font-syne text-3xl sm:text-4xl font-extrabold tracking-wide text-vortx-white">
-                THE HYBRID SHIELD APEX
+              <h2 className="font-sans text-4xl sm:text-5xl font-extrabold tracking-wide text-vortx-white">
+                NEW RELEASES
               </h2>
               <p className="text-sm text-vortx-gray leading-relaxed max-w-lg">
                 The next iteration of warrior performance drops on August 15, 2026. Pre-orders are open exclusively to clan members. Stocks are capped at 50 units globally.
@@ -237,7 +236,7 @@ export default function Home() {
           
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
             <div>
-              <h2 className="font-syne text-3xl font-bold tracking-wide text-vortx-white">WARRIOR GEAR</h2>
+              <h2 className="font-sans text-4xl font-extrabold tracking-wide text-vortx-white">WARRIOR GEAR</h2>
               <p className="text-xs text-vortx-gray mt-2 uppercase tracking-widest font-semibold">
                 {preOrderMode ? 'PRE-ORDERS COLLECTION ACTIVE' : 'BESTSELLERS & NEW ARRIVALS'}
               </p>
@@ -349,8 +348,8 @@ export default function Home() {
               />
             </div>
             <div className="space-y-6">
-              <span className="font-syne text-[10px] font-black tracking-[0.25em] text-vortx-gray uppercase">THE CLAN MANIFESTO</span>
-              <h2 className="font-syne text-4xl sm:text-5xl font-extrabold tracking-wide text-vortx-white">
+              <span className="font-sans text-[11px] font-bold tracking-[0.2em] text-vortx-gray uppercase">THE CLAN MANIFESTO</span>
+              <h2 className="font-sans text-4xl sm:text-5xl font-extrabold tracking-wide text-vortx-white">
                 DESIGNED FOR WARRIORS, NOT WATCHERS.
               </h2>
               <p className="text-sm text-vortx-gray leading-relaxed">
@@ -375,8 +374,8 @@ export default function Home() {
       {reviews.length > 0 && (
         <section className="py-24 border-b border-vortx-white/10 text-center">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <span className="font-syne text-[10px] font-black tracking-[0.2em] text-vortx-gray uppercase">COMMUNITY RATING</span>
-            <h2 className="font-syne text-3xl font-bold tracking-wider text-vortx-white mt-2 mb-10">ATHLETE INSIGHTS</h2>
+            <span className="font-sans text-[11px] font-bold tracking-[0.2em] text-vortx-gray uppercase">COMMUNITY RATING</span>
+            <h2 className="font-sans text-4xl font-bold tracking-wide text-vortx-white mt-2 mb-10">ATHLETE INSIGHTS</h2>
             
             {/* Reviews container */}
             <div className="relative bg-vortx-dark/30 border border-vortx-white/10 p-8 sm:p-12 rounded glassmorphism min-h-[220px] flex flex-col justify-between">
@@ -436,24 +435,24 @@ export default function Home() {
             >
               <X className="w-4 h-4" />
             </button>
-            <span className="font-syne text-[8px] font-black tracking-[0.25em] text-vortx-white/80 uppercase">WARRIORS EXCLUSIVE</span>
-            <h3 className="font-syne text-xl font-bold tracking-wider text-vortx-white mt-3 mb-2">DON'T LEAVE EMPTY HANDED</h3>
-            <p className="text-xs text-vortx-gray leading-relaxed mb-6">
+            <span className="font-sans text-[11px] font-bold tracking-[0.2em] text-vortx-white/80 uppercase">WARRIORS EXCLUSIVE</span>
+            <h3 className="font-syne text-2xl font-bold tracking-wider text-vortx-white mt-3 mb-2">DON'T LEAVE EMPTY HANDED</h3>
+            <p className="text-sm text-vortx-gray leading-relaxed mb-6">
               Sign up for the clan drops today and get 10% off your first checkout.
             </p>
-            <div className="border border-dashed border-vortx-white/20 p-4 rounded bg-vortx-white/5 font-mono text-sm font-bold text-vortx-white tracking-widest uppercase select-all">
+            <div className="border border-dashed border-vortx-white/20 p-4 rounded bg-vortx-white/5 font-mono text-base font-bold text-vortx-white tracking-widest uppercase select-all">
               COUPON: WELCOME10
             </div>
             <div className="flex gap-3 mt-6">
               <button 
                 onClick={() => setShowExitPopup(false)}
-                className="flex-1 py-3 bg-vortx-white text-vortx-black font-syne text-[10px] font-bold tracking-widest hover:bg-vortx-white/90 active:scale-95 transition"
+                className="flex-1 py-3 bg-vortx-white text-vortx-black font-syne text-xs font-bold tracking-widest hover:bg-vortx-white/90 active:scale-95 transition"
               >
                 APPLY CODE
               </button>
               <button 
                 onClick={() => setShowExitPopup(false)}
-                className="flex-1 py-3 border border-vortx-white/20 text-vortx-white font-syne text-[10px] font-bold tracking-widest hover:bg-vortx-white/10 transition"
+                className="flex-1 py-3 border border-vortx-white/20 text-vortx-white font-syne text-xs font-bold tracking-widest hover:bg-vortx-white/10 transition"
               >
                 DISMISS
               </button>

@@ -201,7 +201,7 @@ export default function Navbar() {
             <div className="w-screen max-w-md bg-vortx-dark border-l border-vortx-white/20 flex flex-col glassmorphism">
               {/* Cart Header */}
               <div className="px-6 py-5 bg-vortx-gray-dark border-b border-vortx-white/10 flex items-center justify-between">
-                <span className="font-syne text-sm font-bold tracking-widest text-vortx-white">YOUR GEAR ({totalItemsCount})</span>
+                <span className="font-sans text-base font-bold tracking-widest text-vortx-white">YOUR GEAR ({totalItemsCount})</span>
                 <button 
                   onClick={() => setIsCartOpen(false)}
                   className="p-1 hover:bg-vortx-white/10 rounded transition text-vortx-gray hover:text-vortx-white"
@@ -215,62 +215,62 @@ export default function Navbar() {
                 {cart.length === 0 ? (
                   <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
                     <ShoppingBag className="w-12 h-12 text-vortx-gray/40 stroke-[1]" />
-                    <p className="font-syne text-xs font-bold tracking-wider text-vortx-gray">YOUR CART IS EMPTY</p>
+                    <p className="font-sans text-sm font-bold tracking-wider text-vortx-gray">YOUR CART IS EMPTY</p>
                     <Link 
                       href="/shop"
                       onClick={() => setIsCartOpen(false)}
-                      className="inline-block px-6 py-2.5 bg-vortx-white text-vortx-black font-syne text-[10px] font-bold tracking-widest hover:bg-vortx-white/90 active:scale-95 transition"
+                      className="inline-block px-6 py-2.5 bg-vortx-white text-vortx-black font-sans text-xs font-bold tracking-widest hover:bg-vortx-white/90 active:scale-95 transition"
                     >
                       BROWSE CATALOG
                     </Link>
                   </div>
                 ) : (
                   cart.map((item) => (
-                    <div key={item.variantId} className="flex gap-4 p-3 border border-vortx-white/10 bg-vortx-black/50 rounded">
+                    <div key={item.variantId} className="flex gap-4 p-4 border border-vortx-white/10 bg-vortx-black/50 rounded">
                       <img 
                         src={item.image} 
                         alt={item.name} 
-                        className="w-16 h-20 object-cover border border-vortx-white/10 bg-vortx-dark flex-shrink-0"
+                        className="w-20 h-24 object-cover border border-vortx-white/10 bg-vortx-dark flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0 flex flex-col justify-between">
                         <div>
                           <div className="flex justify-between items-start">
-                            <h4 className="font-syne text-[10px] font-bold tracking-wider text-vortx-white truncate mr-2">{item.name.toUpperCase()}</h4>
+                            <h4 className="font-sans text-base font-bold tracking-wide text-vortx-white truncate mr-2">{item.name.toUpperCase()}</h4>
                             <button 
                               onClick={() => removeFromCart(item.variantId)}
                               className="text-vortx-gray hover:text-vortx-white transition"
                             >
-                              <Trash2 className="w-3.5 h-3.5" />
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
-                          <div className="text-[10px] text-vortx-gray mt-1 flex flex-wrap gap-x-2 gap-y-0.5">
+                          <div className="text-sm text-vortx-gray mt-1 flex flex-wrap gap-x-2 gap-y-0.5">
                             <span>SIZE: {item.size}</span>
                             <span>|</span>
                             <span>COLOR: {item.color}</span>
                           </div>
                           {item.isPreOrder && (
-                            <span className="inline-block border border-vortx-white/30 text-vortx-white text-[8px] font-bold tracking-widest px-1.5 py-0.5 mt-1">
+                            <span className="inline-block border border-vortx-white/30 text-vortx-white text-xs font-bold tracking-widest px-2 py-1 mt-1.5">
                               PRE-ORDER (SHIPS {item.preOrderDate ? new Date(item.preOrderDate).toLocaleDateString() : 'LATER'})
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center justify-between mt-2">
-                          <div className="flex items-center border border-vortx-white/10 rounded overflow-hidden h-7">
+                        <div className="flex items-center justify-between mt-3">
+                          <div className="flex items-center border border-vortx-white/10 rounded overflow-hidden h-9">
                             <button 
                               onClick={() => updateCartQuantity(item.variantId, item.quantity - 1)}
-                              className="w-7 h-7 flex items-center justify-center hover:bg-vortx-white/10 text-xs font-bold transition"
+                              className="w-9 h-9 flex items-center justify-center hover:bg-vortx-white/10 text-sm font-bold transition"
                             >
                               -
                             </button>
-                            <span className="w-8 text-center text-xs font-mono flex items-center justify-center h-7">{item.quantity}</span>
+                            <span className="w-10 text-center text-sm font-mono flex items-center justify-center h-9">{item.quantity}</span>
                             <button 
                               onClick={() => updateCartQuantity(item.variantId, item.quantity + 1)}
-                              className="w-7 h-7 flex items-center justify-center hover:bg-vortx-white/10 text-xs font-bold transition"
+                              className="w-9 h-9 flex items-center justify-center hover:bg-vortx-white/10 text-sm font-bold transition"
                             >
                               +
                             </button>
                           </div>
-                          <span className="font-mono text-xs font-bold text-vortx-white">{formatPrice(item.price * item.quantity)}</span>
+                          <span className="font-mono text-sm sm:text-base font-bold text-vortx-white">{formatPrice(item.price * item.quantity)}</span>
                         </div>
                       </div>
                     </div>
@@ -303,16 +303,16 @@ export default function Navbar() {
                       />
                       <button 
                         type="submit"
-                        className="px-4 py-2.5 border border-vortx-white text-vortx-white hover:bg-vortx-white hover:text-vortx-black text-[10px] font-syne font-bold tracking-widest transition duration-300"
+                        className="px-4 py-2.5 border border-vortx-white text-vortx-white hover:bg-vortx-white hover:text-vortx-black text-xs font-sans font-bold tracking-widest transition duration-300"
                       >
                         APPLY
                       </button>
                     </form>
                   )}
-                  {couponError && <p className="text-[10px] text-vortx-white font-medium">{couponError}</p>}
+                  {couponError && <p className="text-xs text-vortx-white font-medium">{couponError}</p>}
 
                   {/* Pricing Tally */}
-                  <div className="space-y-2 text-xs font-medium text-vortx-gray">
+                  <div className="space-y-2 text-sm font-medium text-vortx-gray">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
                       <span className="font-mono text-vortx-white">{formatPrice(cartSubtotal)}</span>
@@ -330,11 +330,11 @@ export default function Navbar() {
                       </span>
                     </div>
                     {shippingFee > 0 && (
-                      <p className="text-[9px] text-vortx-gray italic -mt-1">
+                      <p className="text-xs text-vortx-gray italic -mt-1">
                         Add {formatPrice(shippingThreshold - cartSubtotal)} more to qualify for FREE shipping.
                       </p>
                     )}
-                    <div className="flex justify-between border-t border-vortx-white/10 pt-3 text-sm font-bold text-vortx-white">
+                    <div className="flex justify-between border-t border-vortx-white/10 pt-3 text-base font-bold text-vortx-white">
                       <span>TOTAL</span>
                       <span className="font-mono">{formatPrice(cartTotal)}</span>
                     </div>
@@ -344,7 +344,7 @@ export default function Navbar() {
                   <Link 
                     href={user ? "/checkout" : "/auth?redirect=checkout"}
                     onClick={() => setIsCartOpen(false)}
-                    className="block w-full py-3.5 bg-vortx-white text-vortx-black font-syne text-[11px] font-bold tracking-widest hover:bg-vortx-white/90 active:scale-95 transition text-center shadow-lg hover:shadow-vortx-white/10"
+                    className="block w-full py-3.5 bg-vortx-white text-vortx-black font-sans text-xs sm:text-sm font-bold tracking-widest hover:bg-vortx-white/90 active:scale-95 transition text-center shadow-lg hover:shadow-vortx-white/10"
                   >
                     PROCEED TO CHECKOUT
                   </Link>

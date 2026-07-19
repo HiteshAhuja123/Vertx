@@ -44,6 +44,13 @@ function AuthPortalContent() {
           return;
         }
         
+        // Validate 10 digit length
+        const cleanPhone = phone.replace(/\D/g, '');
+        if (cleanPhone.length !== 10) {
+          setErrorMsg('Please enter a valid 10-digit mobile number.');
+          return;
+        }
+        
         // Find if profile with email matching mock phone exists or handle standard lookup
         const success = await login(email || 'admin@vortx.fit');
         if (success) {
@@ -84,6 +91,13 @@ function AuthPortalContent() {
         return;
       }
 
+      // Validate 10 digit length
+      const cleanPhone = phone.replace(/\D/g, '');
+      if (cleanPhone.length !== 10) {
+        setErrorMsg('Please enter a valid 10-digit mobile number.');
+        return;
+      }
+
       const success = await signup(fullName, email, phone);
       if (success) {
         setSuccessMsg('Warrior account registered! Redirecting...');
@@ -101,7 +115,7 @@ function AuthPortalContent() {
       <div className="w-full max-w-lg bg-vortx-dark border border-vortx-white/20 p-8 sm:p-10 rounded shadow-2xl glassmorphism">
         
         {/* Tab Headers */}
-        <div className="flex border-b border-vortx-white/10 text-sm font-syne font-bold tracking-widest mb-10">
+        <div className="flex border-b border-vortx-white/10 text-sm font-sans font-bold tracking-widest mb-10">
           <button
             onClick={() => {
               setIsLoginTab(true);
@@ -131,8 +145,8 @@ function AuthPortalContent() {
 
         {/* Brand Slogan */}
         <div className="text-center mb-10">
-          <span className="font-syne text-xs font-black tracking-[0.2em] text-vortx-gray uppercase">VORTX SECURITY</span>
-          <h2 className="font-syne text-xl font-bold tracking-wider text-vortx-white mt-3 uppercase">
+          <span className="font-sans text-[11px] font-bold tracking-[0.2em] text-vortx-gray uppercase">VORTX SECURITY</span>
+          <h2 className="font-syne text-2xl font-bold tracking-wider text-vortx-white mt-3 uppercase">
             {isLoginTab ? 'CHOOSE PERFORMANCE' : 'JOIN THE WARRIOR CLAN'}
           </h2>
         </div>
@@ -154,7 +168,7 @@ function AuthPortalContent() {
           {!isLoginTab && (
             <>
               <div>
-                <label className="block text-xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-2.5">FULL NAME</label>
+                <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-2.5">FULL NAME</label>
                 <input 
                   type="text" 
                   value={fullName}
@@ -165,12 +179,13 @@ function AuthPortalContent() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-2.5">MOBILE NUMBER</label>
+                <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-2.5">MOBILE NUMBER</label>
                 <div className="relative">
                   <input 
                     type="tel" 
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    maxLength={10}
+                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
                     placeholder="ENTER 10-DIGIT MOBILE"
                     className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3.5 pl-14 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/50"
                     required
@@ -184,7 +199,7 @@ function AuthPortalContent() {
           {/* Email Address Field */}
           {(!useOtpMode || !isLoginTab) && (
             <div>
-              <label className="block text-xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-2.5">EMAIL ADDRESS</label>
+              <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-2.5">EMAIL ADDRESS</label>
               <input 
                 type="email" 
                 value={email}
@@ -204,12 +219,13 @@ function AuthPortalContent() {
                 <div className="space-y-4">
                   {!otpSent ? (
                     <div>
-                      <label className="block text-[10px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1.5">MOBILE NUMBER</label>
+                      <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">MOBILE NUMBER</label>
                       <div className="relative">
                         <input 
                           type="tel" 
                           value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
+                          maxLength={10}
+                          onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
                           placeholder="REGISTERED MOBILE"
                           className="w-full bg-vortx-black border border-vortx-white/20 px-3.5 py-2.5 pl-12 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30"
                         />
@@ -218,7 +234,7 @@ function AuthPortalContent() {
                     </div>
                   ) : (
                     <div>
-                      <label className="block text-[10px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1.5">VERIFICATION CODE</label>
+                      <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">VERIFICATION CODE</label>
                       <input 
                         type="text" 
                         maxLength={6}
@@ -234,7 +250,7 @@ function AuthPortalContent() {
                 /* Standard Password input */
                 <div>
                   <div className="flex justify-between items-center mb-1.5">
-                    <label className="block text-[10px] font-syne font-bold tracking-wider text-vortx-gray uppercase">PASSWORD</label>
+                    <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase">PASSWORD</label>
                     <button type="button" className="text-[9px] text-vortx-gray hover:text-vortx-white font-medium underline">Forgot?</button>
                   </div>
                   <input 
@@ -251,7 +267,7 @@ function AuthPortalContent() {
           {/* CTA Buttons */}
           <button
             type="submit"
-            className="w-full py-4 bg-vortx-white text-vortx-black font-syne text-sm font-bold tracking-widest hover:bg-vortx-white/95 active:scale-98 transition flex items-center justify-center gap-2"
+            className="w-full py-4 bg-vortx-white text-vortx-black font-sans text-sm font-bold tracking-widest hover:bg-vortx-white/95 active:scale-98 transition flex items-center justify-center gap-2"
           >
             {isLoginTab ? (useOtpMode && !otpSent ? 'SEND CODE' : 'VERIFY & SIGN IN') : 'CREATE CLAN ACCOUNT'}
             <ArrowRight className="w-3.5 h-3.5" />
@@ -268,7 +284,7 @@ function AuthPortalContent() {
                   setErrorMsg('');
                   setSuccessMsg('');
                 }}
-                className="inline-flex items-center gap-1 text-[10px] font-bold tracking-wider text-vortx-gray hover:text-vortx-white transition font-syne"
+                className="inline-flex items-center gap-1 text-xs font-bold tracking-wider text-vortx-gray hover:text-vortx-white transition font-sans"
               >
                 {useOtpMode ? <Mail className="w-3.5 h-3.5" /> : <Smartphone className="w-3.5 h-3.5" />}
                 {useOtpMode ? 'USE EMAIL & PASSWORD' : 'USE MOBILE OTP CODE'}
@@ -293,7 +309,7 @@ export default function AuthPortal() {
   return (
     <Suspense fallback={
       <div className="flex-grow flex items-center justify-center p-6 bg-vortx-black min-h-screen">
-        <div className="w-full max-w-md p-8 text-center text-xs text-vortx-gray font-syne tracking-widest uppercase">
+        <div className="w-full max-w-md p-8 text-center text-xs text-vortx-gray font-sans tracking-widest uppercase">
           LOADING PORTAL...
         </div>
       </div>

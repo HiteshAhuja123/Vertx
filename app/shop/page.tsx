@@ -70,7 +70,7 @@ export default function Shop() {
         {/* Page Header */}
         <div className="border-b border-vortx-white/10 pb-10 mb-14 flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div>
-            <h1 className="font-syne text-4xl font-extrabold tracking-wide text-vortx-white uppercase">
+            <h1 className="font-sans text-4xl sm:text-5xl font-extrabold tracking-wide text-vortx-white uppercase">
               {preOrderMode ? 'PRE-ORDERS CATALOG' : 'GEAR CATALOG'}
             </h1>
             <p className="text-xs text-vortx-gray mt-2 tracking-widest uppercase font-semibold">
@@ -79,15 +79,15 @@ export default function Shop() {
           </div>
           
           {/* Quick mode explanation banner */}
-          <div className="p-3 bg-vortx-white/5 border border-vortx-white/10 rounded flex items-center justify-between gap-4 max-w-sm">
-            <div className="text-[10px] text-vortx-gray leading-normal pr-2">
+          <div className="p-4 bg-vortx-white/5 border border-vortx-white/10 rounded flex items-center justify-between gap-4 max-w-md">
+            <div className="text-xs sm:text-sm text-vortx-gray leading-normal pr-2">
               <span className="font-bold text-vortx-white">Catalog Toggle:</span> Switch between standard in-stock listings and pre-orders.
             </div>
             <button
               onClick={togglePreOrderMode}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-vortx-white text-vortx-black hover:bg-vortx-white/90 font-syne text-[9px] font-bold tracking-wider transition flex-shrink-0"
+              className="flex items-center gap-1.5 px-4 py-2 rounded bg-vortx-white text-vortx-black hover:bg-vortx-white/90 font-sans text-xs sm:text-sm font-bold tracking-wider transition flex-shrink-0"
             >
-              <RefreshCw className="w-3 h-3" />
+              <RefreshCw className="w-3.5 h-3.5" />
               MODE SWITCH
             </button>
           </div>
@@ -113,7 +113,7 @@ export default function Shop() {
 
             {/* Category Filter */}
             <div className="catalog-filter-group">
-              <h4 className="font-syne text-xs font-bold tracking-widest text-vortx-white mb-4 uppercase">CATEGORY</h4>
+              <h4 className="font-sans text-xs font-bold tracking-wider text-vortx-white mb-4 uppercase">CATEGORY</h4>
               <div className="space-y-1">
                 {['all', 'tops', 'bottoms', 'outerwear'].map((cat) => (
                   <button
@@ -133,7 +133,7 @@ export default function Shop() {
 
             {/* Gender Filter */}
             <div className="catalog-filter-group">
-              <h4 className="font-syne text-xs font-bold tracking-widest text-vortx-white mb-4 uppercase">GENDER</h4>
+              <h4 className="font-sans text-xs font-bold tracking-wider text-vortx-white mb-4 uppercase">GENDER</h4>
               <div className="space-y-1">
                 {['all', 'men', 'women', 'unisex'].map((gen) => (
                   <button
@@ -153,11 +153,11 @@ export default function Shop() {
 
             {/* Sort Options */}
             <div className="catalog-filter-group">
-              <h4 className="font-syne text-xs font-bold tracking-widest text-vortx-white mb-4 uppercase">SORT BY</h4>
+              <h4 className="font-sans text-xs font-bold tracking-wider text-vortx-white mb-4 uppercase">SORT BY</h4>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full bg-vortx-dark border border-vortx-white/20 px-3.5 py-2.5 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-syne font-bold tracking-wide"
+                className="w-full bg-vortx-dark border border-vortx-white/20 px-3.5 py-2.5 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-sans font-bold tracking-wide"
               >
                 <option value="featured">FEATURED</option>
                 <option value="price-asc">PRICE: LOW TO HIGH</option>
@@ -173,14 +173,14 @@ export default function Shop() {
             
             {filteredProducts.length === 0 ? (
               <div className="h-64 flex flex-col items-center justify-center border border-dashed border-vortx-white/10 rounded">
-                <p className="font-syne text-xs font-bold tracking-widest text-vortx-gray">NO GEAR MATCHES THE SELECTED FILTERS</p>
+                <p className="font-sans text-xs font-bold tracking-wider text-vortx-gray">NO GEAR MATCHES THE SELECTED FILTERS</p>
                 <button 
                   onClick={() => {
                     setSelectedCategory('all');
                     setSelectedGender('all');
                     setSearchQuery('');
                   }}
-                  className="mt-4 px-5 py-2 border border-vortx-white text-vortx-white text-[10px] font-syne font-bold tracking-widest hover:bg-vortx-white hover:text-vortx-black transition"
+                  className="mt-4 px-5 py-2 border border-vortx-white text-vortx-white text-xs font-sans font-bold tracking-widest hover:bg-vortx-white hover:text-vortx-black transition"
                 >
                   RESET FILTERS
                 </button>
@@ -233,14 +233,14 @@ export default function Shop() {
 
                         {/* Drop badge */}
                         {prod.badge && (
-                          <span className="absolute top-4 left-4 px-2 py-1 bg-vortx-white text-vortx-black font-syne text-[8px] font-extrabold tracking-wider">
+                          <span className="absolute top-4 left-4 px-2 py-1 bg-vortx-white text-vortx-black font-sans text-[10px] font-bold tracking-wider">
                             {prod.badge}
                           </span>
                         )}
 
                         {/* Pre-order drop labels */}
                         {isPreOrder && (
-                          <span className="absolute bottom-4 right-4 bg-vortx-black text-vortx-white border border-vortx-white/40 font-syne text-[7px] font-bold tracking-widest px-2 py-1 rounded">
+                          <span className="absolute bottom-4 right-4 bg-vortx-black text-vortx-white border border-vortx-white/40 font-sans text-[10px] font-bold tracking-wider px-2 py-1 rounded">
                             PRE-ORDER
                           </span>
                         )}
@@ -269,7 +269,7 @@ export default function Shop() {
                           </div>
                           
                           <Link href={`/product/${prod.slug}`}>
-                            <h3 className="font-syne text-xs font-bold tracking-wider text-vortx-white mt-1 hover:underline truncate">
+                            <h3 className="font-sans text-sm font-bold tracking-wide text-vortx-white mt-1 hover:underline truncate">
                               {prod.name.toUpperCase()}
                             </h3>
                           </Link>
