@@ -102,7 +102,7 @@ export default function Home() {
     <div className="relative w-full overflow-hidden bg-vortx-black">
       
       {/* 1. HERO BANNER SCREEN */}
-      <section className="relative h-[90vh] md:h-screen w-full flex items-center justify-center overflow-hidden">
+      <section className="relative h-[78svh] sm:h-[90vh] md:h-screen w-full flex items-center justify-center overflow-hidden">
         {/* Background Visual (Atmospheric premium graphic) */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-60 scale-105 transition-transform duration-[10000ms]"
@@ -115,31 +115,31 @@ export default function Home() {
         <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none" />
 
         {/* Content */}
-        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto space-y-6 md:space-y-8">
+        <div className="relative z-10 text-center px-5 max-w-5xl mx-auto space-y-5 sm:space-y-6 md:space-y-8">
           <div className="inline-flex items-center gap-2 border border-vortx-white/20 px-3.5 py-1.5 bg-vortx-white/5 backdrop-blur-md rounded-full">
             <span className="h-1.5 w-1.5 bg-vortx-white rounded-full animate-ping" />
-            <span className="font-syne text-[9px] font-bold tracking-[0.2em] text-vortx-white uppercase">HYBRID ATHLETE LINE INITIATED</span>
+            <span className="font-syne text-[10px] sm:text-xs font-bold tracking-[0.16em] text-vortx-white uppercase">HYBRID ATHLETE LINE INITIATED</span>
           </div>
 
-          <h1 className="font-syne text-4xl sm:text-7xl lg:text-8xl font-extrabold tracking-tight leading-none text-vortx-white select-none">
+          <h1 className="font-syne text-5xl sm:text-7xl lg:text-8xl font-extrabold tracking-tight leading-none text-vortx-white select-none">
             CHOOSE<br />
             <span className="text-stroke-active">STRENGTH</span>
           </h1>
 
-          <p className="font-sans text-xs md:text-sm text-vortx-gray tracking-widest uppercase font-semibold max-w-md mx-auto">
+          <p className="font-sans text-sm md:text-base text-vortx-gray tracking-wide uppercase font-semibold max-w-md mx-auto">
             "FOR WARRIORS, NOT WATCHERS."
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 pt-5 sm:pt-6 w-full max-w-sm sm:max-w-none mx-auto">
             <Link 
               href="/shop"
-              className="inline-flex items-center justify-center w-full sm:w-auto px-8 py-4 bg-vortx-white text-vortx-black font-syne text-[10px] font-bold tracking-widest hover:bg-vortx-white/90 active:scale-95 transition-all duration-300 shadow-xl"
+              className="inline-flex items-center justify-center w-full sm:w-auto px-8 py-4 bg-vortx-white text-vortx-black font-syne text-xs font-bold tracking-widest hover:bg-vortx-white/90 active:scale-95 transition-all duration-300 shadow-xl"
             >
               SHOP NOW
             </Link>
             <Link 
               href="/shop?filter=preorder"
-              className="inline-flex items-center justify-center w-full sm:w-auto px-8 py-4 border border-vortx-white/30 text-vortx-white font-syne text-[10px] font-bold tracking-widest hover:bg-vortx-white/10 hover:border-vortx-white transition-all duration-300"
+              className="inline-flex items-center justify-center w-full sm:w-auto px-8 py-4 border border-vortx-white/30 text-vortx-white font-syne text-xs font-bold tracking-widest hover:bg-vortx-white/10 hover:border-vortx-white transition-all duration-300"
             >
               PRE-ORDER COLLECTION
             </Link>
@@ -147,7 +147,7 @@ export default function Home() {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-2 opacity-50">
           <span className="text-[8px] font-syne font-bold tracking-widest text-vortx-gray">SCROLL</span>
           <div className="w-1 h-12 border border-vortx-white/20 rounded-full relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1/2 bg-vortx-white rounded-full animate-bounce" />
@@ -464,7 +464,7 @@ export default function Home() {
 
       {/* 8. RECENTLY PURCHASED FLOATING TOAST */}
       {recentPurchase && (
-        <div className="fixed bottom-6 left-6 z-50 w-72 bg-vortx-dark border border-vortx-white/20 p-3 flex gap-3 shadow-2xl glassmorphism rounded animate-in slide-in-from-left-5 fade-in duration-300">
+        <div className="hidden sm:flex fixed bottom-6 left-6 z-50 w-72 bg-vortx-dark border border-vortx-white/20 p-3 gap-3 shadow-2xl glassmorphism rounded animate-in slide-in-from-left-5 fade-in duration-300">
           <div className="w-8 h-8 rounded-full border border-vortx-white/20 flex items-center justify-center text-vortx-white flex-shrink-0 mt-0.5">
             <ShoppingBag className="w-3.5 h-3.5" />
           </div>

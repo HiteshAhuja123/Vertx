@@ -103,54 +103,54 @@ export default function AboutPage() {
       </section>
 
       {/* 3. CONTACT US FORM & DETAILS */}
-      <section id="contact" className="py-20 bg-vortx-gray-dark/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <section id="contact" className="py-24 bg-vortx-gray-dark/10">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
             
             {/* Contact Details info panel (5/12) */}
-            <div className="lg:col-span-5 space-y-8">
+            <div className="lg:col-span-5 space-y-12">
               <div>
-                <span className="font-syne text-[8px] font-black tracking-[0.25em] text-vortx-gray uppercase">CONNECT</span>
-                <h2 className="font-syne text-3xl font-extrabold tracking-wide uppercase mt-1">WAR ROOM CONTACT</h2>
-                <p className="text-xs text-vortx-gray mt-2 leading-relaxed max-w-sm">
+                <span className="font-syne text-xs font-black tracking-[0.18em] text-vortx-gray uppercase">CONNECT</span>
+                <h2 className="font-syne text-4xl font-extrabold tracking-wide uppercase mt-2">WAR ROOM CONTACT</h2>
+                <p className="text-base text-vortx-gray mt-4 leading-relaxed max-w-lg">
                   Have questions about fit, pre-order queues, or custom sponsorships? Reach out directly. Our support squad runs Monday through Saturday.
                 </p>
               </div>
 
-              <div className="space-y-4 font-mono text-[10px] text-vortx-gray">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded border border-vortx-white/10 flex items-center justify-center text-vortx-white">
-                    <Mail className="w-3.5 h-3.5" />
+              <div className="space-y-6 font-mono text-base text-vortx-gray">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded border border-vortx-white/10 flex items-center justify-center text-vortx-white">
+                    <Mail className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="text-[8px] font-sans font-bold text-vortx-white block">EMAIL SUPPORT</span>
+                    <span className="text-xs font-sans font-bold text-vortx-white block mb-1">EMAIL SUPPORT</span>
                     <span>SUPPORT@VORTX.FIT</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded border border-vortx-white/10 flex items-center justify-center text-vortx-white">
-                    <Smartphone className="w-3.5 h-3.5" />
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded border border-vortx-white/10 flex items-center justify-center text-vortx-white">
+                    <Smartphone className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="text-[8px] font-sans font-bold text-vortx-white block">WHATSAPP CHAT</span>
+                    <span className="text-xs font-sans font-bold text-vortx-white block mb-1">WHATSAPP CHAT</span>
                     <span>+91 99999 99999</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded border border-vortx-white/10 flex items-center justify-center text-vortx-white">
-                    <Clock className="w-3.5 h-3.5" />
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded border border-vortx-white/10 flex items-center justify-center text-vortx-white">
+                    <Clock className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="text-[8px] font-sans font-bold text-vortx-white block">BUSINESS HOURS</span>
+                    <span className="text-xs font-sans font-bold text-vortx-white block mb-1">BUSINESS HOURS</span>
                     <span>MON - SAT, 09:00 - 18:00 IST</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded border border-vortx-white/10 flex items-center justify-center text-vortx-white">
-                    <Instagram className="w-3.5 h-3.5" />
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded border border-vortx-white/10 flex items-center justify-center text-vortx-white">
+                    <Instagram className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="text-[8px] font-sans font-bold text-vortx-white block">INSTAGRAM CLAN</span>
+                    <span className="text-xs font-sans font-bold text-vortx-white block mb-1">INSTAGRAM CLAN</span>
                     <span>@VORTX.FIT</span>
                   </div>
                 </div>
@@ -159,7 +159,7 @@ export default function AboutPage() {
 
             {/* Interactive Query Form (7/12) */}
             <div className="lg:col-span-7">
-              <div className="p-6 border border-vortx-white/10 bg-vortx-dark/30 rounded glassmorphism">
+              <div className="p-8 border border-vortx-white/10 bg-vortx-dark/30 rounded glassmorphism">
                 
                 {submitted ? (
                   <div className="h-64 flex flex-col items-center justify-center text-center space-y-2">
@@ -170,47 +170,47 @@ export default function AboutPage() {
                     <p className="text-xs text-vortx-gray max-w-xs">We will follow up via email within 24 hours.</p>
                   </div>
                 ) : (
-                  <form onSubmit={handleContactSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <form onSubmit={handleContactSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-[9px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1.5">YOUR NAME</label>
+                        <label className="block text-xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-3">YOUR NAME</label>
                         <input 
                           type="text" 
                           value={name}
                           onChange={(e) => setName(e.target.value)}
                           placeholder="ENTER YOUR NAME"
-                          className="w-full bg-vortx-black border border-vortx-white/20 px-3.5 py-2.5 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30 uppercase"
+                          className="w-full bg-vortx-black border border-vortx-white/20 px-5 py-4 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/50 uppercase"
                           required
                         />
                       </div>
                       <div>
-                        <label className="block text-[9px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1.5">YOUR EMAIL</label>
+                        <label className="block text-xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-3">YOUR EMAIL</label>
                         <input 
                           type="email" 
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           placeholder="ENTER EMAIL ADDRESS"
-                          className="w-full bg-vortx-black border border-vortx-white/20 px-3.5 py-2.5 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30 uppercase"
+                          className="w-full bg-vortx-black border border-vortx-white/20 px-5 py-4 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/50 uppercase"
                           required
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-[9px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1.5">MESSAGE QUERY</label>
+                      <label className="block text-xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-3">MESSAGE QUERY</label>
                       <textarea 
-                        rows={5}
+                        rows={6}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         placeholder="ENTER MESSAGE DETAIL"
-                        className="w-full bg-vortx-black border border-vortx-white/20 px-3.5 py-2.5 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30 uppercase"
+                        className="w-full bg-vortx-black border border-vortx-white/20 px-5 py-4 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/50 uppercase"
                         required
                       />
                     </div>
 
                     <button
                       type="submit"
-                      className="w-full py-3.5 bg-vortx-white text-vortx-black font-syne text-[10px] font-bold tracking-widest hover:bg-vortx-white/95 transition uppercase flex items-center justify-center gap-1.5"
+                      className="w-full py-5 bg-vortx-white text-vortx-black font-syne text-sm font-bold tracking-widest hover:bg-vortx-white/95 transition uppercase flex items-center justify-center gap-2"
                     >
                       <span>SEND DISPATCH</span>
                       <Send className="w-3.5 h-3.5" />

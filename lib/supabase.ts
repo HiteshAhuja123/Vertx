@@ -144,8 +144,7 @@ class MockDatabase {
         pre_order_date: "2026-08-15T00:00:00.000Z",
         created_at: new Date().toISOString(),
         images: [
-          "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=90",
-          "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=90"
+          "/products/hybrid-compression-shell.png"
         ],
         variants: [
           { id: 'v1_m', size: 'M', color: 'Black', stock: 10, sku: 'VX-HYB-COMP-M-BLK' },
@@ -166,7 +165,7 @@ class MockDatabase {
         pre_order_available: false,
         created_at: new Date().toISOString(),
         images: [
-          "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=800&q=90"
+          "/products/phantom-joggers.png"
         ],
         variants: [
           { id: 'v2_m', size: 'M', color: 'Black', stock: 20, sku: 'VX-PHN-JOG-M-BLK' },
@@ -223,15 +222,47 @@ class MockDatabase {
         pre_order_date: "2026-08-20T00:00:00.000Z",
         created_at: new Date().toISOString(),
         images: [
-          "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=90"
+          "/products/warrior-oversized-tee.png"
         ],
         variants: [
           { id: 'v5_m', size: 'M', color: 'Black', stock: 0, sku: 'VX-WAR-TEE-M-BLK' },
           { id: 'v5_l', size: 'L', color: 'Black', stock: 0, sku: 'VX-WAR-TEE-L-BLK' }
         ]
+      },
+      {
+        id: 'p6',
+        name: "Stealth 2-in-1 Shorts",
+        slug: "stealth-2-in-1-shorts",
+        description: "Lightweight four-way stretch outer shorts with a secure compression liner, side slits, and zip pockets for unrestricted training sessions.",
+        price: 3999,
+        mrp: 4799,
+        discount_percent: 17,
+        badge: "NEW DROP",
+        is_in_stock: true,
+        pre_order_available: false,
+        created_at: new Date().toISOString(),
+        images: [
+          "/products/stealth-2-in-1-shorts.png"
+        ],
+        variants: [
+          { id: 'v6_m', size: 'M', color: 'Black', stock: 14, sku: 'VX-STL-SHT-M-BLK' },
+          { id: 'v6_l', size: 'L', color: 'Black', stock: 18, sku: 'VX-STL-SHT-L-BLK' },
+          { id: 'v6_xl', size: 'XL', color: 'Black', stock: 8, sku: 'VX-STL-SHT-XL-BLK' }
+        ]
       }
     ];
-    return this.getStorageItem<MockProduct[]>('products', defaultProducts);
+    const savedProducts = this.getStorageItem<MockProduct[] | null>('products', null);
+    if (!savedProducts) return defaultProducts;
+
+    // Keep locally-created products, while refreshing the built-in catalog assets
+    // and adding any newly released default products for existing local sessions.
+    const defaultsById = new Map(defaultProducts.map((product) => [product.id, product]));
+    const refreshedProducts = savedProducts.map((product) => {
+      const currentDefault = defaultsById.get(product.id);
+      return currentDefault ? { ...product, images: currentDefault.images } : product;
+    });
+    const savedIds = new Set(savedProducts.map((product) => product.id));
+    return [...refreshedProducts, ...defaultProducts.filter((product) => !savedIds.has(product.id))];
   }
 
   saveProducts(products: MockProduct[]): void {

@@ -44,18 +44,18 @@ export default function Footer() {
 
   return (
     <footer className="bg-vortx-black border-t border-vortx-white/10 text-vortx-white font-sans mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-20">
         
         {/* Top Grid section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-16 mb-20">
           
           {/* Logo & Slogan info */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-8">
             <Link href="/" className="inline-block flex flex-col">
               <span className="font-syne text-2xl font-extrabold tracking-[0.25em] text-vortx-white">VORTX</span>
-              <span className="text-[8px] font-bold tracking-[0.19em] text-vortx-gray/80 -mt-0.5">FOR WARRIORS, NOT WATCHERS.</span>
+              <span className="text-xs font-bold tracking-[0.14em] text-vortx-gray/80 -mt-0.5">FOR WARRIORS, NOT WATCHERS.</span>
             </Link>
-            <p className="text-xs text-vortx-gray leading-relaxed max-w-sm">
+            <p className="text-base text-vortx-gray leading-relaxed max-w-lg">
               We design and engineer high-performance activewear for the hybrid athlete. VORTX is built on relentless drive, structural minimalism, and absolute performance. 
             </p>
             <div className="flex gap-4">
@@ -70,8 +70,8 @@ export default function Footer() {
 
           {/* Quick links columns */}
           <div>
-            <h4 className="font-syne text-xs font-bold tracking-widest text-vortx-white mb-6 uppercase">CATALOG</h4>
-            <ul className="space-y-4 text-xs">
+            <h4 className="font-syne text-base font-bold tracking-widest text-vortx-white mb-8 uppercase">CATALOG</h4>
+            <ul className="space-y-5 text-base">
               {footerLinks.shop.map((link, i) => (
                 <li key={i}>
                   <Link href={link.href} className="text-vortx-gray hover:text-vortx-white transition duration-300">
@@ -83,8 +83,8 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-syne text-xs font-bold tracking-widest text-vortx-white mb-6 uppercase">HELP</h4>
-            <ul className="space-y-4 text-xs">
+            <h4 className="font-syne text-base font-bold tracking-widest text-vortx-white mb-8 uppercase">HELP</h4>
+            <ul className="space-y-5 text-base">
               {footerLinks.support.map((link, i) => (
                 <li key={i}>
                   <Link href={link.href} className="text-vortx-gray hover:text-vortx-white transition duration-300">
@@ -97,9 +97,9 @@ export default function Footer() {
 
           {/* Newsletter Subscribe */}
           <div>
-            <h4 className="font-syne text-xs font-bold tracking-widest text-vortx-white mb-6 uppercase">NEWSLETTER</h4>
+            <h4 className="font-syne text-base font-bold tracking-widest text-vortx-white mb-8 uppercase">NEWSLETTER</h4>
             <div className="space-y-4">
-              <p className="text-xs text-vortx-gray leading-relaxed">
+              <p className="text-base text-vortx-gray leading-relaxed">
                 Join the clan. Receive 10% off your first drop.
               </p>
               {isSubscribed ? (
@@ -115,7 +115,7 @@ export default function Footer() {
                     value={emailInput}
                     onChange={(e) => setEmailInput(e.target.value)}
                     placeholder="ENTER YOUR EMAIL" 
-                    className="w-full bg-transparent border-none text-xs text-vortx-white focus:outline-none placeholder:text-vortx-gray/50 py-1"
+                    className="w-full bg-transparent border-none text-base text-vortx-white focus:outline-none placeholder:text-vortx-gray/50 py-2"
                     required
                   />
                   <button type="submit" className="text-vortx-gray hover:text-vortx-white transition pl-2">
@@ -129,14 +129,14 @@ export default function Footer() {
         </div>
 
         {/* Brand statement / Hours info / Copyright */}
-        <div className="border-t border-vortx-white/10 pt-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div className="flex flex-wrap gap-x-8 gap-y-2 text-[10px] text-vortx-gray font-medium">
+        <div className="border-t border-vortx-white/10 pt-16 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+          <div className="flex flex-wrap gap-x-8 gap-y-3 text-sm text-vortx-gray font-medium">
             <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> SUPPORT: MON-SAT, 9AM-6PM</span>
             <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5" /> +91 99999 99999</span>
             <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5" /> GEAR@VORTX.FIT</span>
           </div>
 
-          <div className="flex flex-col md:items-end gap-2 text-[10px] text-vortx-gray font-medium">
+          <div className="flex flex-col md:items-end gap-3 text-sm text-vortx-gray font-medium">
             <div className="flex gap-4 mb-1">
               {footerLinks.legal.map((link, i) => (
                 <Link key={i} href={link.href} className="hover:text-vortx-white transition">

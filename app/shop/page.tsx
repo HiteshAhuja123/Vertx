@@ -64,11 +64,11 @@ export default function Shop() {
   }, [dbProducts, preOrderMode, selectedCategory, selectedGender, searchQuery, sortBy]);
 
   return (
-    <div className="py-12 bg-vortx-black min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="py-16 lg:py-20 bg-vortx-black min-h-screen">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
         
         {/* Page Header */}
-        <div className="border-b border-vortx-white/10 pb-8 mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="border-b border-vortx-white/10 pb-10 mb-14 flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div>
             <h1 className="font-syne text-4xl font-extrabold tracking-wide text-vortx-white uppercase">
               {preOrderMode ? 'PRE-ORDERS CATALOG' : 'GEAR CATALOG'}
@@ -94,10 +94,10 @@ export default function Shop() {
         </div>
 
         {/* Filter Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-10 xl:gap-14">
           
           {/* Left Side Sidebar Filters */}
-          <div className="space-y-8 lg:col-span-1 border-b lg:border-b-0 lg:border-r border-vortx-white/10 pb-8 lg:pb-0 lg:pr-8">
+          <aside className="catalog-filters lg:col-span-1 border-b lg:border-b-0 lg:border-r border-vortx-white/10 pb-10 lg:pb-0 lg:pr-10">
             
             {/* Search Input */}
             <div className="relative flex items-center">
@@ -112,7 +112,7 @@ export default function Shop() {
             </div>
 
             {/* Category Filter */}
-            <div>
+            <div className="catalog-filter-group">
               <h4 className="font-syne text-xs font-bold tracking-widest text-vortx-white mb-4 uppercase">CATEGORY</h4>
               <div className="space-y-1">
                 {['all', 'tops', 'bottoms', 'outerwear'].map((cat) => (
@@ -132,7 +132,7 @@ export default function Shop() {
             </div>
 
             {/* Gender Filter */}
-            <div>
+            <div className="catalog-filter-group">
               <h4 className="font-syne text-xs font-bold tracking-widest text-vortx-white mb-4 uppercase">GENDER</h4>
               <div className="space-y-1">
                 {['all', 'men', 'women', 'unisex'].map((gen) => (
@@ -152,7 +152,7 @@ export default function Shop() {
             </div>
 
             {/* Sort Options */}
-            <div>
+            <div className="catalog-filter-group">
               <h4 className="font-syne text-xs font-bold tracking-widest text-vortx-white mb-4 uppercase">SORT BY</h4>
               <select
                 value={sortBy}
@@ -166,7 +166,7 @@ export default function Shop() {
               </select>
             </div>
 
-          </div>
+          </aside>
 
           {/* Right Side Catalog Grid */}
           <div className="lg:col-span-3">

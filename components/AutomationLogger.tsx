@@ -41,10 +41,10 @@ export default function AutomationLogger() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end">
       {/* Logger Drawer */}
       {isOpen && (
-        <div className="w-96 md:w-[450px] h-96 bg-vortx-dark border border-vortx-white/20 rounded shadow-2xl flex flex-col mb-3 glassmorphism overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-300">
+        <div className="w-[calc(100vw-32px)] sm:w-96 md:w-[450px] h-96 bg-vortx-dark border border-vortx-white/20 rounded shadow-2xl flex flex-col mb-3 glassmorphism overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-300">
           {/* Header */}
           <div className="px-4 py-3 bg-vortx-gray-dark border-b border-vortx-white/10 flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -117,12 +117,12 @@ export default function AutomationLogger() {
       {/* Floating Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-3 bg-vortx-white text-vortx-black hover:bg-vortx-white/95 active:scale-95 border border-vortx-white rounded-full shadow-2xl transition duration-300 font-syne text-xs font-bold tracking-widest relative overflow-hidden"
+        className="flex items-center justify-center sm:justify-start gap-2 w-14 h-14 sm:w-auto sm:h-auto sm:px-4 sm:py-3 bg-vortx-white text-vortx-black hover:bg-vortx-white/95 active:scale-95 border border-vortx-white rounded-full shadow-2xl transition duration-300 font-syne text-xs font-bold tracking-widest relative overflow-hidden"
       >
         {/* Subtle scanline animation */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-transparent pointer-events-none animate-scanline" />
         <Terminal className="w-4 h-4 text-vortx-black" />
-        <span>AUTOMATION LOGS</span>
+        <span className="hidden sm:inline">AUTOMATION LOGS</span>
         {logs.length > 0 && (
           <span className="flex h-2 w-2 relative">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-vortx-black opacity-75"></span>

@@ -55,15 +55,15 @@ export default function Navbar() {
   return (
     <>
       <header className="sticky top-0 w-full z-40 bg-vortx-black/85 backdrop-blur-md border-b border-vortx-white/10 transition duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
           
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="group flex flex-col justify-center">
-              <span className="font-syne text-xl md:text-2xl font-extrabold tracking-[0.25em] text-vortx-white transition group-hover:tracking-[0.3em]">
+              <span className="font-syne text-lg sm:text-xl md:text-2xl font-extrabold tracking-[0.22em] text-vortx-white transition group-hover:tracking-[0.3em]">
                 VORTX
               </span>
-              <span className="text-[7px] font-bold tracking-[0.19em] text-vortx-gray/80 -mt-0.5">
+              <span className="text-[10px] sm:text-xs font-bold tracking-[0.1em] text-vortx-gray/80 -mt-0.5 whitespace-nowrap">
                 WARRIORS, NOT WATCHERS.
               </span>
             </Link>
@@ -75,7 +75,7 @@ export default function Navbar() {
               <Link 
                 key={link.href} 
                 href={link.href}
-                className={`font-syne text-xs font-bold tracking-widest transition duration-300 hover:text-vortx-white ${
+                className={`font-syne text-sm md:text-base font-bold tracking-widest transition duration-300 hover:text-vortx-white ${
                   pathname === link.href ? 'text-vortx-white' : 'text-vortx-gray'
                 }`}
               >
@@ -95,7 +95,7 @@ export default function Navbar() {
           </nav>
 
           {/* Action Icons */}
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-4 sm:gap-5">
             {/* User Access */}
             {user ? (
               <div className="flex items-center gap-4">
@@ -120,7 +120,7 @@ export default function Navbar() {
                 title="Account Login"
                 className={`text-vortx-gray hover:text-vortx-white transition ${pathname === '/auth' ? 'text-vortx-white' : ''}`}
               >
-                <User className="w-4 h-4 md:w-5 md:h-5" />
+                <User className="w-5 h-5 md:w-5 md:h-5" />
               </Link>
             )}
 
@@ -130,7 +130,7 @@ export default function Navbar() {
               title="My Wishlist"
               className="text-vortx-gray hover:text-vortx-white transition relative"
             >
-              <Heart className="w-4 h-4 md:w-5 md:h-5" />
+              <Heart className="w-5 h-5 md:w-5 md:h-5" />
               {wishlist.length > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-vortx-white text-vortx-black text-[7px] font-bold rounded-full flex items-center justify-center">
                   {wishlist.length}
@@ -144,7 +144,7 @@ export default function Navbar() {
               title="Shopping Cart"
               className="text-vortx-gray hover:text-vortx-white transition relative"
             >
-              <ShoppingBag className="w-4 h-4 md:w-5 md:h-5" />
+              <ShoppingBag className="w-5 h-5 md:w-5 md:h-5" />
               {totalItemsCount > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-vortx-white text-vortx-black text-[7px] font-bold rounded-full flex items-center justify-center">
                   {totalItemsCount}
@@ -157,7 +157,7 @@ export default function Navbar() {
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="md:hidden text-vortx-gray hover:text-vortx-white transition"
             >
-              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
