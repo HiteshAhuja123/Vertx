@@ -242,6 +242,14 @@ function ShopContent() {
                     >
                       {/* Image cover */}
                       <div className="aspect-[4/5] bg-vortx-gray-dark relative overflow-hidden">
+                        {/* Warrior Target Lock Brackets overlay */}
+                        <div className="absolute inset-0 pointer-events-none z-10">
+                          <div className="card-target-bracket card-target-top-left" />
+                          <div className="card-target-bracket card-target-top-right" />
+                          <div className="card-target-bracket card-target-bottom-left" />
+                          <div className="card-target-bracket card-target-bottom-right" />
+                        </div>
+                        
                         <img 
                           src={prod.images?.[0]} 
                           alt={prod.name} 

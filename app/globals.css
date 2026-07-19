@@ -161,3 +161,96 @@ body {
     linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
+
+/* Warrior Scanner Sweep Animation */
+.scanner-sweep {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(230, 0, 0, 0.45), transparent);
+  box-shadow: 0 0 12px rgba(230, 0, 0, 0.6);
+  opacity: 0.6;
+  pointer-events: none;
+  animation: scanner-move 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  z-index: 2;
+}
+
+@keyframes scanner-move {
+  0% { top: 0%; }
+  50% { top: 100%; }
+  100% { top: 0%; }
+}
+
+/* Warrior Countdown Pulse Glowing Animation */
+.countdown-pulse {
+  animation: border-glow 3s infinite ease-in-out;
+}
+
+@keyframes border-glow {
+  0%, 100% {
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0px rgba(230, 0, 0, 0);
+  }
+  50% {
+    border-color: rgba(230, 0, 0, 0.3);
+    box-shadow: 0 0 8px rgba(230, 0, 0, 0.15);
+  }
+}
+
+/* Warrior Target Lock Brackets overlay */
+.card-target-bracket {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-color: #E60000;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  pointer-events: none;
+}
+.card-target-top-left {
+  top: 14px;
+  left: 14px;
+  border-top-width: 2px;
+  border-left-width: 2px;
+  transform: translate(-6px, -6px);
+}
+.card-target-top-right {
+  top: 14px;
+  right: 14px;
+  border-top-width: 2px;
+  border-right-width: 2px;
+  transform: translate(6px, -6px);
+}
+.card-target-bottom-left {
+  bottom: 14px;
+  left: 14px;
+  border-bottom-width: 2px;
+  border-left-width: 2px;
+  transform: translate(-6px, 6px);
+}
+.card-target-bottom-right {
+  bottom: 14px;
+  right: 14px;
+  border-bottom-width: 2px;
+  border-right-width: 2px;
+  transform: translate(6px, 6px);
+}
+
+/* Card hover animation activations */
+.group:hover .card-target-top-left {
+  transform: translate(0px, 0px);
+  opacity: 1;
+}
+.group:hover .card-target-top-right {
+  transform: translate(0px, 0px);
+  opacity: 1;
+}
+.group:hover .card-target-bottom-left {
+  transform: translate(0px, 0px);
+  opacity: 1;
+}
+.group:hover .card-target-bottom-right {
+  transform: translate(0px, 0px);
+  opacity: 1;
+}

@@ -113,8 +113,9 @@ export default function Home() {
         {/* Deep overlay vignette */}
         <div className="absolute inset-0 bg-gradient-to-t from-vortx-black via-vortx-black/40 to-vortx-black/80" />
         
-        {/* Grid Background Line Overlay */}
+        {/* Grid Background Line Overlay & Laser Scanner Sweep */}
         <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none" />
+        <div className="scanner-sweep" />
 
         {/* Content */}
         <div className="relative z-10 text-center px-5 max-w-5xl mx-auto space-y-5 sm:space-y-6 md:space-y-8">
@@ -186,19 +187,19 @@ export default function Home() {
               
               {/* Countdown Ticker boxes */}
               <div className="grid grid-cols-4 gap-4 max-w-sm pt-4 font-mono text-center">
-                <div className="bg-vortx-white/5 border border-vortx-white/10 p-3 rounded">
+                <div className="bg-vortx-white/5 border border-vortx-white/10 p-3 rounded countdown-pulse">
                   <span className="block text-2xl font-bold text-vortx-white">{timeLeft.days}</span>
                   <span className="text-[8px] text-vortx-gray uppercase">Days</span>
                 </div>
-                <div className="bg-vortx-white/5 border border-vortx-white/10 p-3 rounded">
+                <div className="bg-vortx-white/5 border border-vortx-white/10 p-3 rounded countdown-pulse">
                   <span className="block text-2xl font-bold text-vortx-white">{timeLeft.hours}</span>
                   <span className="text-[8px] text-vortx-gray uppercase">Hours</span>
                 </div>
-                <div className="bg-vortx-white/5 border border-vortx-white/10 p-3 rounded">
+                <div className="bg-vortx-white/5 border border-vortx-white/10 p-3 rounded countdown-pulse">
                   <span className="block text-2xl font-bold text-vortx-white">{timeLeft.minutes}</span>
                   <span className="text-[8px] text-vortx-gray uppercase">Mins</span>
                 </div>
-                <div className="bg-vortx-white/5 border border-vortx-white/10 p-3 rounded">
+                <div className="bg-vortx-white/5 border border-vortx-white/10 p-3 rounded countdown-pulse">
                   <span className="block text-2xl font-bold text-vortx-white">{timeLeft.seconds}</span>
                   <span className="text-[8px] text-vortx-gray uppercase">Secs</span>
                 </div>
@@ -263,6 +264,14 @@ export default function Home() {
                 >
                   {/* Image wrapper */}
                   <div className="aspect-[4/5] bg-vortx-gray-dark relative overflow-hidden">
+                    {/* Warrior Target Lock Brackets overlay */}
+                    <div className="absolute inset-0 pointer-events-none z-10">
+                      <div className="card-target-bracket card-target-top-left" />
+                      <div className="card-target-bracket card-target-top-right" />
+                      <div className="card-target-bracket card-target-bottom-left" />
+                      <div className="card-target-bracket card-target-bottom-right" />
+                    </div>
+                    
                     <img 
                       src={prod.images?.[0]} 
                       alt={prod.name}

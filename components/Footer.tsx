@@ -44,21 +44,21 @@ export default function Footer() {
 
   return (
     <footer className="bg-vortx-black border-t border-vortx-white/10 text-vortx-white font-sans mt-auto">
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-20">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-12 sm:py-20">
         
         {/* Top Grid section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-16 mb-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 sm:gap-16 mb-12 sm:mb-20">
           
           {/* Logo & Slogan info */}
-          <div className="lg:col-span-2 space-y-8">
-            <Link href="/" className="group flex items-center gap-3">
-              <svg className="w-10 h-10 transition-transform duration-300 group-hover:scale-105" viewBox="0 0 115 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+            <Link href="/" className="group flex items-center gap-2.5 sm:gap-3">
+              <svg className="w-9 h-9 sm:w-10 sm:h-10 transition-transform duration-300 group-hover:scale-105" viewBox="0 0 115 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M 10 18 L 95 18 L 82 38 L 38 25 Z" fill="#E60000" />
                 <path d="M 38 38 L 103 58 L 60 90 L 45 68 Z" fill="#E60000" />
               </svg>
               <div className="flex flex-col justify-center">
-                <span className="font-syne text-2xl font-extrabold tracking-[0.25em] text-vortx-white">VORTX</span>
-                <span className="text-xs font-bold tracking-[0.14em] text-vortx-gray/80 -mt-0.5">FOR WARRIORS, NOT WATCHERS.</span>
+                <span className="font-syne text-xl sm:text-2xl font-extrabold tracking-[0.25em] text-vortx-white">VORTX</span>
+                <span className="text-[10px] sm:text-xs font-bold tracking-[0.1em] sm:tracking-[0.14em] text-vortx-gray/80 -mt-0.5">FOR WARRIORS, NOT WATCHERS.</span>
               </div>
             </Link>
             <p className="text-base text-vortx-gray leading-relaxed max-w-lg">
@@ -135,15 +135,15 @@ export default function Footer() {
         </div>
 
         {/* Brand statement / Hours info / Copyright */}
-        <div className="border-t border-vortx-white/10 pt-16 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-          <div className="flex flex-wrap gap-x-8 gap-y-3 text-sm text-vortx-gray font-medium">
+        <div className="border-t border-vortx-white/10 pt-10 sm:pt-16 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+          <div className="flex flex-wrap gap-x-5 sm:gap-x-8 gap-y-3 text-xs sm:text-sm text-vortx-gray font-medium">
             <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> SUPPORT: MON-SAT, 9AM-6PM</span>
             <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5" /> +91 99999 99999</span>
             <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5" /> GEAR@VORTX.FIT</span>
           </div>
 
-          <div className="flex flex-col md:items-end gap-3 text-sm text-vortx-gray font-medium">
-            <div className="flex gap-4 mb-1">
+          <div className="flex flex-col md:items-end gap-3 text-xs sm:text-sm text-vortx-gray font-medium w-full md:w-auto">
+            <div className="flex flex-wrap gap-x-4 sm:gap-x-6 gap-y-2 mb-1">
               {footerLinks.legal.map((link, i) => (
                 <Link key={i} href={link.href} className="hover:text-vortx-white transition">
                   {link.label}
