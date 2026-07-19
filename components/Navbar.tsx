@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useStore } from './StoreContext';
-import { ShoppingBag, Heart, User, LogOut, Menu, X, Trash2, ShieldAlert } from 'lucide-react';
+import { ShoppingBag, User, LogOut, Menu, X, Trash2, ShieldAlert } from 'lucide-react';
 import { formatPrice } from '@/products';
 
 export default function Navbar() {
@@ -126,20 +126,20 @@ export default function Navbar() {
           <div className="flex items-center gap-4 sm:gap-5">
             {/* User Access */}
             {user ? (
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 <Link 
                   href="/profile" 
                   title="My Profile"
                   className={`text-vortx-gray hover:text-vortx-white transition ${pathname === '/profile' ? 'text-vortx-white' : ''}`}
                 >
-                  <User className="w-4 h-4 md:w-5 md:h-5" />
+                  <User className="w-5 h-5" />
                 </Link>
                 <button 
                   onClick={logout}
                   title="Logout"
-                  className="text-vortx-gray hover:text-vortx-white transition"
+                  className="text-vortx-gray hover:text-vortx-white transition hidden md:block"
                 >
-                  <LogOut className="w-4 h-4 md:w-5 md:h-5" />
+                  <LogOut className="w-5 h-5" />
                 </button>
               </div>
             ) : (
@@ -148,23 +148,9 @@ export default function Navbar() {
                 title="Account Login"
                 className={`text-vortx-gray hover:text-vortx-white transition ${pathname === '/auth' ? 'text-vortx-white' : ''}`}
               >
-                <User className="w-5 h-5 md:w-5 md:h-5" />
+                <User className="w-5 h-5" />
               </Link>
             )}
-
-            {/* Wishlist */}
-            <Link 
-              href={user ? "/profile#wishlist" : "/auth"} 
-              title="My Wishlist"
-              className="text-vortx-gray hover:text-vortx-white transition relative"
-            >
-              <Heart className="w-5 h-5 md:w-5 md:h-5" />
-              {wishlist.length > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-red-600 text-vortx-white text-[7px] font-bold rounded-full flex items-center justify-center">
-                  {wishlist.length}
-                </span>
-              )}
-            </Link>
 
             {/* Shopping Cart Trigger */}
             <button 
@@ -172,7 +158,7 @@ export default function Navbar() {
               title="Shopping Cart"
               className="text-vortx-gray hover:text-vortx-white transition relative"
             >
-              <ShoppingBag className="w-5 h-5 md:w-5 md:h-5" />
+              <ShoppingBag className="w-5 h-5" />
               {totalItemsCount > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-vortx-white text-vortx-black text-[7px] font-bold rounded-full flex items-center justify-center">
                   {totalItemsCount}
@@ -202,7 +188,12 @@ export default function Navbar() {
                   isLinkActive(link.href) ? 'text-vortx-white font-bold' : 'text-vortx-gray hover:text-vortx-white'
                 }`}
               >
-                {link.label}
+                <span className="relative pb-1">
+                  {link.label}
+                  {isLinkActive(link.href) && (
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-red-600 rounded-full" />
+                  )}
+                </span>
               </Link>
             ))}
             {user?.role === 'admin' && (
@@ -213,6 +204,17 @@ export default function Navbar() {
               >
                 ADMIN PORTAL
               </Link>
+            )}
+            {user && (
+              <button 
+                onClick={() => {
+                  logout();
+                  setIsMobileMenuOpen(false);
+                }}
+                className="w-full py-2.5 border border-red-600/30 text-red-500 rounded text-center hover:bg-red-600 hover:text-white transition"
+              >
+                LOG OUT
+              </button>
             )}
           </div>
         )}

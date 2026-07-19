@@ -96,12 +96,12 @@ function ProfilePageContent() {
         {/* Header Block */}
         <div className="border-b border-vortx-white/10 pb-8 mb-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="font-sans text-4xl font-extrabold tracking-wide uppercase">WARRIOR ACCOUNT</h1>
+            <h1 className="font-sans text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-wide uppercase break-words">WARRIOR ACCOUNT</h1>
             <p className="text-xs text-vortx-gray uppercase font-semibold font-mono tracking-wider mt-1">ID: {user.id}</p>
           </div>
           <button
             onClick={logout}
-            className="px-6 py-3 border border-vortx-white text-vortx-white font-sans text-sm font-bold tracking-widest hover:bg-vortx-white hover:text-vortx-black transition uppercase"
+            className="px-6 py-3 border border-vortx-white text-vortx-white font-sans text-sm font-bold tracking-widest hover:bg-vortx-white hover:text-vortx-black transition uppercase w-full sm:w-auto"
           >
             LOG OUT
           </button>
@@ -146,8 +146,8 @@ function ProfilePageContent() {
               ) : (
                 <div className="space-y-4">
                   {addresses.map((addr) => (
-                    <div key={addr.id} className="p-3 bg-vortx-black/40 border border-vortx-white/10 rounded flex justify-between items-start">
-                      <div className="text-base">
+                    <div key={addr.id} className="p-3.5 bg-vortx-black/40 border border-vortx-white/10 rounded flex flex-col sm:flex-row justify-between sm:items-start gap-3">
+                      <div className="text-base flex-grow">
                         <span className="font-sans text-xs font-bold tracking-widest text-vortx-white bg-vortx-white/10 px-2 py-0.5 rounded uppercase mb-1.5 inline-block">{addr.type}</span>
                         <p className="font-medium text-vortx-white">{addr.addressLine1}</p>
                         {addr.addressLine2 && <p className="text-vortx-gray text-sm mt-0.5">{addr.addressLine2}</p>}
@@ -156,9 +156,9 @@ function ProfilePageContent() {
                       </div>
                       <button 
                         onClick={() => deleteAddress(addr.id)}
-                        className="text-sm font-bold font-sans tracking-wider text-vortx-gray hover:text-vortx-white transition underline ml-2"
+                        className="text-xs font-bold font-sans tracking-widest text-red-500 hover:text-red-400 transition uppercase text-left sm:text-right mt-1 sm:mt-0"
                       >
-                        DELETE
+                        DELETE ADDRESS
                       </button>
                     </div>
                   ))}
@@ -198,30 +198,32 @@ function ProfilePageContent() {
                       }`}
                     >
                       {/* Brief headers */}
-                      <div className="flex flex-wrap justify-between items-center gap-3 border-b border-vortx-white/5 pb-3.5 mb-3 text-base">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 border-b border-vortx-white/5 pb-3.5 mb-3 text-base">
                         <div className="space-y-1">
-                          <span className="text-sm text-vortx-gray block uppercase font-bold">ORDER NO</span>
-                          <span className="font-mono font-bold text-vortx-white">{ord.orderNumber}</span>
+                          <span className="text-xs sm:text-sm text-vortx-gray block uppercase font-bold">ORDER NO</span>
+                          <span className="font-mono font-bold text-xs sm:text-sm text-vortx-white">{ord.orderNumber}</span>
                         </div>
                         <div className="space-y-1">
-                          <span className="text-sm text-vortx-gray block uppercase font-bold">DATE PLACED</span>
-                          <span className="font-mono text-vortx-white">{new Date(ord.createdAt).toLocaleDateString()}</span>
+                          <span className="text-xs sm:text-sm text-vortx-gray block uppercase font-bold">DATE PLACED</span>
+                          <span className="font-mono text-xs sm:text-sm text-vortx-white">{new Date(ord.createdAt).toLocaleDateString()}</span>
                         </div>
                         <div className="space-y-1">
-                          <span className="text-sm text-vortx-gray block uppercase font-bold">TOTAL AMOUNT</span>
-                          <span className="font-mono font-bold text-vortx-white">{formatPrice(ord.totalAmount)}</span>
+                          <span className="text-xs sm:text-sm text-vortx-gray block uppercase font-bold">TOTAL AMOUNT</span>
+                          <span className="font-mono font-bold text-xs sm:text-sm text-vortx-white">{formatPrice(ord.totalAmount)}</span>
                         </div>
-                        <div className="space-y-1 text-right">
-                          <span className="text-sm text-vortx-gray block uppercase font-bold">DELIVERY STATUS</span>
-                          <span className={`inline-block font-sans text-xs font-bold tracking-widest px-3 py-1 rounded uppercase ${
-                            ord.status === 'delivered' 
-                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
-                              : ord.status === 'cancelled'
-                              ? 'bg-red-500/10 text-red-400 border border-red-500/20'
-                              : 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
-                          }`}>
-                            {ord.status}
-                          </span>
+                        <div className="space-y-1">
+                          <span className="text-xs sm:text-sm text-vortx-gray block uppercase font-bold">DELIVERY STATUS</span>
+                          <div>
+                            <span className={`inline-block font-sans text-[10px] sm:text-xs font-bold tracking-widest px-2.5 py-1 rounded uppercase ${
+                              ord.status === 'delivered' 
+                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
+                                : ord.status === 'cancelled'
+                                ? 'bg-red-500/10 text-red-400 border border-red-500/20'
+                                : 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
+                            }`}>
+                              {ord.status}
+                            </span>
+                          </div>
                         </div>
                       </div>
 
@@ -295,7 +297,7 @@ function ProfilePageContent() {
                                 <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-mono font-bold transition z-10 ${getStatusStepClass(ord.status, 'pending')}`}>
                                   {ord.status !== 'pending' && ord.status !== 'cancelled' ? '✓' : '1'}
                                 </div>
-                                <span className="text-xs font-sans font-bold tracking-wider text-vortx-white uppercase">ORDERED</span>
+                                <span className="text-[9px] sm:text-xs font-sans font-bold tracking-normal sm:tracking-wider text-vortx-white uppercase">ORDERED</span>
                               </div>
 
                               {/* Step 2: Paid */}
@@ -303,7 +305,7 @@ function ProfilePageContent() {
                                 <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-mono font-bold transition z-10 ${getStatusStepClass(ord.status, 'paid')}`}>
                                   {ord.status === 'shipped' || ord.status === 'delivered' ? '✓' : '2'}
                                 </div>
-                                <span className="text-xs font-sans font-bold tracking-wider text-vortx-white uppercase">PACKED</span>
+                                <span className="text-[9px] sm:text-xs font-sans font-bold tracking-normal sm:tracking-wider text-vortx-white uppercase">PACKED</span>
                               </div>
 
                               {/* Step 3: Shipped */}
@@ -311,7 +313,7 @@ function ProfilePageContent() {
                                 <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-mono font-bold transition z-10 ${getStatusStepClass(ord.status, 'shipped')}`}>
                                   {ord.status === 'delivered' ? '✓' : '3'}
                                 </div>
-                                <span className="text-xs font-sans font-bold tracking-wider text-vortx-white uppercase">SHIPPED</span>
+                                <span className="text-[9px] sm:text-xs font-sans font-bold tracking-normal sm:tracking-wider text-vortx-white uppercase">SHIPPED</span>
                               </div>
 
                               {/* Step 4: Delivered */}
@@ -319,7 +321,7 @@ function ProfilePageContent() {
                                 <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-mono font-bold transition z-10 ${getStatusStepClass(ord.status, 'delivered')}`}>
                                   4
                                 </div>
-                                <span className="text-xs font-sans font-bold tracking-wider text-vortx-white uppercase">DELIVERED</span>
+                                <span className="text-[9px] sm:text-xs font-sans font-bold tracking-normal sm:tracking-wider text-vortx-white uppercase">DELIVERED</span>
                               </div>
                             </div>
                           </div>
