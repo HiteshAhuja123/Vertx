@@ -40,7 +40,6 @@ export default function Navbar() {
     cart, 
     removeFromCart, 
     updateCartQuantity, 
-    wishlist,
     couponCode,
     discountPercent,
     applyCoupon,

@@ -77,8 +77,8 @@ function ShopContent() {
     // Filter by Search Query
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
-      result = result.filter(p => 
-        p.name.toLowerCase().includes(q) || 
+      result = result.filter(p =>
+        p.name.toLowerCase().includes(q) ||
         p.description.toLowerCase().includes(q)
       );
     }
@@ -98,7 +98,7 @@ function ShopContent() {
   return (
     <div className="py-16 lg:py-20 bg-vortx-black min-h-screen">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
-        
+
         {/* Page Header */}
         <div className="border-b border-vortx-white/10 pb-8 mb-10">
           <h1 className="font-sans text-4xl sm:text-5xl font-extrabold tracking-wide text-vortx-white uppercase">
@@ -111,11 +111,11 @@ function ShopContent() {
 
         {/* Filter Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-10 xl:gap-14">
-          
+
           {/* Left Side Sidebar Filters (Desktop Only) */}
           <div className="hidden lg:block lg:col-span-1 border-r border-vortx-white/10 pr-10">
             <aside className="catalog-filters">
-              
+
               {/* Category Filter */}
               <div className="catalog-filter-group">
                 <h4 className="font-sans text-xs font-bold tracking-wider text-vortx-white mb-4 uppercase">CATEGORY</h4>
@@ -124,11 +124,10 @@ function ShopContent() {
                     <button
                       key={cat}
                       onClick={() => setSelectedCategory(cat)}
-                      className={`block w-full text-xs font-medium tracking-wide text-left transition py-2 pl-3 border-l-2 ${
-                        selectedCategory === cat 
-                          ? 'text-vortx-white font-bold border-red-600 bg-red-600/5' 
+                      className={`block w-full text-xs font-medium tracking-wide text-left transition py-2 pl-3 border-l-2 ${selectedCategory === cat
+                          ? 'text-vortx-white font-bold border-red-600 bg-red-600/5'
                           : 'text-vortx-gray hover:text-vortx-white border-transparent hover:bg-vortx-white/2'
-                      }`}
+                        }`}
                     >
                       {cat.toUpperCase()}
                     </button>
@@ -144,11 +143,10 @@ function ShopContent() {
                     <button
                       key={gen}
                       onClick={() => setSelectedGender(gen)}
-                      className={`block w-full text-xs font-medium tracking-wide text-left transition py-2 pl-3 border-l-2 ${
-                        selectedGender === gen 
-                          ? 'text-vortx-white font-bold border-red-600 bg-red-600/5' 
+                      className={`block w-full text-xs font-medium tracking-wide text-left transition py-2 pl-3 border-l-2 ${selectedGender === gen
+                          ? 'text-vortx-white font-bold border-red-600 bg-red-600/5'
                           : 'text-vortx-gray hover:text-vortx-white border-transparent hover:bg-vortx-white/2'
-                      }`}
+                        }`}
                     >
                       {gen.toUpperCase()}
                     </button>
@@ -176,13 +174,13 @@ function ShopContent() {
 
           {/* Right Side Catalog Grid */}
           <div className="lg:col-span-3">
-            
+
             {/* Catalog Action Header Bar (Search & Mobile Filter Trigger) */}
             <div className="flex gap-4 mb-6">
               {/* Universal Search Input */}
               <div className="relative flex-grow flex items-center">
                 <Search className="absolute left-3.5 w-4 h-4 text-vortx-gray/50" />
-                <input 
+                <input
                   type="text"
                   placeholder="SEARCH GEAR"
                   value={searchQuery}
@@ -192,7 +190,7 @@ function ShopContent() {
               </div>
 
               {/* Mobile Filter Button */}
-              <button 
+              <button
                 onClick={() => setIsMobileFiltersOpen(true)}
                 className="lg:hidden flex items-center gap-2 px-4 py-2.5 bg-vortx-white text-vortx-black hover:bg-vortx-white/90 font-sans text-xs font-bold tracking-widest uppercase transition flex-shrink-0"
               >
@@ -200,11 +198,11 @@ function ShopContent() {
                 FILTERS
               </button>
             </div>
-            
+
             {filteredProducts.length === 0 ? (
               <div className="h-64 flex flex-col items-center justify-center border border-dashed border-vortx-white/10 rounded">
                 <p className="font-sans text-xs font-bold tracking-wider text-vortx-gray">NO GEAR MATCHES THE SELECTED FILTERS</p>
-                <button 
+                <button
                   onClick={() => {
                     setSelectedCategory('all');
                     setSelectedGender('all');
@@ -223,8 +221,8 @@ function ShopContent() {
                   const totalStock = prod.variants?.reduce((acc: number, v: any) => acc + v.stock, 0) || 0;
 
                   return (
-                    <div 
-                      key={prod.id} 
+                    <div
+                      key={prod.id}
                       onClick={() => router.push(`/product/${prod.slug}`)}
                       className="group flex flex-col border border-vortx-white/15 bg-vortx-dark/30 rounded overflow-hidden hover:border-vortx-white/30 transition-all duration-300 cursor-pointer"
                     >
@@ -237,23 +235,23 @@ function ShopContent() {
                           <div className="card-target-bracket card-target-bottom-left" />
                           <div className="card-target-bracket card-target-bottom-right" />
                         </div>
-                        
-                        <img 
-                          src={prod.images?.[0]} 
-                          alt={prod.name} 
+
+                        <img
+                          src={prod.images?.[0]}
+                          alt={prod.name}
                           className="w-full h-full object-cover grayscale group-hover:scale-102 group-hover:grayscale-0 transition duration-500"
                         />
 
                         {/* Interactive overlay shortcuts */}
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-3 transition-opacity duration-300">
-                          <Link 
+                          <Link
                             href={`/product/${prod.slug}`}
                             onClick={(e) => e.stopPropagation()}
                             className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-105 active:scale-95 transition"
                           >
                             <Eye className="w-4 h-4" />
                           </Link>
-                          <button 
+                          <button
                             onClick={(e) => {
                               e.stopPropagation();
                               addToCart({
@@ -299,21 +297,20 @@ function ShopContent() {
                             <span className="text-[8px] font-mono text-vortx-gray uppercase tracking-widest">
                               {[prod.gender, prod.category].filter(Boolean).join(' | ')}
                             </span>
-                            
+
                             {/* Stock Indicator */}
                             {!isPreOrder && (
-                              <span className={`text-[8px] font-bold tracking-wider ${
-                                totalStock === 0 
-                                  ? 'text-red-500' 
-                                  : totalStock < 10 
-                                  ? 'text-yellow-400' 
-                                  : 'text-vortx-gray'
-                              }`}>
+                              <span className={`text-[8px] font-bold tracking-wider ${totalStock === 0
+                                  ? 'text-red-500'
+                                  : totalStock < 10
+                                    ? 'text-yellow-400'
+                                    : 'text-vortx-gray'
+                                }`}>
                                 {totalStock === 0 ? 'OUT OF STOCK' : totalStock < 10 ? `ONLY ${totalStock} LEFT` : 'IN STOCK'}
                               </span>
                             )}
                           </div>
-                          
+
                           <Link href={`/product/${prod.slug}`} onClick={(e) => e.stopPropagation()}>
                             <h3 className="font-sans text-sm font-bold tracking-wide text-vortx-white mt-1 hover:underline truncate">
                               {prod.name.toUpperCase()}
@@ -348,17 +345,17 @@ function ShopContent() {
       {isMobileFiltersOpen && (
         <div className="fixed inset-0 z-50 lg:hidden flex justify-end">
           {/* Backdrop */}
-          <div 
+          <div
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
             onClick={() => setIsMobileFiltersOpen(false)}
           />
-          
+
           {/* Slide-out Panel */}
           <div className="relative w-80 max-w-full bg-vortx-dark border-l border-vortx-white/10 p-6 flex flex-col justify-between glassmorphism h-full">
             <div className="space-y-8 overflow-y-auto pr-1">
               <div className="flex justify-between items-center border-b border-vortx-white/10 pb-4">
                 <span className="font-syne text-xs font-bold tracking-widest text-vortx-white uppercase">FILTERS & SORT</span>
-                <button 
+                <button
                   onClick={() => setIsMobileFiltersOpen(false)}
                   className="p-1 hover:bg-vortx-white/10 rounded transition text-vortx-gray hover:text-vortx-white"
                 >
@@ -377,11 +374,10 @@ function ShopContent() {
                         setSelectedCategory(cat);
                         setIsMobileFiltersOpen(false);
                       }}
-                      className={`block w-full text-xs font-medium tracking-wide text-left transition py-2.5 pl-3 border-l-2 ${
-                        selectedCategory === cat 
-                          ? 'text-vortx-white font-bold border-red-600 bg-red-600/5' 
+                      className={`block w-full text-xs font-medium tracking-wide text-left transition py-2.5 pl-3 border-l-2 ${selectedCategory === cat
+                          ? 'text-vortx-white font-bold border-red-600 bg-red-600/5'
                           : 'text-vortx-gray hover:text-vortx-white border-transparent hover:bg-vortx-white/2'
-                      }`}
+                        }`}
                     >
                       {cat.toUpperCase()}
                     </button>
@@ -400,11 +396,10 @@ function ShopContent() {
                         setSelectedGender(gen);
                         setIsMobileFiltersOpen(false);
                       }}
-                      className={`block w-full text-xs font-medium tracking-wide text-left transition py-2.5 pl-3 border-l-2 ${
-                        selectedGender === gen 
-                          ? 'text-vortx-white font-bold border-red-600 bg-red-600/5' 
+                      className={`block w-full text-xs font-medium tracking-wide text-left transition py-2.5 pl-3 border-l-2 ${selectedGender === gen
+                          ? 'text-vortx-white font-bold border-red-600 bg-red-600/5'
                           : 'text-vortx-gray hover:text-vortx-white border-transparent hover:bg-vortx-white/2'
-                      }`}
+                        }`}
                     >
                       {gen.toUpperCase()}
                     </button>

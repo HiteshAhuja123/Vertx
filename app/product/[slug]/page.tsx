@@ -12,7 +12,7 @@ import { logAutomation } from '@/lib/email';
 export default function ProductDetail() {
   const params = useParams();
   const router = useRouter();
-  const { addToCart, toggleWishlist, isInWishlist } = useStore();
+  const { addToCart } = useStore();
   
   const [product, setProduct] = useState<any>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
