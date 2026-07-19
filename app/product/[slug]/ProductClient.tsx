@@ -65,15 +65,79 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
   const sizes = Array.from(new Set(product.variants?.map((v: any) => v.size) || [])) as string[];
   const colors = Array.from(new Set(product.variants?.map((v: any) => v.color) || [])) as string[];
 
-  // Fallbacks for specifications
-  const fabricInfo = product.fabric || '82% Nylon / 18% Spandex Elite Stretch Weave';
-  const specsInfo = product.specs || {
-    'Fit': 'Athletic Contoured Fit',
-    'Fabric weight': '240 GSM Contoured Technical Knit',
-    'Breathability': 'Aerated Zonal Mesh Channels',
-    'Stretch': '4-Way Mechanical Elasticity',
-    'Odour Control': 'Anti-Microbial Zinc Treatment'
+  // Dynamic, context-aware details based on product type
+  const getProductSpecs = () => {
+    const nameLower = product.name.toLowerCase();
+    const categoryLower = (product.category || '').toLowerCase();
+    
+    if (nameLower.includes('tee') || nameLower.includes('t-shirt')) {
+      return {
+        fabric: '100% Premium Ring-Spun Cotton',
+        specs: {
+          'Fit': 'Oversized Boxy Fit',
+          'Fabric weight': '240 GSM Heavyweight Knit',
+          'Breathability': 'Natural Cotton Airflow',
+          'Stretch': 'Standard Comfort Stretch',
+          'Treatment': 'Preshrunk Silicone Wash'
+        }
+      };
+    }
+    
+    if (nameLower.includes('compression') || nameLower.includes('shell')) {
+      return {
+        fabric: '82% Nylon / 18% Spandex Technical Blend',
+        specs: {
+          'Fit': 'Athletic Contoured Compression Fit',
+          'Fabric weight': '240 GSM Support Knit',
+          'Breathability': 'Zonal Mesh Aeration',
+          'Stretch': '4-Way Mechanical Elasticity',
+          'Odour Control': 'Anti-Microbial Zinc Shield'
+        }
+      };
+    }
+
+    if (nameLower.includes('tank') || nameLower.includes('singlet')) {
+      return {
+        fabric: '90% Recycled Polyester / 10% Elastane',
+        specs: {
+          'Fit': 'Athletic Slim Fit',
+          'Fabric weight': '160 GSM Ultra-Lightweight Mesh',
+          'Breathability': 'Laser Cut Ventilation Zones',
+          'Stretch': '4-Way Elastic Fluidity',
+          'Odour Control': 'Polygiene Anti-Odor Technology'
+        }
+      };
+    }
+    
+    if (categoryLower.includes('bottoms') || nameLower.includes('joggers') || nameLower.includes('leggings')) {
+      return {
+        fabric: '78% Polyester / 22% Spandex Brushed Microfiber',
+        specs: {
+          'Fit': 'Tapered Tonal Athletic Fit',
+          'Fabric weight': '280 GSM Double-Brushed Fleece',
+          'Breathability': 'Thermal Moisture-Wicking Channels',
+          'Stretch': 'High-Elasticity Shape Retention',
+          'Features': 'Secure Zip Pocketing & Ergonomic Seams'
+        }
+      };
+    }
+
+    // Default premium fallback
+    return {
+      fabric: 'Hybrid technical fiber blend',
+      specs: {
+        'Fit': 'Athletic Standard Fit',
+        'Fabric weight': '220 GSM Performance Knit',
+        'Breathability': 'Moisture-Wicking Micro-Weave',
+        'Stretch': 'Comfort Stretch Flex',
+        'Treatment': 'Quick-Dry Finish'
+      }
+    };
   };
+
+  const specsDetails = getProductSpecs();
+  const fabricInfo = product.fabric || specsDetails.fabric;
+  const specsInfo = product.specs || specsDetails.specs;
   const shippingInfo = product.shipping || 'Standard delivery in India. Free on cart orders above ₹3,000. Express shipping available at checkout.';
 
   // Find matching variant
@@ -184,12 +248,15 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
                   </div>
                 </div>
               ) : (
-                /* Standard Zoom Image cover */
+                /* Standard Zoom Image cover with smooth transform-origin transition */
                 <img 
                   ref={zoomImageRef}
                   src={product.images?.[activeImageIndex]} 
                   alt={product.name}
-                  className="w-full h-full object-cover grayscale transition duration-300 pointer-events-none"
+                  className="w-full h-full object-cover grayscale pointer-events-none"
+                  style={{
+                    transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform-origin 0.1s ease-out'
+                  }}
                 />
               )}
 
