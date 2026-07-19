@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/components/StoreContext';
 import { mockDb } from '@/lib/supabase';
-import { ShoppingBag, Eye, SlidersHorizontal, Search, RefreshCw } from 'lucide-react';
+import { ShoppingBag, Eye, SlidersHorizontal, Search, RefreshCw, X } from 'lucide-react';
 import { formatPrice } from '@/products';
 
 function ShopContent() {
@@ -20,6 +20,7 @@ function ShopContent() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedGender, setSelectedGender] = useState('all');
   const [sortBy, setSortBy] = useState('featured');
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
   // Load products
   useEffect(() => {
@@ -116,8 +117,29 @@ function ShopContent() {
         {/* Filter Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-10 xl:gap-14">
           
-          {/* Left Side Sidebar Filters */}
-          <aside className="catalog-filters lg:col-span-1 border-b lg:border-b-0 lg:border-r border-vortx-white/10 pb-10 lg:pb-0 lg:pr-10">
+          {/* Mobile Filter Control Bar */}
+          <div className="lg:hidden flex gap-4 mb-6">
+            <div className="relative flex-grow flex items-center">
+              <Search className="absolute left-3.5 w-4 h-4 text-vortx-gray/50" />
+              <input 
+                type="text"
+                placeholder="SEARCH GEAR"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-vortx-dark border border-vortx-white/20 px-3.5 py-2.5 pl-10 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/50 uppercase"
+              />
+            </div>
+            <button 
+              onClick={() => setIsMobileFiltersOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 bg-vortx-white text-vortx-black hover:bg-vortx-white/90 font-sans text-xs font-bold tracking-widest uppercase transition flex-shrink-0"
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              FILTERS
+            </button>
+          </div>
+
+          {/* Left Side Sidebar Filters (Desktop Only) */}
+          <aside className="catalog-filters lg:col-span-1 border-r border-vortx-white/10 pr-10 hidden lg:flex lg:flex-col">
             
             {/* Search Input */}
             <div className="relative flex items-center">
@@ -325,6 +347,109 @@ function ShopContent() {
         </div>
 
       </div>
+
+      {/* Mobile Filters Drawer Modal */}
+      {isMobileFiltersOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden flex justify-end">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={() => setIsMobileFiltersOpen(false)}
+          />
+          
+          {/* Slide-out Panel */}
+          <div className="relative w-80 max-w-full bg-vortx-dark border-l border-vortx-white/10 p-6 flex flex-col justify-between glassmorphism h-full">
+            <div className="space-y-8 overflow-y-auto pr-1">
+              <div className="flex justify-between items-center border-b border-vortx-white/10 pb-4">
+                <span className="font-syne text-xs font-bold tracking-widest text-vortx-white uppercase">FILTERS & SORT</span>
+                <button 
+                  onClick={() => setIsMobileFiltersOpen(false)}
+                  className="p-1 hover:bg-vortx-white/10 rounded transition text-vortx-gray hover:text-vortx-white"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Category Filter */}
+              <div className="catalog-filter-group">
+                <h4 className="font-sans text-xs font-bold tracking-wider text-vortx-white mb-4 uppercase">CATEGORY</h4>
+                <div className="space-y-1">
+                  {['all', 'tops', 'bottoms', 'outerwear'].map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => {
+                        setSelectedCategory(cat);
+                        setIsMobileFiltersOpen(false);
+                      }}
+                      className={`block w-full text-xs font-medium tracking-wide text-left transition py-2.5 pl-3 border-l-2 ${
+                        selectedCategory === cat 
+                          ? 'text-vortx-white font-bold border-red-600 bg-red-600/5' 
+                          : 'text-vortx-gray hover:text-vortx-white border-transparent hover:bg-vortx-white/2'
+                      }`}
+                    >
+                      {cat.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Gender Filter */}
+              <div className="catalog-filter-group">
+                <h4 className="font-sans text-xs font-bold tracking-wider text-vortx-white mb-4 uppercase">GENDER</h4>
+                <div className="space-y-1">
+                  {['all', 'men', 'women', 'unisex'].map((gen) => (
+                    <button
+                      key={gen}
+                      onClick={() => {
+                        setSelectedGender(gen);
+                        setIsMobileFiltersOpen(false);
+                      }}
+                      className={`block w-full text-xs font-medium tracking-wide text-left transition py-2.5 pl-3 border-l-2 ${
+                        selectedGender === gen 
+                          ? 'text-vortx-white font-bold border-red-600 bg-red-600/5' 
+                          : 'text-vortx-gray hover:text-vortx-white border-transparent hover:bg-vortx-white/2'
+                      }`}
+                    >
+                      {gen.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sort Options */}
+              <div className="catalog-filter-group">
+                <h4 className="font-sans text-xs font-bold tracking-wider text-vortx-white mb-4 uppercase">SORT BY</h4>
+                <select
+                  value={sortBy}
+                  onChange={(e) => {
+                    setSortBy(e.target.value);
+                    setIsMobileFiltersOpen(false);
+                  }}
+                  className="w-full bg-vortx-black border border-vortx-white/20 px-3.5 py-2.5 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-sans font-bold tracking-wide"
+                >
+                  <option value="featured">FEATURED</option>
+                  <option value="price-asc">PRICE: LOW TO HIGH</option>
+                  <option value="price-desc">PRICE: HIGH TO LOW</option>
+                  <option value="newest">NEW RELEASES</option>
+                </select>
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                setSelectedCategory('all');
+                setSelectedGender('all');
+                setSearchQuery('');
+                setIsMobileFiltersOpen(false);
+              }}
+              className="w-full py-3 mt-6 border border-red-600/20 text-red-500 hover:bg-red-600 hover:text-white text-xs font-sans font-bold tracking-widest transition uppercase"
+            >
+              RESET FILTERS
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

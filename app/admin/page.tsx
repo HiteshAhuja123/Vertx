@@ -288,7 +288,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Dashboard Navigation Tabs */}
-        <div className="flex gap-4 border-b border-vortx-white/10 mb-8 font-syne text-xs font-bold tracking-widest">
+        <div className="flex gap-4 border-b border-vortx-white/10 mb-8 font-syne text-xs font-bold tracking-widest overflow-x-auto whitespace-nowrap scrollbar-none pb-1">
           <button
             onClick={() => setActiveTab('stats')}
             className={`pb-3 px-4 transition ${
