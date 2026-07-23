@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { mockDb } from '@/lib/supabase';
+import { mockDb, fetchSupabaseProducts } from '@/lib/supabase';
 import { useStore } from '@/components/StoreContext';
 import { ArrowRight, Play, Star, ChevronLeft, ChevronRight, X, Clock, ShoppingBag, Eye } from 'lucide-react';
 import { formatPrice } from '@/products';
@@ -33,7 +33,11 @@ export default function Home() {
   const [recentPurchase, setRecentPurchase] = useState<any | null>(null);
 
   useEffect(() => {
-    setProducts(mockDb.getProducts());
+    const loadHomeProducts = async () => {
+      const prods = await fetchSupabaseProducts();
+      setProducts(prods);
+    };
+    loadHomeProducts();
     setReviews(mockDb.getReviews());
 
     // Countdown target: August 15, 2026

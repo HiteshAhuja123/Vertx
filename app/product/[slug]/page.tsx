@@ -1,6 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
-import { mockDb } from '@/lib/supabase';
+import { fetchSupabaseProducts } from '@/lib/supabase';
 import ProductClient from './ProductClient';
 import { notFound } from 'next/navigation';
 
@@ -11,7 +11,8 @@ interface Props {
 // 1. DYNAMIC METADATA GENERATOR (FOR OG AND SEARCH INDEXING)
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const product = mockDb.getProducts().find((p: any) => p.slug === slug);
+  const products = await fetchSupabaseProducts();
+  const product = products.find((p: any) => p.slug === slug);
   
   if (!product) {
     return {
@@ -42,7 +43,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductDetailPage({ params }: Props) {
   const { slug } = await params;
-  const product = mockDb.getProducts().find((p: any) => p.slug === slug);
+  const products = await fetchSupabaseProducts();
+  const product = products.find((p: any) => p.slug === slug);
 
   if (!product) {
     notFound();

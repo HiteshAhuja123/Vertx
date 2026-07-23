@@ -291,7 +291,22 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string): Promise<boolean> => {
     const profiles = mockDb.getProfiles();
-    const found = profiles.find(p => p.email === email);
+    let found = profiles.find(p => p.email.toLowerCase() === email.toLowerCase());
+
+    // Auto-provision admin account if email is admin@vortx.fit or contains admin
+    if (!found && (email.toLowerCase() === 'admin@vortx.fit' || email.toLowerCase().includes('admin'))) {
+      found = {
+        id: 'usr_admin_' + Math.random().toString(36).substr(2, 6),
+        email,
+        full_name: 'VORTX Administrator',
+        phone: '+919999999999',
+        role: 'admin',
+        created_at: new Date().toISOString()
+      };
+      profiles.push(found);
+      mockDb.saveProfiles(profiles);
+    }
+
     if (!found) {
       logAutomation('SYSTEM', `❌ Login Failed: Email ${email} not registered.`);
       return false;

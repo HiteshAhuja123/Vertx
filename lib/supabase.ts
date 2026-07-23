@@ -516,3 +516,24 @@ export async function deleteSupabaseProduct(productId: string): Promise<void> {
     throw error;
   }
 }
+
+export async function toggleSupabaseProductVisibility(productId: string, currentStatus: boolean): Promise<boolean> {
+  const newStatus = !currentStatus;
+  if (!isSupabaseConfigured) {
+    const prods = mockDb.getProducts();
+    const updated = prods.map(p => p.id === productId ? { ...p, is_in_stock: newStatus } : p);
+    mockDb.saveProducts(updated);
+    return newStatus;
+  }
+
+  const { error } = await supabase
+    .from('products')
+    .update({ is_in_stock: newStatus })
+    .eq('id', productId);
+
+  if (error) {
+    console.error('Error toggling visibility in Supabase:', error);
+    throw error;
+  }
+  return newStatus;
+}

@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore, Order } from '@/components/StoreContext';
-import { mockDb, isSupabaseConfigured, supabase, fetchSupabaseProducts, createSupabaseProduct, deleteSupabaseProduct } from '@/lib/supabase';
+import { mockDb, isSupabaseConfigured, supabase, fetchSupabaseProducts, createSupabaseProduct, deleteSupabaseProduct, toggleSupabaseProductVisibility } from '@/lib/supabase';
 import { 
   ShieldAlert, LayoutDashboard, Plus, Trash2, Edit3, ClipboardList, 
   Tag, Download, ArrowLeftRight, Check, X, ShieldCheck, DollarSign,
-  UploadCloud, Loader2
+  UploadCloud, Loader2, Eye, EyeOff
 } from 'lucide-react';
 import { formatPrice } from '@/products';
 import { logAutomation } from '@/lib/email';
@@ -259,12 +259,23 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleDeleteProduct = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this product from live database?')) return;
+  const handleToggleVisibility = async (p: any) => {
     try {
-      await deleteSupabaseProduct(id);
+      const newStatus = await toggleSupabaseProductVisibility(p.id, p.is_in_stock);
+      setProducts(products.map(item => item.id === p.id ? { ...item, is_in_stock: newStatus } : item));
+      logAutomation('SYSTEM', `🛡️ Admin Visibility Toggle: Product "${p.name}" set to ${newStatus ? 'VISIBLE (ON STOREFRONT)' : 'HIDDEN (DRAFT MODE)'}.`);
+    } catch (err) {
+      alert('Failed to update product visibility.');
+    }
+  };
+
+  const handleDeleteProduct = async (p: any) => {
+    if (!confirm(`PERMANENT DELETE WARNING: Are you sure you want to permanently delete "${p.name}" from your live database?\n\nTip: You can use the Eye button (Visibility Toggle) to hide this product from your storefront without losing database records.`)) return;
+    try {
+      await deleteSupabaseProduct(p.id);
       const refreshedProds = await fetchSupabaseProducts();
       setProducts(refreshedProds);
+      logAutomation('SYSTEM', `🛡️ Admin CRUD: Product "${p.name}" deleted from database.`);
     } catch (err: any) {
       console.error('Delete error:', err);
       alert('Failed to delete product from database.');
@@ -659,23 +670,54 @@ export default function AdminDashboard() {
                   {products.map((p) => {
                     const totalStk = p.variants?.reduce((acc: number, v: any) => acc + v.stock, 0) || 0;
                     return (
-                      <div key={p.id} className="p-3 bg-vortx-black/40 border border-vortx-white/10 rounded flex justify-between items-center gap-4 text-xs">
+                      <div key={p.id} className={`p-3 bg-vortx-black/40 border rounded flex justify-between items-center gap-4 text-xs transition ${p.is_in_stock ? 'border-vortx-white/10' : 'border-amber-500/30 bg-amber-500/5'}`}>
                         <div className="flex items-center gap-3">
-                          <img src={p.images?.[0]} alt={p.name} className="w-10 h-12 object-cover border border-vortx-white/10" />
+                          <img src={p.images?.[0]} alt={p.name} className="w-10 h-12 object-cover border border-vortx-white/10 rounded" />
                           <div>
-                            <h4 className="font-syne font-bold text-vortx-white uppercase">{p.name}</h4>
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-syne font-bold text-vortx-white uppercase">{p.name}</h4>
+                              {p.is_in_stock ? (
+                                <span className="px-1.5 py-0.5 text-[8px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded uppercase">
+                                  VISIBLE ON STORE
+                                </span>
+                              ) : (
+                                <span className="px-1.5 py-0.5 text-[8px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded uppercase">
+                                  HIDDEN (DRAFT)
+                                </span>
+                              )}
+                            </div>
                             <p className="text-[10px] text-vortx-gray mt-0.5 font-mono uppercase">
-                              CAT: {p.category} | PRICE: {formatPrice(p.price)} | STOCK: {totalStk} UNITS
+                              CAT: {p.category || 'Tops'} | PRICE: {formatPrice(p.price)} | STOCK: {totalStk} UNITS
                             </p>
                           </div>
                         </div>
-                        <button
-                          onClick={() => handleDeleteProduct(p.id)}
-                          className="p-2 border border-vortx-white/10 hover:border-red-500/30 text-vortx-gray hover:text-red-500 rounded transition"
-                          title="Delete Product"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        
+                        <div className="flex items-center gap-2">
+                          {/* Visibility Toggle (Show / Hide on Storefront) */}
+                          <button
+                            type="button"
+                            onClick={() => handleToggleVisibility(p)}
+                            className={`p-2 border rounded transition flex items-center gap-1 text-[10px] font-mono font-bold ${
+                              p.is_in_stock 
+                                ? 'border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10' 
+                                : 'border-amber-500/30 text-amber-400 hover:bg-amber-500/10'
+                            }`}
+                            title={p.is_in_stock ? 'Click to HIDE from Storefront' : 'Click to SHOW on Storefront'}
+                          >
+                            {p.is_in_stock ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                            <span className="hidden sm:inline">{p.is_in_stock ? 'HIDE' : 'SHOW'}</span>
+                          </button>
+
+                          {/* Delete Action */}
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteProduct(p)}
+                            className="p-2 border border-vortx-white/10 hover:border-red-500/40 text-vortx-gray hover:text-red-500 rounded transition"
+                            title="Permanently Delete Product"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
                     );
                   })}
