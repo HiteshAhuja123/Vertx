@@ -373,9 +373,7 @@ export const mockDb = new MockDatabase();
 // ==========================================
 
 export async function fetchSupabaseProducts(): Promise<MockProduct[]> {
-  const localProducts = mockDb.getProducts();
-
-  if (!isSupabaseConfigured) return localProducts;
+  if (!isSupabaseConfigured) return mockDb.getProducts();
 
   try {
     const { data: products, error } = await supabase
@@ -388,11 +386,11 @@ export async function fetchSupabaseProducts(): Promise<MockProduct[]> {
       .order('created_at', { ascending: false });
 
     if (error || !products) {
-      console.warn('Supabase products fetch returned error, using local storage:', error);
-      return localProducts;
+      console.error('Fetch Supabase error:', error);
+      return [];
     }
 
-    const remoteProducts = products.map((p: any) => ({
+    return products.map((p: any) => ({
       id: p.id,
       name: p.name,
       slug: p.slug,
@@ -416,14 +414,9 @@ export async function fetchSupabaseProducts(): Promise<MockProduct[]> {
         sku: v.sku
       }))
     }));
-
-    // Merge remote products with any locally created products
-    const remoteIds = new Set(remoteProducts.map((p: any) => p.id));
-    const extraLocal = localProducts.filter(lp => !remoteIds.has(lp.id));
-    return [...remoteProducts, ...extraLocal];
   } catch (err) {
     console.error('Fetch Supabase error:', err);
-    return localProducts;
+    return [];
   }
 }
 
@@ -443,7 +436,7 @@ export async function createSupabaseProduct(productData: {
   images: string[];
   variants: { size: string; color: string; stock: number; sku: string }[];
 }): Promise<any> {
-  const fallbackCreate = () => {
+  if (!isSupabaseConfigured) {
     const currentProds = mockDb.getProducts();
     const newProd: MockProduct = {
       id: 'p_' + Math.random().toString(36).substring(2, 9),
@@ -457,113 +450,84 @@ export async function createSupabaseProduct(productData: {
     };
     mockDb.saveProducts([...currentProds, newProd]);
     return newProd;
-  };
-
-  if (!isSupabaseConfigured) {
-    return fallbackCreate();
   }
 
-  try {
-    // 1. Insert into products table
-    const { data: product, error: pError } = await supabase
-      .from('products')
-      .insert({
-        name: productData.name,
-        slug: productData.slug,
-        description: productData.description,
-        price: productData.price,
-        mrp: productData.mrp,
-        discount_percent: productData.discount_percent,
-        badge: productData.badge,
-        is_in_stock: productData.is_in_stock,
-        pre_order_available: productData.pre_order_available,
-        pre_order_date: productData.pre_order_date || null
-      })
-      .select()
-      .single();
+  // 1. Insert into products table
+  const { data: product, error: pError } = await supabase
+    .from('products')
+    .insert({
+      name: productData.name,
+      slug: productData.slug,
+      description: productData.description,
+      price: productData.price,
+      mrp: productData.mrp,
+      discount_percent: productData.discount_percent,
+      badge: productData.badge,
+      is_in_stock: productData.is_in_stock,
+      pre_order_available: productData.pre_order_available,
+      pre_order_date: productData.pre_order_date || null
+    })
+    .select()
+    .single();
 
-    if (pError) throw pError;
+  if (pError) throw pError;
 
-    // 2. Insert variants
-    if (productData.variants && productData.variants.length > 0) {
-      const variantRows = productData.variants.map((v) => ({
-        product_id: product.id,
-        size: v.size,
-        color: v.color,
-        stock: v.stock,
-        sku: v.sku
-      }));
-      const { error: vError } = await supabase.from('product_variants').insert(variantRows);
-      if (vError) console.error('Error inserting variants to Supabase:', vError);
-    }
-
-    // 3. Insert images
-    if (productData.images && productData.images.length > 0) {
-      const imageRows = productData.images.map((imgUrl, idx) => ({
-        product_id: product.id,
-        image_url: imgUrl,
-        display_order: idx
-      }));
-      const { error: imgError } = await supabase.from('product_images').insert(imageRows);
-      if (imgError) console.error('Error inserting images to Supabase:', imgError);
-    }
-
-    return product;
-  } catch (err: any) {
-    console.warn('Supabase product creation error (RLS or permissions), applying local fallback:', err?.message || err);
-    return fallbackCreate();
+  // 2. Insert variants
+  if (productData.variants && productData.variants.length > 0) {
+    const variantRows = productData.variants.map((v) => ({
+      product_id: product.id,
+      size: v.size,
+      color: v.color,
+      stock: v.stock,
+      sku: v.sku
+    }));
+    const { error: vError } = await supabase.from('product_variants').insert(variantRows);
+    if (vError) throw vError;
   }
+
+  // 3. Insert images
+  if (productData.images && productData.images.length > 0) {
+    const imageRows = productData.images.map((imgUrl, idx) => ({
+      product_id: product.id,
+      image_url: imgUrl,
+      display_order: idx
+    }));
+    const { error: imgError } = await supabase.from('product_images').insert(imageRows);
+    if (imgError) throw imgError;
+  }
+
+  return product;
 }
 
 export async function deleteSupabaseProduct(productId: string): Promise<void> {
-  const localFilter = () => {
+  if (!isSupabaseConfigured) {
     const next = mockDb.getProducts().filter(p => p.id !== productId);
     mockDb.saveProducts(next);
-  };
-
-  if (!isSupabaseConfigured) {
-    localFilter();
     return;
   }
 
-  try {
-    const { error } = await supabase
-      .from('products')
-      .delete()
-      .eq('id', productId);
+  const { error } = await supabase
+    .from('products')
+    .delete()
+    .eq('id', productId);
 
-    if (error) throw error;
-    localFilter();
-  } catch (err: any) {
-    console.warn('Supabase delete error, applying local deletion fallback:', err?.message || err);
-    localFilter();
-  }
+  if (error) throw error;
 }
 
 export async function toggleSupabaseProductVisibility(productId: string, currentStatus: boolean): Promise<boolean> {
   const newStatus = !currentStatus;
-  const localToggle = () => {
+  if (!isSupabaseConfigured) {
     const prods = mockDb.getProducts();
     const updated = prods.map(p => p.id === productId ? { ...p, is_in_stock: newStatus } : p);
     mockDb.saveProducts(updated);
     return newStatus;
-  };
-
-  if (!isSupabaseConfigured) {
-    return localToggle();
   }
 
-  try {
-    const { error } = await supabase
-      .from('products')
-      .update({ is_in_stock: newStatus })
-      .eq('id', productId);
+  const { error } = await supabase
+    .from('products')
+    .update({ is_in_stock: newStatus })
+    .eq('id', productId);
 
-    if (error) throw error;
-    localToggle();
-    return newStatus;
-  } catch (err: any) {
-    console.warn('Supabase update error, applying local toggle fallback:', err?.message || err);
-    return localToggle();
-  }
+  if (error) throw error;
+  return newStatus;
 }

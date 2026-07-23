@@ -72,18 +72,6 @@ export default function AdminDashboard() {
 
     setUploading(true);
 
-    const convertToBase64 = (f: File): Promise<string> => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          if (e.target?.result) resolve(e.target.result as string);
-          else reject(new Error('Failed to read file'));
-        };
-        reader.onerror = (e) => reject(e);
-        reader.readAsDataURL(f);
-      });
-    };
-
     try {
       if (isSupabaseConfigured) {
         const fileExt = file.name.split('.').pop();
@@ -98,12 +86,7 @@ export default function AdminDashboard() {
           });
 
         if (uploadError) {
-          console.warn('Supabase storage upload error:', uploadError.message);
-          // Fallback to data URL encoding so product creation can continue seamlessly
-          const dataUrl = await convertToBase64(file);
-          setPImageInput(dataUrl);
-          logAutomation('SYSTEM', `⚠️ Storage Engine: Supabase Storage upload error (${uploadError.message}). Applied local data URL fallback.`);
-          return;
+          throw uploadError;
         }
 
         const { data: urlData } = supabase.storage
@@ -112,21 +95,10 @@ export default function AdminDashboard() {
 
         setPImageInput(urlData.publicUrl);
         logAutomation('SYSTEM', `🛡️ Storage Engine: Uploaded "${file.name}" to Supabase bucket.`);
-      } else {
-        // Fallback for local demo mode when Supabase is offline/not configured
-        const dataUrl = await convertToBase64(file);
-        setPImageInput(dataUrl);
-        logAutomation('SYSTEM', `🛡️ Storage Engine: Created local data preview for "${file.name}".`);
       }
     } catch (err: any) {
-      console.error('Upload error:', err);
-      try {
-        const dataUrl = await convertToBase64(file);
-        setPImageInput(dataUrl);
-        logAutomation('SYSTEM', `⚠️ Storage Engine: Applied fallback image data URL.`);
-      } catch (fallbackErr) {
-        alert(`Upload failed: ${err.message || err}`);
-      }
+      console.error('Upload failed:', err);
+      alert(`Upload to Supabase Storage failed: ${err.message || err}`);
     } finally {
       setUploading(false);
     }
