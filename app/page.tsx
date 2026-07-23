@@ -7,6 +7,7 @@ import { mockDb, fetchSupabaseProducts } from '@/lib/supabase';
 import { useStore } from '@/components/StoreContext';
 import { ArrowRight, Play, Star, ChevronLeft, ChevronRight, X, Clock, ShoppingBag, Eye } from 'lucide-react';
 import { formatPrice } from '@/products';
+import { ProductGridSkeleton } from '@/components/ProductSkeleton';
 
 // Mock notification list
 const RANDOM_PURCHASES = [
@@ -21,6 +22,7 @@ export default function Home() {
   const router = useRouter();
   const { addToCart, preOrderMode } = useStore();
   const [products, setProducts] = useState<any[]>([]);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [reviews, setReviews] = useState<any[]>([]);
   const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
 
@@ -34,8 +36,10 @@ export default function Home() {
 
   useEffect(() => {
     const loadHomeProducts = async () => {
+      setIsLoadingProducts(true);
       const prods = await fetchSupabaseProducts();
       setProducts(prods);
+      setIsLoadingProducts(false);
     };
     loadHomeProducts();
     setReviews(mockDb.getReviews());
@@ -257,8 +261,11 @@ export default function Home() {
           </div>
 
           {/* Product Cards Layout */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProducts.slice(0, 3).map((prod) => {
+          {isLoadingProducts ? (
+            <ProductGridSkeleton count={3} />
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredProducts.slice(0, 3).map((prod) => {
               const isPreOrder = prod.pre_order_available;
               return (
                 <div 
@@ -359,6 +366,7 @@ export default function Home() {
               );
             })}
           </div>
+          )}
 
         </div>
       </section>
