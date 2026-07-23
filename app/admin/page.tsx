@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore, Order } from '@/components/StoreContext';
-import { mockDb, isSupabaseConfigured, supabase } from '@/lib/supabase';
+import { mockDb, isSupabaseConfigured, supabase, fetchSupabaseProducts, createSupabaseProduct, deleteSupabaseProduct } from '@/lib/supabase';
 import { 
   ShieldAlert, LayoutDashboard, Plus, Trash2, Edit3, ClipboardList, 
   Tag, Download, ArrowLeftRight, Check, X, ShieldCheck, DollarSign,
@@ -24,8 +24,8 @@ export default function AdminDashboard() {
   // Product Creator Form States
   const [pName, setPName] = useState('');
   const [pDescription, setPDescription] = useState('');
-  const [pPrice, setPPrice] = useState(3999);
-  const [pMrp, setPMrp] = useState(4999);
+  const [pPrice, setPPrice] = useState<number | string>(3999);
+  const [pMrp, setPMrp] = useState<number | string>(4999);
   const [pBadge, setPBadge] = useState('NEW DROP');
   const [pCategory, setPCategory] = useState('tops');
   const [pGender, setPGender] = useState('men');
@@ -126,11 +126,13 @@ export default function AdminDashboard() {
       router.push('/auth?redirect=admin');
       return;
     }
-    if (user.role !== 'admin') {
-      // Allow demo user to set admin if they want or show access denied
-    }
+    
+    const loadDatabaseData = async () => {
+      const prods = await fetchSupabaseProducts();
+      setProducts(prods);
+    };
 
-    setProducts(mockDb.getProducts());
+    loadDatabaseData();
     setCoupons(mockDb.getCoupons());
   }, [user, router]);
 
@@ -167,7 +169,7 @@ export default function AdminDashboard() {
     .reduce((acc, o) => acc + o.totalAmount, 0);
 
   // --- PRODUCTS CRUD LOGIC ---
-  const handleCreateProduct = (e: React.FormEvent) => {
+  const handleCreateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError('');
 
@@ -210,7 +212,6 @@ export default function AdminDashboard() {
     // Create variants mapping
     const variantsList = pSizes.flatMap(size => 
       pColors.map(color => ({
-        id: 'v_' + Math.random().toString(36).substr(2, 9),
         size,
         color,
         stock: pStock,
@@ -218,47 +219,56 @@ export default function AdminDashboard() {
       }))
     );
 
-    const newProd = {
-      id: 'p_' + Math.random().toString(36).substr(2, 9),
-      name: pName,
-      slug,
-      description: pDescription,
-      price: priceNum,
-      mrp: mrpNum,
-      discount_percent: discount,
-      badge: pBadge,
-      category: pCategory,
-      gender: pGender,
-      is_in_stock: pStock > 0,
-      pre_order_available: pBadge === 'NEW DROP' || pBadge === 'LIMITED',
-      pre_order_date: pBadge === 'NEW DROP' || pBadge === 'LIMITED' ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() : null,
-      created_at: new Date().toISOString(),
-      images: [pImageInput],
-      variants: variantsList
-    };
+    try {
+      setUploading(true);
+      await createSupabaseProduct({
+        name: pName,
+        slug,
+        description: pDescription,
+        price: priceNum,
+        mrp: mrpNum,
+        discount_percent: discount,
+        badge: pBadge,
+        category: pCategory,
+        gender: pGender,
+        is_in_stock: pStock > 0,
+        pre_order_available: pBadge === 'NEW DROP' || pBadge === 'LIMITED',
+        pre_order_date: pBadge === 'NEW DROP' || pBadge === 'LIMITED' ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() : null,
+        images: [pImageInput],
+        variants: variantsList
+      });
 
-    const currentProds = [...products, newProd];
-    mockDb.saveProducts(currentProds);
-    setProducts(currentProds);
+      const refreshedProds = await fetchSupabaseProducts();
+      setProducts(refreshedProds);
 
-    // Log automation action
-    logAutomation('SYSTEM', `🛡️ Admin CRUD: Product "${pName}" successfully created with ${variantsList.length} variants.`);
+      logAutomation('SYSTEM', `🛡️ Supabase CRUD: Product "${pName}" successfully created.`);
 
-    // Reset Form
-    setPName('');
-    setPDescription('');
-    setPPrice(3999);
-    setPMrp(4999);
-    setPBadge('NEW DROP');
-    setPImageInput('');
-    alert('Product created and catalog updated!');
+      // Reset Form
+      setPName('');
+      setPDescription('');
+      setPPrice(3999);
+      setPMrp(4999);
+      setPBadge('NEW DROP');
+      setPImageInput('');
+      alert('Product created live in Supabase database!');
+    } catch (err: any) {
+      console.error('Error creating product in Supabase:', err);
+      setFormError(`Failed to save product to database: ${err.message || err}`);
+    } finally {
+      setUploading(false);
+    }
   };
 
-  const handleDeleteProduct = (id: string) => {
-    const next = products.filter(p => p.id !== id);
-    mockDb.saveProducts(next);
-    setProducts(next);
-    logAutomation('SYSTEM', `🛡️ Admin CRUD: Product ID ${id} deleted.`);
+  const handleDeleteProduct = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this product from live database?')) return;
+    try {
+      await deleteSupabaseProduct(id);
+      const refreshedProds = await fetchSupabaseProducts();
+      setProducts(refreshedProds);
+    } catch (err: any) {
+      console.error('Delete error:', err);
+      alert('Failed to delete product from database.');
+    }
   };
 
   // --- ORDERS EXPORT TO CSV LOGIC ---

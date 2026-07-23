@@ -367,3 +367,152 @@ class MockDatabase {
 }
 
 export const mockDb = new MockDatabase();
+
+// ==========================================
+// LIVE SUPABASE DATABASE INTEGRATION (REAL DB)
+// ==========================================
+
+export async function fetchSupabaseProducts(): Promise<MockProduct[]> {
+  if (!isSupabaseConfigured) return mockDb.getProducts();
+
+  try {
+    const { data: products, error } = await supabase
+      .from('products')
+      .select(`
+        *,
+        product_images(image_url, display_order),
+        product_variants(id, size, color, stock, sku)
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error || !products || products.length === 0) {
+      console.warn('Supabase products fetch returned empty or error, falling back to database seed:', error);
+      return mockDb.getProducts();
+    }
+
+    return products.map((p: any) => ({
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      description: p.description || '',
+      price: Number(p.price),
+      mrp: Number(p.mrp || p.price),
+      discount_percent: p.discount_percent || 0,
+      badge: p.badge || '',
+      is_in_stock: p.is_in_stock,
+      pre_order_available: p.pre_order_available,
+      pre_order_date: p.pre_order_date,
+      created_at: p.created_at,
+      images: (p.product_images || [])
+        .sort((a: any, b: any) => a.display_order - b.display_order)
+        .map((img: any) => img.image_url),
+      variants: (p.product_variants || []).map((v: any) => ({
+        id: v.id,
+        size: v.size,
+        color: v.color,
+        stock: v.stock,
+        sku: v.sku
+      }))
+    }));
+  } catch (err) {
+    console.error('Fetch Supabase error:', err);
+    return mockDb.getProducts();
+  }
+}
+
+export async function createSupabaseProduct(productData: {
+  name: string;
+  slug: string;
+  description: string;
+  price: number;
+  mrp: number;
+  discount_percent: number;
+  badge: string;
+  category?: string;
+  gender?: string;
+  is_in_stock: boolean;
+  pre_order_available: boolean;
+  pre_order_date?: string | null;
+  images: string[];
+  variants: { size: string; color: string; stock: number; sku: string }[];
+}): Promise<any> {
+  if (!isSupabaseConfigured) {
+    const currentProds = mockDb.getProducts();
+    const newProd: MockProduct = {
+      id: 'p_' + Math.random().toString(36).substring(2, 9),
+      ...productData,
+      pre_order_date: productData.pre_order_date || undefined,
+      created_at: new Date().toISOString(),
+      variants: productData.variants.map((v, i) => ({
+        id: `v_${i}`,
+        ...v
+      }))
+    };
+    mockDb.saveProducts([...currentProds, newProd]);
+    return newProd;
+  }
+
+  // 1. Insert into products table
+  const { data: product, error: pError } = await supabase
+    .from('products')
+    .insert({
+      name: productData.name,
+      slug: productData.slug,
+      description: productData.description,
+      price: productData.price,
+      mrp: productData.mrp,
+      discount_percent: productData.discount_percent,
+      badge: productData.badge,
+      is_in_stock: productData.is_in_stock,
+      pre_order_available: productData.pre_order_available,
+      pre_order_date: productData.pre_order_date || null
+    })
+    .select()
+    .single();
+
+  if (pError) throw pError;
+
+  // 2. Insert variants
+  if (productData.variants && productData.variants.length > 0) {
+    const variantRows = productData.variants.map((v) => ({
+      product_id: product.id,
+      size: v.size,
+      color: v.color,
+      stock: v.stock,
+      sku: v.sku
+    }));
+    const { error: vError } = await supabase.from('product_variants').insert(variantRows);
+    if (vError) console.error('Error inserting variants to Supabase:', vError);
+  }
+
+  // 3. Insert images
+  if (productData.images && productData.images.length > 0) {
+    const imageRows = productData.images.map((imgUrl, idx) => ({
+      product_id: product.id,
+      image_url: imgUrl,
+      display_order: idx
+    }));
+    const { error: imgError } = await supabase.from('product_images').insert(imageRows);
+    if (imgError) console.error('Error inserting images to Supabase:', imgError);
+  }
+
+  return product;
+}
+
+export async function deleteSupabaseProduct(productId: string): Promise<void> {
+  if (!isSupabaseConfigured) {
+    const next = mockDb.getProducts().filter(p => p.id !== productId);
+    mockDb.saveProducts(next);
+    return;
+  }
+
+  const { error } = await supabase
+    .from('products')
+    .delete()
+    .eq('id', productId);
+
+  if (error) {
+    console.error('Error deleting product from Supabase:', error);
+    throw error;
+  }
+}

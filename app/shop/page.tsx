@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/components/StoreContext';
-import { mockDb } from '@/lib/supabase';
+import { mockDb, fetchSupabaseProducts } from '@/lib/supabase';
 import { ShoppingBag, Eye, SlidersHorizontal, Search, RefreshCw, X } from 'lucide-react';
 import { formatPrice } from '@/products';
 import { ProductGridSkeleton } from '@/components/ProductSkeleton';
@@ -24,12 +24,15 @@ function ShopContent() {
   const [sortBy, setSortBy] = useState('featured');
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
-  // Load products
+  // Load products from live Supabase
   useEffect(() => {
-    setIsLoading(true);
-    setDbProducts(mockDb.getProducts());
-    const timer = setTimeout(() => setIsLoading(false), 350);
-    return () => clearTimeout(timer);
+    const loadProducts = async () => {
+      setIsLoading(true);
+      const prods = await fetchSupabaseProducts();
+      setDbProducts(prods);
+      setIsLoading(false);
+    };
+    loadProducts();
   }, []);
 
   // Update filters based on query params (navbar links)
