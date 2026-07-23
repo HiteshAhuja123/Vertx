@@ -244,35 +244,35 @@ ON CONFLICT (id) DO NOTHING;
 INSERT INTO public.products (id, name, slug, description, price, mrp, discount_percent, badge, is_in_stock, pre_order_available, pre_order_date)
 VALUES 
     (
-        'p1111111-1111-1111-1111-111111111111', 
+        'a1111111-1111-1111-1111-111111111111', 
         'Hybrid Compression Shell', 
         'hybrid-compression-shell', 
         'Engineered for the hybrid athlete who lives between the weight room and the track. The Hybrid Compression Shell delivers elite muscle support, sweat-wicking performance, and a silhouette that moves like a second skin.', 
         5499, 6999, 21, 'NEW DROP', true, true, '2026-08-15T00:00:00Z'
     ),
     (
-        'p2222222-2222-2222-2222-222222222222', 
+        'a2222222-2222-2222-2222-222222222222', 
         'Phantom Joggers', 
         'phantom-joggers', 
         'The Phantom Joggers redefine what training bottoms can be. Cut with a tailored taper and finished with brushed fleece that is cloud-soft from the first wear, these are built for the athlete who refuses to compromise.', 
         4999, 5999, 16, 'BESTSELLER', true, false, null
     ),
     (
-        'p3333333-3333-3333-3333-333333333333', 
+        'a3333333-3333-3333-3333-333333333333', 
         'Apex Performance Tank', 
         'apex-performance-tank', 
         'When intensity peaks, the Apex Performance Tank keeps you cool. Open-mesh panels channel airflow to your core, and zinc-oxide technology eliminates odor even in your hardest sessions.', 
         3499, 3499, 0, 'LIMITED', true, true, '2026-09-01T00:00:00Z'
     ),
     (
-        'p4444444-4444-4444-4444-444444444444', 
+        'a4444444-4444-4444-4444-444444444444', 
         'Shadow Leggings', 
         'shadow-leggings', 
         'Sculpt. Support. Dominate. The Shadow Leggings feature our high-waist compression technology for a defined silhouette from every angle. Squat-proof, sweat-proof, and built to outlast your hardest sessions.', 
         4499, 5499, 18, 'BESTSELLER', true, false, null
     ),
     (
-        'p5555555-5555-5555-5555-555555555555', 
+        'a5555555-5555-5555-5555-555555555555', 
         'Warrior Oversized Tee', 
         'warrior-oversized-tee', 
         'A statement piece for the off-days. Heavyweight ring-spun cotton in an oversized silhouette with VORTX branding. This is how warriors recover.', 
@@ -283,26 +283,26 @@ ON CONFLICT (id) DO NOTHING;
 -- Variants
 INSERT INTO public.product_variants (product_id, size, color, stock, sku)
 VALUES 
-    ('p1111111-1111-1111-1111-111111111111', 'M', 'Black', 10, 'VX-HYB-COMP-M-BLK'),
-    ('p1111111-1111-1111-1111-111111111111', 'L', 'Black', 15, 'VX-HYB-COMP-L-BLK'),
-    ('p1111111-1111-1111-1111-111111111111', 'XL', 'Black', 5, 'VX-HYB-COMP-XL-BLK'),
-    ('p2222222-2222-2222-2222-222222222222', 'M', 'Black', 20, 'VX-PHN-JOG-M-BLK'),
-    ('p2222222-2222-2222-2222-222222222222', 'L', 'Black', 25, 'VX-PHN-JOG-L-BLK'),
-    ('p3333333-3333-3333-3333-333333333333', 'M', 'White', 8, 'VX-APX-TNK-M-WHT'),
-    ('p3333333-3333-3333-3333-333333333333', 'L', 'White', 12, 'VX-APX-TNK-L-WHT'),
-    ('p4444444-4444-4444-4444-444444444444', 'S', 'Black', 15, 'VX-SHD-LEG-S-BLK'),
-    ('p4444444-4444-4444-4444-444444444444', 'M', 'Black', 20, 'VX-SHD-LEG-M-BLK'),
-    ('p5555555-5555-5555-5555-555555555555', 'M', 'Black', 0, 'VX-WAR-TEE-M-BLK'),
-    ('p5555555-5555-5555-5555-555555555555', 'L', 'Black', 0, 'VX-WAR-TEE-L-BLK')
+    ('a1111111-1111-1111-1111-111111111111', 'M', 'Black', 10, 'VX-HYB-COMP-M-BLK'),
+    ('a1111111-1111-1111-1111-111111111111', 'L', 'Black', 15, 'VX-HYB-COMP-L-BLK'),
+    ('a1111111-1111-1111-1111-111111111111', 'XL', 'Black', 5, 'VX-HYB-COMP-XL-BLK'),
+    ('a2222222-2222-2222-2222-222222222222', 'M', 'Black', 20, 'VX-PHN-JOG-M-BLK'),
+    ('a2222222-2222-2222-2222-222222222222', 'L', 'Black', 25, 'VX-PHN-JOG-L-BLK'),
+    ('a3333333-3333-3333-3333-333333333333', 'M', 'White', 8, 'VX-APX-TNK-M-WHT'),
+    ('a3333333-3333-3333-3333-333333333333', 'L', 'White', 12, 'VX-APX-TNK-L-WHT'),
+    ('a4444444-4444-4444-4444-444444444444', 'S', 'Black', 15, 'VX-SHD-LEG-S-BLK'),
+    ('a4444444-4444-4444-4444-444444444444', 'M', 'Black', 20, 'VX-SHD-LEG-M-BLK'),
+    ('a5555555-5555-5555-5555-555555555555', 'M', 'Black', 0, 'VX-WAR-TEE-M-BLK'),
+    ('a5555555-5555-5555-5555-555555555555', 'L', 'Black', 0, 'VX-WAR-TEE-L-BLK')
 ON CONFLICT (sku) DO NOTHING;
 
 -- Product Images
 INSERT INTO public.product_images (product_id, image_url, display_order)
 VALUES 
-    ('p1111111-1111-1111-1111-111111111111', 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80', 0),
-    ('p1111111-1111-1111-1111-111111111111', 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=80', 1),
-    ('p2222222-2222-2222-2222-222222222222', 'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=800&q=80', 0),
-    ('p3333333-3333-3333-3333-333333333333', 'https://images.unsplash.com/photo-1548690312-e3b507d8c110?w=800&q=80', 0),
-    ('p4444444-4444-4444-4444-444444444444', 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80', 0),
-    ('p5555555-5555-5555-5555-555555555555', 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80', 0)
+    ('a1111111-1111-1111-1111-111111111111', 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80', 0),
+    ('a1111111-1111-1111-1111-111111111111', 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=80', 1),
+    ('a2222222-2222-2222-2222-222222222222', 'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=800&q=80', 0),
+    ('a3333333-3333-3333-3333-333333333333', 'https://images.unsplash.com/photo-1548690312-e3b507d8c110?w=800&q=80', 0),
+    ('a4444444-4444-4444-4444-444444444444', 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80', 0),
+    ('a5555555-5555-5555-5555-555555555555', 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80', 0)
 ON CONFLICT (id) DO NOTHING;
