@@ -102,8 +102,7 @@ export default function AdminDashboard() {
           // Fallback to data URL encoding so product creation can continue seamlessly
           const dataUrl = await convertToBase64(file);
           setPImageInput(dataUrl);
-          logAutomation('SYSTEM', `⚠️ Storage Engine: Supabase RLS policy blocked upload (${uploadError.message}). Applied local data URL fallback.`);
-          alert(`Storage Notice: Direct cloud bucket upload was blocked by Supabase RLS policy (${uploadError.message}). A local image preview has been applied so you can create your product. Execute the Storage RLS SQL policies in Supabase to enable direct cloud uploads.`);
+          logAutomation('SYSTEM', `⚠️ Storage Engine: Supabase Storage upload error (${uploadError.message}). Applied local data URL fallback.`);
           return;
         }
 
