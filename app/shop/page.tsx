@@ -234,7 +234,7 @@ function ShopContent() {
                     <div
                       key={prod.id}
                       onClick={() => router.push(`/product/${prod.slug}`)}
-                      className="group flex flex-col border border-vortx-white/15 bg-vortx-dark/30 rounded overflow-hidden hover:border-vortx-white/30 transition-all duration-300 cursor-pointer"
+                      className="group flex flex-col border border-vortx-white/15 bg-vortx-dark/30 rounded overflow-hidden card-tilt-hover cursor-pointer"
                     >
                       {/* Image cover */}
                       <div className="aspect-[4/5] bg-vortx-gray-dark relative overflow-hidden">
@@ -249,7 +249,7 @@ function ShopContent() {
                         <img
                           src={prod.images?.[0]}
                           alt={prod.name}
-                          className="w-full h-full object-cover grayscale group-hover:scale-102 group-hover:grayscale-0 transition duration-500"
+                          className="w-full h-full object-cover grayscale group-hover:scale-105 group-hover:grayscale-0 transition duration-700"
                         />
 
                         {/* Interactive overlay shortcuts */}
@@ -258,7 +258,7 @@ function ShopContent() {
                             href={`/product/${prod.slug}`}
                             onClick={(e) => e.stopPropagation()}
                             aria-label={`View details for ${prod.name}`}
-                            className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-105 active:scale-95 transition"
+                            className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-110 active:scale-95 transition btn-lift"
                           >
                             <Eye className="w-4 h-4" />
                           </Link>
@@ -280,7 +280,7 @@ function ShopContent() {
                               }, 1);
                             }}
                             aria-label={`Add ${prod.name} to cart`}
-                            className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-105 active:scale-95 transition"
+                            className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-110 active:scale-95 transition btn-lift"
                             title={isPreOrder ? "Place Pre-Order" : "Add to Cart"}
                           >
                             <ShoppingBag className="w-4 h-4" />
@@ -289,7 +289,7 @@ function ShopContent() {
 
                         {/* Drop badge */}
                         {prod.badge && (
-                          <span className="absolute top-4 left-4 px-2 py-1 bg-vortx-white text-vortx-black font-sans text-[10px] font-bold tracking-wider">
+                          <span className="absolute top-4 left-4 px-2 py-1 bg-vortx-white text-vortx-black font-sans text-[10px] font-bold tracking-wider badge-shimmer">
                             {prod.badge}
                           </span>
                         )}

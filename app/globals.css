@@ -296,3 +296,64 @@ body {
   background-size: 200% 100%;
   animation: shimmer 1.6s infinite ease-in-out;
 }
+
+/* --- HIGH-PERFORMANCE BRAND ANIMATIONS --- */
+
+/* Interactive Spring Button Physics */
+.btn-lift {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, background-color 0.25s ease;
+}
+.btn-lift:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 25px -5px rgba(255, 255, 255, 0.12);
+}
+.btn-lift:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+/* Card Subtle 3D Depth & Border Glow */
+.card-tilt-hover {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.5s ease;
+  will-change: transform;
+}
+.card-tilt-hover:hover {
+  transform: translateY(-4px) scale(1.01);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 255, 255, 0.05);
+}
+
+/* Cyber Badge Pulsing Glow */
+.glow-red-pulse {
+  animation: red-glow 2.5s infinite ease-in-out;
+}
+
+@keyframes red-glow {
+  0%, 100% {
+    box-shadow: 0 0 4px rgba(230, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 14px rgba(230, 0, 0, 0.7);
+  }
+}
+
+/* Metallic Badge Shimmer Edge */
+.badge-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.badge-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  transform: skewX(-25deg);
+  animation: badge-shine 4s infinite ease-in-out;
+}
+@keyframes badge-shine {
+  0%, 70% { left: -100%; }
+  100% { left: 200%; }
+}
+

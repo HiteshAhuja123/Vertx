@@ -143,13 +143,13 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 pt-5 sm:pt-6 w-full max-w-sm sm:max-w-none mx-auto">
             <Link 
               href="/shop"
-              className="inline-flex items-center justify-center w-full sm:w-auto px-8 py-4 bg-vortx-white text-vortx-black font-sans text-xs font-bold tracking-widest hover:bg-vortx-white/90 active:scale-95 transition-all duration-300 shadow-xl"
+              className="inline-flex items-center justify-center w-full sm:w-auto px-8 py-4 bg-vortx-white text-vortx-black font-sans text-xs font-bold tracking-widest btn-lift shadow-xl"
             >
               SHOP COLLECTION
             </Link>
             <Link 
               href="/shop?filter=preorder"
-              className="inline-flex items-center justify-center w-full sm:w-auto px-8 py-4 border border-vortx-white/30 text-vortx-white font-sans text-xs font-bold tracking-widest hover:bg-vortx-white/10 hover:border-vortx-white transition-all duration-300"
+              className="inline-flex items-center justify-center w-full sm:w-auto px-8 py-4 border border-vortx-white/30 text-vortx-white font-sans text-xs font-bold tracking-widest btn-lift hover:bg-vortx-white/10 hover:border-vortx-white"
             >
               PRE-ORDER COLLECTION
             </Link>
@@ -271,7 +271,7 @@ export default function Home() {
                 <div 
                   key={prod.id} 
                   onClick={() => router.push(`/product/${prod.slug}`)}
-                  className="group flex flex-col border border-vortx-white/15 bg-vortx-dark/40 overflow-hidden relative transition hover:border-vortx-white/30 cursor-pointer"
+                  className="group flex flex-col border border-vortx-white/15 bg-vortx-dark/40 overflow-hidden relative card-tilt-hover cursor-pointer"
                 >
                   {/* Image wrapper */}
                   <div className="aspect-[4/5] bg-vortx-gray-dark relative overflow-hidden">
@@ -286,7 +286,7 @@ export default function Home() {
                     <img 
                       src={prod.images?.[0]} 
                       alt={prod.name}
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-102 transition duration-500"
+                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition duration-700"
                     />
                     
                     {/* Hover controls overlay */}
@@ -295,7 +295,7 @@ export default function Home() {
                         href={`/product/${prod.slug}`}
                         onClick={(e) => e.stopPropagation()}
                         aria-label={`View details for ${prod.name}`}
-                        className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-105 active:scale-95 transition"
+                        className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-110 active:scale-95 transition btn-lift"
                         title="View Details"
                       >
                         <Eye className="w-4 h-4" />
@@ -318,7 +318,7 @@ export default function Home() {
                           }, 1);
                         }}
                         aria-label={`Add ${prod.name} to cart`}
-                        className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-105 active:scale-95 transition"
+                        className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-110 active:scale-95 transition btn-lift"
                         title={isPreOrder ? "Pre-Order Item" : "Add to Cart"}
                       >
                         <ShoppingBag className="w-4 h-4" />
@@ -327,7 +327,7 @@ export default function Home() {
 
                     {/* Badge */}
                     {prod.badge && (
-                      <span className="absolute top-4 left-4 px-2 py-1 bg-vortx-white text-vortx-black font-syne text-[8px] font-extrabold tracking-wider">
+                      <span className="absolute top-4 left-4 px-2 py-1 bg-vortx-white text-vortx-black font-syne text-[8px] font-extrabold tracking-wider badge-shimmer">
                         {prod.badge}
                       </span>
                     )}
