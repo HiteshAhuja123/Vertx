@@ -306,3 +306,30 @@ VALUES
     ('a4444444-4444-4444-4444-444444444444', 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80', 0),
     ('a5555555-5555-5555-5555-555555555555', 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80', 0)
 ON CONFLICT (id) DO NOTHING;
+
+-- --- SUPABASE STORAGE CONFIGURATION & RLS POLICIES ---
+
+-- 1. Create the 'product-images' storage bucket if it doesn't exist
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('product-images', 'product-images', true)
+ON CONFLICT (id) DO UPDATE SET public = true;
+
+-- 2. Allow public viewing of stored images
+CREATE POLICY "Public Read Access on product-images" 
+ON storage.objects FOR SELECT 
+USING (bucket_id = 'product-images');
+
+-- 3. Allow uploads into product-images bucket
+CREATE POLICY "Public Upload Access on product-images" 
+ON storage.objects FOR INSERT 
+WITH CHECK (bucket_id = 'product-images');
+
+-- 4. Allow updates and deletes on product-images bucket
+CREATE POLICY "Public Update Access on product-images" 
+ON storage.objects FOR UPDATE 
+USING (bucket_id = 'product-images');
+
+CREATE POLICY "Public Delete Access on product-images" 
+ON storage.objects FOR DELETE 
+USING (bucket_id = 'product-images');
+
