@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { mockDb } from '@/lib/supabase';
 import { useStore } from '@/components/StoreContext';
-import { Star, ShieldCheck, Truck, RefreshCw, Layers, Check, Ruler, Info, X } from 'lucide-react';
+import { Star, ShieldCheck, Truck, Layers, Check, Ruler, Info, X } from 'lucide-react';
 import { formatPrice } from '@/products';
 import { logAutomation } from '@/lib/email';
 
@@ -29,10 +29,6 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [activeTab, setActiveTab] = useState<'details' | 'specs' | 'shipping'>('details');
   const [relatedItems, setRelatedItems] = useState<any[]>([]);
-
-  // 360 Visualizer Mode State
-  const [view360, setView360] = useState(false);
-  const [rotationAngle, setRotationAngle] = useState(0);
 
   // Zoom Ref and hover positioning
   const containerRef = useRef<HTMLDivElement>(null);
@@ -149,7 +145,7 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
 
   // Zoom events handler
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current || !zoomImageRef.current || view360) return;
+    if (!containerRef.current || !zoomImageRef.current) return;
     
     const { left, top, width, height } = containerRef.current.getBoundingClientRect();
     const x = ((e.clientX - left) / width) * 100;
@@ -217,60 +213,19 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
               onMouseLeave={handleMouseLeave}
               className="aspect-[4/5] max-h-[500px] sm:max-h-[550px] lg:max-h-[calc(100vh-180px)] w-full bg-vortx-dark border border-vortx-white/10 relative overflow-hidden rounded group"
             >
-              {view360 ? (
-                /* Interactive 360 simulation viewer */
-                <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-vortx-black">
-                  <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
-                    <img 
-                      src={product.images?.[activeImageIndex]} 
-                      alt="360 View"
-                      className="max-h-[85%] object-contain grayscale"
-                      style={{ 
-                        transform: `rotateY(${rotationAngle}deg) scale(1.05)`,
-                        filter: `hue-rotate(${rotationAngle / 4}deg) brightness(${1 - Math.abs(rotationAngle - 180) / 1000})`,
-                        transition: 'transform 0.1s ease-out'
-                      }}
-                    />
-                  </div>
-                  {/* Slider controller */}
-                  <div className="absolute bottom-6 w-[80%] mx-auto font-mono text-center space-y-2">
-                    <div className="text-xs text-vortx-gray font-bold tracking-widest uppercase">
-                      DRAG ROTATION SLIDER // {rotationAngle}°
-                    </div>
-                    <input 
-                      type="range" 
-                      min="0" 
-                      max="360"
-                      value={rotationAngle}
-                      onChange={(e) => setRotationAngle(Number(e.target.value))}
-                      className="w-full h-1 bg-vortx-white/20 rounded-lg appearance-none cursor-pointer accent-vortx-white"
-                    />
-                  </div>
-                </div>
-              ) : (
-                /* Standard Zoom Image cover with smooth transform-origin transition */
-                <img 
-                  ref={zoomImageRef}
-                  src={product.images?.[activeImageIndex]} 
-                  alt={product.name}
-                  className="w-full h-full object-cover grayscale pointer-events-none"
-                  style={{
-                    transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform-origin 0.1s ease-out'
-                  }}
-                />
-              )}
-
-              {/* View Toggle */}
-              <button 
-                onClick={() => setView360(!view360)}
-                className="absolute top-4 right-4 bg-vortx-black/80 hover:bg-vortx-white hover:text-vortx-black border border-vortx-white/20 rounded px-3 py-1.5 font-sans text-xs font-bold tracking-wider transition flex items-center gap-1.5"
-              >
-                <RefreshCw className="w-3 h-3" />
-                {view360 ? 'STANDARD VIEW' : '360° INTERACTIVE'}
-              </button>
+              {/* Standard Zoom Image cover with smooth transform-origin transition */}
+              <img 
+                ref={zoomImageRef}
+                src={product.images?.[activeImageIndex]} 
+                alt={product.name}
+                className="w-full h-full object-cover grayscale pointer-events-none"
+                style={{
+                  transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform-origin 0.1s ease-out'
+                }}
+              />
 
               {/* Badge */}
-              {product.badge && !view360 && (
+              {product.badge && (
                 <span className="absolute top-4 left-4 px-2 py-1 bg-vortx-white text-vortx-black font-sans text-[10px] font-bold tracking-wider">
                   {product.badge}
                 </span>
@@ -278,7 +233,7 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
             </div>
 
             {/* Thumbnail Gallery Row */}
-            {!view360 && product.images && product.images.length > 1 && (
+            {product.images && product.images.length > 1 && (
               <div className="grid grid-cols-4 gap-4">
                 {product.images.map((img: string, idx: number) => (
                   <button
@@ -304,7 +259,7 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
               <span className="text-xs font-sans text-vortx-gray uppercase tracking-[0.2em] font-bold">
                 {product.category} | {product.gender}
               </span>
-              <h1 className="font-syne text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-wide text-vortx-white uppercase leading-none break-words">
+              <h1 className="font-sans text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-wide text-vortx-white uppercase leading-tight break-words">
                 {product.name}
               </h1>
               
@@ -459,65 +414,102 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
               </div>
             </div>
 
-            {/* Shipping / Support assurances */}
-            <div className="grid grid-cols-3 gap-4 text-center text-xs sm:text-sm font-sans font-medium text-vortx-gray border-y border-vortx-white/10 py-6">
-              <div className="space-y-1">
-                <Truck className="w-5 h-5 mx-auto mb-1.5 text-vortx-white" />
-                <span className="block text-vortx-white uppercase font-bold tracking-wide">EST. DELIVERY</span>
-                <span className="text-[11px] sm:text-xs text-vortx-gray">{isPreOrder ? 'Starts Aug 15' : getDeliveryDate()}</span>
-              </div>
-              <div className="space-y-1 border-x border-vortx-white/10">
-                <ShieldCheck className="w-5 h-5 mx-auto mb-1.5 text-vortx-white" />
-                <span className="block text-vortx-white uppercase font-bold tracking-wide">SECURED GATEWAY</span>
-                <span className="text-[11px] sm:text-xs text-vortx-gray">SSL Encrypted Checkout</span>
-              </div>
-              <div className="space-y-1">
-                <Layers className="w-5 h-5 mx-auto mb-1.5 text-vortx-white" />
-                <span className="block text-vortx-white uppercase font-bold tracking-wide">WARRIOR FIT</span>
-                <span className="text-[11px] sm:text-xs text-vortx-gray">Sweat-proof Tech Weave</span>
-              </div>
-            </div>
+          </div>
 
-            {/* Details tabs accordion */}
-            <div className="space-y-4">
-              <div className="flex gap-2 border-b border-vortx-white/10 text-xs sm:text-sm font-sans font-bold tracking-widest">
-                {['details', 'specs', 'shipping'].map((tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => setActiveTab(tab as any)}
-                    className={`pb-3 px-6 transition ${
-                      activeTab === tab ? 'border-b-2 border-vortx-white text-vortx-white' : 'text-vortx-gray hover:text-vortx-white'
-                    }`}
+        </div>
+
+        {/* Full-Width Lower Content Section */}
+        <div className="space-y-8 mt-12">
+          
+          {/* Shipping / Support assurances */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center text-xs sm:text-sm font-sans font-medium text-vortx-gray bg-vortx-dark/60 border border-vortx-white/10 rounded-lg p-6">
+            <div className="space-y-1 py-2 sm:py-0">
+              <Truck className="w-5 h-5 mx-auto mb-1.5 text-vortx-white" />
+              <span className="block text-vortx-white uppercase font-bold tracking-wide">EST. DELIVERY</span>
+              <span className="text-[11px] sm:text-xs text-vortx-gray">{isPreOrder ? 'Starts Aug 15' : getDeliveryDate()}</span>
+            </div>
+            <div className="space-y-1 py-2 sm:py-0 border-y sm:border-y-0 sm:border-x border-vortx-white/10">
+              <ShieldCheck className="w-5 h-5 mx-auto mb-1.5 text-vortx-white" />
+              <span className="block text-vortx-white uppercase font-bold tracking-wide">SECURED GATEWAY</span>
+              <span className="text-[11px] sm:text-xs text-vortx-gray">SSL Encrypted Checkout</span>
+            </div>
+            <div className="space-y-1 py-2 sm:py-0">
+              <Layers className="w-5 h-5 mx-auto mb-1.5 text-vortx-white" />
+              <span className="block text-vortx-white uppercase font-bold tracking-wide">WARRIOR FIT</span>
+              <span className="text-[11px] sm:text-xs text-vortx-gray">Sweat-proof Tech Weave</span>
+            </div>
+          </div>
+
+          {/* Details tabs section */}
+          <div className="bg-vortx-dark/40 border border-vortx-white/10 rounded-lg p-6 sm:p-8 space-y-6">
+            <div className="flex gap-2 border-b border-vortx-white/10 text-xs sm:text-sm font-sans font-bold tracking-widest">
+              {['details', 'specs', 'shipping'].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab as any)}
+                  className={`pb-3 px-6 transition ${
+                    activeTab === tab ? 'border-b-2 border-vortx-white text-vortx-white' : 'text-vortx-gray hover:text-vortx-white'
+                  }`}
+                >
+                  {tab.toUpperCase()}
+                </button>
+              ))}
+            </div>
+            <div className="text-sm sm:text-base text-vortx-gray leading-relaxed font-medium">
+              {activeTab === 'details' && (
+                <div className="space-y-2">
+                  <p>{product.description}</p>
+                  <p className="text-xs sm:text-sm text-vortx-white mt-4 font-semibold">FABRIC CONTENT:</p>
+                  <p className="italic">{fabricInfo}</p>
+                </div>
+              )}
+              {activeTab === 'specs' && (
+                <ul className="space-y-2 font-mono text-xs sm:text-sm max-w-2xl">
+                  {Object.entries(specsInfo).map(([key, val]: any) => (
+                    <li key={key} className="flex justify-between border-b border-vortx-white/10 pb-1.5">
+                      <span className="uppercase text-vortx-white/60">{key}</span>
+                      <span className="text-vortx-white font-medium">{val}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {activeTab === 'shipping' && (
+                <p>{shippingInfo}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Related Items Row */}
+          {relatedItems && relatedItems.length > 0 && (
+            <div className="pt-8 border-t border-vortx-white/10">
+              <h3 className="text-xs font-sans font-bold tracking-[0.2em] text-vortx-gray uppercase mb-6">
+                RECOMMENDED GEAR // COMPLETE THE LOOK
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                {relatedItems.map((rel: any) => (
+                  <Link 
+                    key={rel.id} 
+                    href={`/product/${rel.slug}`}
+                    className="group bg-vortx-dark border border-vortx-white/10 rounded overflow-hidden hover:border-vortx-white/30 transition p-3 flex flex-col"
                   >
-                    {tab.toUpperCase()}
-                  </button>
+                    <div className="aspect-[4/5] bg-vortx-black rounded overflow-hidden mb-3">
+                      <img 
+                        src={rel.images?.[0]} 
+                        alt={rel.name} 
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition duration-300" 
+                      />
+                    </div>
+                    <span className="text-xs font-sans font-bold text-vortx-white group-hover:underline uppercase truncate">
+                      {rel.name}
+                    </span>
+                    <span className="text-xs font-mono text-vortx-gray mt-1 font-bold">
+                      {formatPrice(rel.price)}
+                    </span>
+                  </Link>
                 ))}
               </div>
-              <div className="text-sm sm:text-base text-vortx-gray leading-relaxed font-medium">
-                {activeTab === 'details' && (
-                  <div className="space-y-2">
-                    <p>{product.description}</p>
-                    <p className="text-xs sm:text-sm text-vortx-white mt-4 font-semibold">FABRIC CONTENT:</p>
-                    <p className="italic">{fabricInfo}</p>
-                  </div>
-                )}
-                {activeTab === 'specs' && (
-                  <ul className="space-y-1.5 font-mono text-xs sm:text-sm">
-                    {Object.entries(specsInfo).map(([key, val]: any) => (
-                      <li key={key} className="flex justify-between border-b border-vortx-white/5 pb-1">
-                        <span className="uppercase text-vortx-white/60">{key}</span>
-                        <span>{val}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {activeTab === 'shipping' && (
-                  <p>{shippingInfo}</p>
-                )}
-              </div>
             </div>
-
-          </div>
+          )}
 
         </div>
 

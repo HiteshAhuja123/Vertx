@@ -170,7 +170,9 @@ interface StoreContextType {
   placeOrder: (method: Required<Order>['payment']['method'], addressId: string) => Promise<string>;
   updateOrderStatus: (orderId: string, status: Order['status'], courierName?: string, trackingNumber?: string) => void;
   
-  // Mode Toggle
+  // Mode & Theme Toggles
+  theme: 'dark' | 'light';
+  toggleTheme: () => void;
   togglePreOrderMode: () => void;
 }
 
@@ -186,9 +188,19 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [couponCode, setCouponCode] = useState('');
   const [discountPercent, setDiscountPercent] = useState(0);
   const [preOrderMode, setPreOrderMode] = useState(false);
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
-  // Load state on mount
+  // Load state & theme on mount
   useEffect(() => {
+    const savedTheme = (localStorage.getItem('vortx_theme') as 'dark' | 'light') || 'dark';
+    setTheme(savedTheme);
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    if (savedTheme === 'light') {
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+    }
+
     const currUser = mockDb.getCurrentUser();
     if (currUser) {
       const mappedUser: UserProfile = {
@@ -591,6 +603,21 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     logAutomation('SYSTEM', `⚙️ Order Status Updated: #${dbOrders[orderIndex].order_number} marked as ${status.toUpperCase()}`);
   };
 
+  const toggleTheme = () => {
+    setTheme(prev => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('vortx_theme', next);
+      document.documentElement.setAttribute('data-theme', next);
+      if (next === 'light') {
+        document.documentElement.classList.add('light');
+      } else {
+        document.documentElement.classList.remove('light');
+      }
+      logAutomation('SYSTEM', `⚙️ Theme changed to ${next.toUpperCase()} mode.`);
+      return next;
+    });
+  };
+
   const togglePreOrderMode = () => {
     setPreOrderMode(prev => {
       const mode = !prev;
@@ -608,6 +635,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       cart,
       wishlist,
       preOrderMode,
+      theme,
+      toggleTheme,
       signup,
       login,
       logout,

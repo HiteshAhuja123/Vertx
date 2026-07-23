@@ -7,6 +7,7 @@ import { useStore } from '@/components/StoreContext';
 import { mockDb } from '@/lib/supabase';
 import { ShoppingBag, Eye, SlidersHorizontal, Search, RefreshCw, X } from 'lucide-react';
 import { formatPrice } from '@/products';
+import { ProductGridSkeleton } from '@/components/ProductSkeleton';
 
 function ShopContent() {
   const router = useRouter();
@@ -14,6 +15,7 @@ function ShopContent() {
   const { addToCart, preOrderMode, togglePreOrderMode } = useStore();
   const [dbProducts, setDbProducts] = useState<any[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Filter States
   const [searchQuery, setSearchQuery] = useState('');
@@ -24,7 +26,10 @@ function ShopContent() {
 
   // Load products
   useEffect(() => {
+    setIsLoading(true);
     setDbProducts(mockDb.getProducts());
+    const timer = setTimeout(() => setIsLoading(false), 350);
+    return () => clearTimeout(timer);
   }, []);
 
   // Update filters based on query params (navbar links)
@@ -199,7 +204,9 @@ function ShopContent() {
               </button>
             </div>
 
-            {filteredProducts.length === 0 ? (
+            {isLoading ? (
+              <ProductGridSkeleton count={6} />
+            ) : filteredProducts.length === 0 ? (
               <div className="h-64 flex flex-col items-center justify-center border border-dashed border-vortx-white/10 rounded">
                 <p className="font-sans text-xs font-bold tracking-wider text-vortx-gray">NO GEAR MATCHES THE SELECTED FILTERS</p>
                 <button
