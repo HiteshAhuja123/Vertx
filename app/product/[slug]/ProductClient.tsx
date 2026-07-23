@@ -162,9 +162,9 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
 
   // Add order trigger
   const handleAddToCart = () => {
-    if (!selectedSize) {
-      alert('Please select a size');
-      return;
+    const activeSize = selectedSize || sizes[0] || 'M';
+    if (!selectedSize && sizes.length > 0) {
+      setSelectedSize(sizes[0]);
     }
     
     addToCart({
@@ -173,8 +173,8 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
       name: product.name,
       price: product.price,
       mrp: product.mrp,
-      size: selectedSize,
-      color: selectedColor,
+      size: activeSize,
+      color: selectedColor || colors[0] || 'Black',
       image: product.images?.[0] || '',
       sku: currentVariant?.sku || '',
       isPreOrder: isPreOrder,

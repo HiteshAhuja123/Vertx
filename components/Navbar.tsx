@@ -16,6 +16,28 @@ export default function Navbar() {
   const [couponError, setCouponError] = useState('');
   const [copiedCoupon, setCopiedCoupon] = useState(false);
 
+  // Lock body scrolling when drawer or mobile menu is open, and support Escape key
+  React.useEffect(() => {
+    if (isCartOpen || isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsCartOpen(false);
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isCartOpen, isMobileMenuOpen]);
+
   const navLinks = [
     { label: 'SHOP ALL', href: '/shop' },
     { label: 'MEN', href: '/shop?gender=men' },
@@ -55,6 +77,7 @@ export default function Navbar() {
   const shippingFee = cartSubtotal > shippingThreshold || cartSubtotal === 0 ? 0 : 250;
   const cartTotal = cartSubtotal - discountAmount + shippingFee;
   const totalItemsCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+  const freeShippingProgress = Math.min(100, (cartSubtotal / shippingThreshold) * 100);
 
   const handleApplyCoupon = (e: React.FormEvent) => {
     e.preventDefault();
@@ -341,10 +364,33 @@ export default function Navbar() {
                 <span className="font-sans text-base font-bold tracking-widest text-vortx-white">YOUR GEAR ({totalItemsCount})</span>
                 <button 
                   onClick={() => setIsCartOpen(false)}
+                  aria-label="Close Shopping Cart"
                   className="p-1 hover:bg-vortx-white/10 rounded transition text-vortx-gray hover:text-vortx-white"
                 >
                   <X className="w-5 h-5" />
                 </button>
+              </div>
+
+              {/* Dynamic Free Shipping Progress Bar */}
+              <div className="px-6 py-3 bg-vortx-black/80 border-b border-vortx-white/10 space-y-1.5">
+                <div className="flex justify-between items-center text-[11px] font-bold tracking-wider uppercase">
+                  {cartSubtotal >= shippingThreshold ? (
+                    <span className="text-emerald-400 flex items-center gap-1">
+                      <Truck className="w-3.5 h-3.5" /> 🎉 YOU&apos;VE UNLOCKED FREE EXPRESS SHIPPING!
+                    </span>
+                  ) : (
+                    <span className="text-vortx-white flex items-center gap-1">
+                      <Truck className="w-3.5 h-3.5 text-vortx-gray" /> ADD {formatPrice(shippingThreshold - cartSubtotal)} MORE FOR FREE SHIPPING
+                    </span>
+                  )}
+                  <span className="font-mono text-vortx-gray">{Math.round(freeShippingProgress)}%</span>
+                </div>
+                <div className="w-full h-1.5 bg-vortx-white/10 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-red-600 via-amber-500 to-emerald-400 transition-all duration-500 rounded-full" 
+                    style={{ width: `${freeShippingProgress}%` }}
+                  />
+                </div>
               </div>
 
               {/* Cart List */}

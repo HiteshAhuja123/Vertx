@@ -257,6 +257,7 @@ function ShopContent() {
                           <Link
                             href={`/product/${prod.slug}`}
                             onClick={(e) => e.stopPropagation()}
+                            aria-label={`View details for ${prod.name}`}
                             className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-105 active:scale-95 transition"
                           >
                             <Eye className="w-4 h-4" />
@@ -278,6 +279,7 @@ function ShopContent() {
                                 preOrderDate: prod.pre_order_date
                               }, 1);
                             }}
+                            aria-label={`Add ${prod.name} to cart`}
                             className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-105 active:scale-95 transition"
                             title={isPreOrder ? "Place Pre-Order" : "Add to Cart"}
                           >

@@ -287,6 +287,7 @@ export default function Home() {
                       <Link 
                         href={`/product/${prod.slug}`}
                         onClick={(e) => e.stopPropagation()}
+                        aria-label={`View details for ${prod.name}`}
                         className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-105 active:scale-95 transition"
                         title="View Details"
                       >
@@ -309,6 +310,7 @@ export default function Home() {
                             preOrderDate: prod.pre_order_date
                           }, 1);
                         }}
+                        aria-label={`Add ${prod.name} to cart`}
                         className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-105 active:scale-95 transition"
                         title={isPreOrder ? "Pre-Order Item" : "Add to Cart"}
                       >
