@@ -3,8 +3,12 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || '';
 
-// Initialize real Supabase client only if keys are present
-export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
+// Single flag to toggle mock vs live Supabase data
+// Set NEXT_PUBLIC_USE_MOCK_DATA=true in .env.local to force mock (localStorage) mode
+const useMockData = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
+
+// Initialize real Supabase client only if keys are present AND mock mode is off
+export const isSupabaseConfigured = !useMockData && !!(supabaseUrl && supabaseAnonKey);
 
 export const supabase = isSupabaseConfigured
   ? createClient(supabaseUrl, supabaseAnonKey)
@@ -14,6 +18,7 @@ export const supabase = isSupabaseConfigured
 // HIGH-FIDELITY MOCK DATABASE FOR LOCAL TESTING
 // ==========================================
 // Matches the exact tables in our schema.sql to ensure identical behavior.
+// Only used when isSupabaseConfigured === false (no Supabase keys).
 
 interface MockProfile {
   id: string;
@@ -371,6 +376,667 @@ export const mockDb = new MockDatabase();
 // ==========================================
 // LIVE SUPABASE DATABASE INTEGRATION (REAL DB)
 // ==========================================
+
+// ---- AUTH FUNCTIONS ----
+
+export async function supabaseSignUp(
+  email: string,
+  password: string,
+  fullName: string,
+  phone: string
+): Promise<{ user: any; error: any }> {
+  if (!isSupabaseConfigured) {
+    // Mock fallback
+    const profiles = mockDb.getProfiles();
+    if (profiles.some(p => p.email === email)) {
+      return { user: null, error: { message: 'An account with this email already exists.' } };
+    }
+    const newProfile: MockProfile = {
+      id: 'usr_' + Math.random().toString(36).substr(2, 9),
+      email,
+      full_name: fullName,
+      phone,
+      role: email === 'admin@vortx.fit' ? 'admin' : 'customer',
+      created_at: new Date().toISOString()
+    };
+    profiles.push(newProfile);
+    mockDb.saveProfiles(profiles);
+    mockDb.setCurrentUser(newProfile);
+    return { user: newProfile, error: null };
+  }
+
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name: fullName,
+        phone
+      }
+    }
+  });
+
+  if (error) return { user: null, error };
+
+  // Update the profile with phone (trigger creates profile, but phone comes from metadata)
+  if (data.user) {
+    await supabase
+      .from('profiles')
+      .update({ phone, full_name: fullName })
+      .eq('id', data.user.id);
+  }
+
+  return { user: data.user, error: null };
+}
+
+export async function supabaseLogin(
+  email: string,
+  password: string
+): Promise<{ user: any; error: any }> {
+  if (!isSupabaseConfigured) {
+    // Mock fallback
+    const profiles = mockDb.getProfiles();
+    let found = profiles.find(p => p.email.toLowerCase() === email.toLowerCase());
+
+    // Auto-provision admin account
+    if (!found && (email.toLowerCase() === 'admin@vortx.fit' || email.toLowerCase().includes('admin'))) {
+      found = {
+        id: 'usr_admin_' + Math.random().toString(36).substr(2, 6),
+        email,
+        full_name: 'VORTX Administrator',
+        phone: '+919999999999',
+        role: 'admin',
+        created_at: new Date().toISOString()
+      };
+      profiles.push(found);
+      mockDb.saveProfiles(profiles);
+    }
+
+    if (!found) {
+      return { user: null, error: { message: 'Invalid email credentials.' } };
+    }
+
+    mockDb.setCurrentUser(found);
+    return { user: found, error: null };
+  }
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) return { user: null, error };
+  return { user: data.user, error: null };
+}
+
+export async function supabaseLogout(): Promise<void> {
+  if (!isSupabaseConfigured) {
+    mockDb.setCurrentUser(null);
+    return;
+  }
+  await supabase.auth.signOut();
+}
+
+export async function supabaseGetSession(): Promise<{ user: any; session: any } | null> {
+  if (!isSupabaseConfigured) {
+    const user = mockDb.getCurrentUser();
+    return user ? { user, session: { user } } : null;
+  }
+
+  const { data: { session } } = await supabase.auth.getSession();
+  return session ? { user: session.user, session } : null;
+}
+
+export function supabaseOnAuthStateChange(callback: (event: string, session: any) => void) {
+  if (!isSupabaseConfigured) {
+    // No-op for mock — session is managed synchronously
+    return { data: { subscription: { unsubscribe: () => {} } } };
+  }
+
+  return supabase.auth.onAuthStateChange(callback);
+}
+
+// ---- PROFILE FUNCTIONS ----
+
+export async function fetchProfile(userId: string): Promise<any | null> {
+  if (!isSupabaseConfigured) {
+    const profiles = mockDb.getProfiles();
+    return profiles.find(p => p.id === userId) || null;
+  }
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .single();
+
+  if (error) {
+    console.error('fetchProfile error:', error);
+    return null;
+  }
+  return data;
+}
+
+// ---- ADDRESS FUNCTIONS ----
+
+export async function fetchAddresses(userId: string): Promise<any[]> {
+  if (!isSupabaseConfigured) {
+    return mockDb.getAddresses().filter(a => a.user_id === userId);
+  }
+
+  const { data, error } = await supabase
+    .from('addresses')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('fetchAddresses error:', error);
+    return [];
+  }
+  return data || [];
+}
+
+export async function createAddress(userId: string, addressData: {
+  type: string;
+  address_line1: string;
+  address_line2?: string;
+  city: string;
+  state: string;
+  postal_code: string;
+  country: string;
+  phone: string;
+}): Promise<any> {
+  if (!isSupabaseConfigured) {
+    const addresses = mockDb.getAddresses();
+    const newAddr = {
+      id: 'addr_' + Math.random().toString(36).substr(2, 9),
+      user_id: userId,
+      ...addressData,
+      created_at: new Date().toISOString()
+    };
+    addresses.push(newAddr as any);
+    mockDb.saveAddresses(addresses);
+    return newAddr;
+  }
+
+  const { data, error } = await supabase
+    .from('addresses')
+    .insert({
+      user_id: userId,
+      ...addressData
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteAddressById(addressId: string): Promise<void> {
+  if (!isSupabaseConfigured) {
+    const addresses = mockDb.getAddresses().filter(a => a.id !== addressId);
+    mockDb.saveAddresses(addresses);
+    return;
+  }
+
+  const { error } = await supabase
+    .from('addresses')
+    .delete()
+    .eq('id', addressId);
+
+  if (error) throw error;
+}
+
+// ---- ORDER FUNCTIONS ----
+
+export async function fetchOrders(userId: string): Promise<any[]> {
+  if (!isSupabaseConfigured) {
+    return mockDb.getOrders().filter(o => o.user_id === userId);
+  }
+
+  const { data, error } = await supabase
+    .from('orders')
+    .select(`
+      *,
+      order_items(*),
+      payments(*)
+    `)
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('fetchOrders error:', error);
+    return [];
+  }
+  return data || [];
+}
+
+export async function fetchAllOrders(): Promise<any[]> {
+  if (!isSupabaseConfigured) {
+    return mockDb.getOrders();
+  }
+
+  const { data, error } = await supabase
+    .from('orders')
+    .select(`
+      *,
+      order_items(*),
+      payments(*)
+    `)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('fetchAllOrders error:', error);
+    return [];
+  }
+  return data || [];
+}
+
+export async function createOrderInDb(
+  userId: string,
+  orderData: {
+    order_number: string;
+    status: string;
+    total_amount: number;
+    coupon_code?: string;
+    shipping_address_id: string;
+  },
+  items: {
+    product_name: string;
+    image_url: string;
+    size: string;
+    color: string;
+    quantity: number;
+    unit_price: number;
+    product_variant_id?: string;
+  }[],
+  paymentData: {
+    method: string;
+    status: string;
+    amount: number;
+    transaction_id?: string;
+  }
+): Promise<any> {
+  if (!isSupabaseConfigured) {
+    const orders = mockDb.getOrders();
+    const newOrder = {
+      id: 'ord_' + Math.random().toString(36).substr(2, 9),
+      user_id: userId,
+      ...orderData,
+      tracking_number: '',
+      courier_name: '',
+      tracking_status: 'Order Placed',
+      created_at: new Date().toISOString(),
+      items: items.map(i => ({
+        id: 'oi_' + Math.random(),
+        product_id: i.product_variant_id || '',
+        product_name: i.product_name,
+        image_url: i.image_url,
+        size: i.size,
+        color: i.color,
+        quantity: i.quantity,
+        unit_price: i.unit_price
+      })),
+      payment: {
+        method: paymentData.method,
+        status: paymentData.status,
+        transaction_id: paymentData.transaction_id || ''
+      }
+    };
+    orders.push(newOrder as any);
+    mockDb.saveOrders(orders);
+    return newOrder;
+  }
+
+  // 1. Insert order
+  const { data: order, error: orderError } = await supabase
+    .from('orders')
+    .insert({
+      user_id: userId,
+      order_number: orderData.order_number,
+      status: orderData.status,
+      total_amount: orderData.total_amount,
+      coupon_code: orderData.coupon_code || null,
+      shipping_address_id: orderData.shipping_address_id
+    })
+    .select()
+    .single();
+
+  if (orderError) throw orderError;
+
+  // 2. Insert order items with denormalized product info
+  const orderItems = items.map(i => ({
+    order_id: order.id,
+    product_variant_id: i.product_variant_id || null,
+    product_name: i.product_name,
+    image_url: i.image_url,
+    size: i.size,
+    color: i.color,
+    quantity: i.quantity,
+    unit_price: i.unit_price
+  }));
+
+  const { error: itemsError } = await supabase
+    .from('order_items')
+    .insert(orderItems);
+
+  if (itemsError) {
+    console.error('Order items insert error:', itemsError);
+  }
+
+  // 3. Insert payment
+  const { error: paymentError } = await supabase
+    .from('payments')
+    .insert({
+      order_id: order.id,
+      method: paymentData.method,
+      status: paymentData.status,
+      amount: paymentData.amount,
+      transaction_id: paymentData.transaction_id || null
+    });
+
+  if (paymentError) {
+    console.error('Payment insert error:', paymentError);
+  }
+
+  return order;
+}
+
+export async function updateOrderStatusInDb(
+  orderId: string,
+  status: string,
+  courierName?: string,
+  trackingNumber?: string
+): Promise<void> {
+  if (!isSupabaseConfigured) {
+    const orders = mockDb.getOrders();
+    const idx = orders.findIndex(o => o.id === orderId);
+    if (idx === -1) return;
+    orders[idx].status = status as any;
+    if (courierName) orders[idx].courier_name = courierName;
+    if (trackingNumber) orders[idx].tracking_number = trackingNumber;
+    if (status === 'shipped') orders[idx].tracking_status = 'In Transit';
+    else if (status === 'delivered') orders[idx].tracking_status = 'Delivered';
+    mockDb.saveOrders(orders);
+    return;
+  }
+
+  const updateData: any = { status };
+  if (courierName) updateData.courier_name = courierName;
+  if (trackingNumber) updateData.tracking_number = trackingNumber;
+  if (status === 'shipped') updateData.tracking_status = 'In Transit';
+  else if (status === 'delivered') updateData.tracking_status = 'Delivered';
+
+  const { error } = await supabase
+    .from('orders')
+    .update(updateData)
+    .eq('id', orderId);
+
+  if (error) throw error;
+}
+
+// ---- COUPON FUNCTIONS ----
+
+export async function fetchCoupons(): Promise<any[]> {
+  if (!isSupabaseConfigured) {
+    return mockDb.getCoupons().filter(c => c.is_active);
+  }
+
+  const { data, error } = await supabase
+    .from('coupons')
+    .select('*')
+    .eq('is_active', true);
+
+  if (error) {
+    console.error('fetchCoupons error:', error);
+    return [];
+  }
+  return data || [];
+}
+
+export async function fetchAllCouponsAdmin(): Promise<any[]> {
+  if (!isSupabaseConfigured) {
+    return mockDb.getCoupons();
+  }
+
+  const { data, error } = await supabase
+    .from('coupons')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('fetchAllCouponsAdmin error:', error);
+    return [];
+  }
+  return data || [];
+}
+
+export async function createSupabaseCoupon(code: string, discountPercent: number, validUntil?: string): Promise<any> {
+  const cleanCode = code.toUpperCase().trim();
+  if (!isSupabaseConfigured) {
+    const list = mockDb.getCoupons();
+    const newCoupon = {
+      id: 'c_' + Math.random().toString(36).substring(2, 9),
+      code: cleanCode,
+      discount_percent: discountPercent,
+      is_active: true,
+      valid_until: validUntil || undefined
+    };
+    list.push(newCoupon);
+    mockDb.saveCoupons(list);
+    return newCoupon;
+  }
+
+  const { data, error } = await supabase
+    .from('coupons')
+    .insert({
+      code: cleanCode,
+      discount_percent: discountPercent,
+      is_active: true,
+      valid_until: validUntil || null
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteSupabaseCoupon(couponId: string): Promise<void> {
+  if (!isSupabaseConfigured) {
+    const list = mockDb.getCoupons().filter(c => c.id !== couponId);
+    mockDb.saveCoupons(list);
+    return;
+  }
+
+  const { error } = await supabase
+    .from('coupons')
+    .delete()
+    .eq('id', couponId);
+
+  if (error) throw error;
+}
+
+export async function toggleSupabaseCouponStatus(couponId: string, currentStatus: boolean): Promise<boolean> {
+  const newStatus = !currentStatus;
+  if (!isSupabaseConfigured) {
+    const list = mockDb.getCoupons().map(c => c.id === couponId ? { ...c, is_active: newStatus } : c);
+    mockDb.saveCoupons(list);
+    return newStatus;
+  }
+
+  const { error } = await supabase
+    .from('coupons')
+    .update({ is_active: newStatus })
+    .eq('id', couponId);
+
+  if (error) throw error;
+  return newStatus;
+}
+
+export async function validateCoupon(code: string): Promise<{ valid: boolean; discount_percent: number }> {
+  if (!isSupabaseConfigured) {
+    const coupons = mockDb.getCoupons();
+    const found = coupons.find(c => c.code.toUpperCase() === code.toUpperCase() && c.is_active);
+    return found
+      ? { valid: true, discount_percent: found.discount_percent }
+      : { valid: false, discount_percent: 0 };
+  }
+
+  const { data, error } = await supabase
+    .from('coupons')
+    .select('*')
+    .ilike('code', code)
+    .eq('is_active', true)
+    .single();
+
+  if (error || !data) {
+    return { valid: false, discount_percent: 0 };
+  }
+
+  // Check expiry
+  if (data.valid_until && new Date(data.valid_until) < new Date()) {
+    return { valid: false, discount_percent: 0 };
+  }
+
+  return { valid: true, discount_percent: data.discount_percent };
+}
+
+// ---- WISHLIST FUNCTIONS ----
+
+export async function fetchWishlist(userId: string): Promise<string[]> {
+  if (!isSupabaseConfigured) {
+    return mockDb.getWishlists()
+      .filter(w => w.user_id === userId)
+      .map(w => w.product_id);
+  }
+
+  const { data, error } = await supabase
+    .from('wishlists')
+    .select('product_id')
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error('fetchWishlist error:', error);
+    return [];
+  }
+  return (data || []).map((w: any) => w.product_id);
+}
+
+export async function addToWishlist(userId: string, productId: string): Promise<void> {
+  if (!isSupabaseConfigured) {
+    const list = mockDb.getWishlists();
+    list.push({ id: 'w_' + Math.random(), user_id: userId, product_id: productId });
+    mockDb.saveWishlists(list);
+    return;
+  }
+
+  const { error } = await supabase
+    .from('wishlists')
+    .insert({ user_id: userId, product_id: productId });
+
+  // Ignore duplicate errors (UNIQUE constraint)
+  if (error && !error.message?.includes('duplicate')) {
+    throw error;
+  }
+}
+
+export async function removeFromWishlist(userId: string, productId: string): Promise<void> {
+  if (!isSupabaseConfigured) {
+    const list = mockDb.getWishlists().filter(w => !(w.user_id === userId && w.product_id === productId));
+    mockDb.saveWishlists(list);
+    return;
+  }
+
+  const { error } = await supabase
+    .from('wishlists')
+    .delete()
+    .eq('user_id', userId)
+    .eq('product_id', productId);
+
+  if (error) throw error;
+}
+
+// ---- REVIEW FUNCTIONS ----
+
+export async function fetchReviews(productId?: string): Promise<any[]> {
+  if (!isSupabaseConfigured) {
+    const reviews = mockDb.getReviews();
+    return productId ? reviews.filter(r => r.product_id === productId) : reviews;
+  }
+
+  let query = supabase
+    .from('reviews')
+    .select(`
+      *,
+      profiles:user_id(full_name)
+    `)
+    .order('created_at', { ascending: false });
+
+  if (productId) {
+    query = query.eq('product_id', productId);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error('fetchReviews error:', error);
+    return [];
+  }
+
+  // Map to include user_name from joined profiles
+  return (data || []).map((r: any) => ({
+    id: r.id,
+    user_id: r.user_id,
+    user_name: r.profiles?.full_name || 'Anonymous',
+    product_id: r.product_id,
+    rating: r.rating,
+    comment: r.comment,
+    created_at: r.created_at
+  }));
+}
+
+export async function createReview(
+  userId: string,
+  productId: string,
+  rating: number,
+  comment: string
+): Promise<any> {
+  if (!isSupabaseConfigured) {
+    const reviews = mockDb.getReviews();
+    const profiles = mockDb.getProfiles();
+    const userProfile = profiles.find(p => p.id === userId);
+    const newReview = {
+      id: 'rev_' + Math.random(),
+      user_id: userId,
+      user_name: userProfile?.full_name || 'Anonymous',
+      product_id: productId,
+      rating,
+      comment,
+      created_at: new Date().toISOString()
+    };
+    reviews.push(newReview);
+    mockDb.saveReviews(reviews);
+    return newReview;
+  }
+
+  const { data, error } = await supabase
+    .from('reviews')
+    .insert({
+      user_id: userId,
+      product_id: productId,
+      rating,
+      comment
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+// ---- PRODUCT FUNCTIONS (EXISTING - PRESERVED) ----
 
 export async function fetchSupabaseProducts(): Promise<MockProduct[]> {
   if (!isSupabaseConfigured) return mockDb.getProducts();

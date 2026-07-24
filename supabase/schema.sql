@@ -112,7 +112,11 @@ CREATE TABLE IF NOT EXISTS public.orders (
 CREATE TABLE IF NOT EXISTS public.order_items (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     order_id UUID REFERENCES public.orders(id) ON DELETE CASCADE NOT NULL,
-    product_variant_id UUID REFERENCES public.product_variants(id) ON DELETE RESTRICT NOT NULL,
+    product_variant_id UUID REFERENCES public.product_variants(id) ON DELETE RESTRICT,
+    product_name TEXT,
+    image_url TEXT,
+    size TEXT,
+    color TEXT,
     quantity INTEGER NOT NULL CHECK (quantity > 0),
     unit_price NUMERIC NOT NULL CHECK (unit_price >= 0)
 );

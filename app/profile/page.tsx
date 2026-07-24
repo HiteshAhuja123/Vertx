@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useStore, Order } from '@/components/StoreContext';
-import { mockDb } from '@/lib/supabase';
+import { createReview } from '@/lib/supabase';
 import { ShoppingBag, MapPin, ClipboardList, CheckCircle, Package, Send, X, Star } from 'lucide-react';
 import { formatPrice } from '@/products';
 import { logAutomation } from '@/lib/email';
@@ -49,7 +49,7 @@ function ProfilePageContent() {
 
   if (!user) return null;
 
-  const handleReviewSubmission = (e: React.FormEvent) => {
+  const handleReviewSubmission = async (e: React.FormEvent) => {
     e.preventDefault();
     setReviewError('');
 
@@ -62,28 +62,22 @@ function ProfilePageContent() {
       return;
     }
 
-    const list = mockDb.getReviews();
-    list.push({
-      id: 'rev_' + Math.random(),
-      user_id: user.id,
-      user_name: user.fullName,
-      product_id: reviewProductId,
-      rating: reviewRating,
-      comment: reviewComment,
-      created_at: new Date().toISOString()
-    });
-    mockDb.saveReviews(list);
-    
-    // Log automation update
-    logAutomation('EMAIL', `✉️ Review Received: User ${user.email} submitted review on product: ${reviewProductName}`);
-    logAutomation('SYSTEM', `⚙️ Community Rating update logs compiled.`);
+    try {
+      await createReview(user.id, reviewProductId, reviewRating, reviewComment);
+      
+      // Log automation update
+      logAutomation('EMAIL', `✉️ Review Received: User ${user.email} submitted review on product: ${reviewProductName}`);
+      logAutomation('SYSTEM', `⚙️ Community Rating update logs compiled.`);
 
-    setReviewSubmitted(true);
-    setTimeout(() => {
-      setReviewProductId('');
-      setReviewComment('');
-      setReviewSubmitted(false);
-    }, 2000);
+      setReviewSubmitted(true);
+      setTimeout(() => {
+        setReviewProductId('');
+        setReviewComment('');
+        setReviewSubmitted(false);
+      }, 2000);
+    } catch (err: any) {
+      setReviewError(err.message || 'Failed to submit review.');
+    }
   };
 
   const getStatusStepClass = (orderStatus: Order['status'], step: string) => {

@@ -18,6 +18,7 @@ function AuthPortalContent() {
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('warriorpass1');
   
   // OTP Verification
   const [otpSent, setOtpSent] = useState(false);
@@ -51,20 +52,19 @@ function AuthPortalContent() {
           return;
         }
         
-        // Find if profile with email matching mock phone exists or handle standard lookup
-        const success = await login(email || 'admin@vortx.fit');
-        if (success) {
+        const loginEmail = email || 'admin@vortx.fit';
+        const res = await login(loginEmail, password);
+        if (res.success) {
           setOtpSent(true);
           setSuccessMsg('OTP Code dispatched successfully via WhatsApp.');
         } else {
-          setErrorMsg('Email corresponding to OTP request not found.');
+          setErrorMsg(res.error || 'Email corresponding to OTP request not found.');
         }
         return;
       }
 
       if (useOtpMode && otpSent) {
         if (otpVal.length === 6) {
-          // Success simulated redirect
           router.push(redirect ? `/${redirect}` : '/profile');
         } else {
           setErrorMsg('Invalid verification code.');
@@ -84,15 +84,15 @@ function AuthPortalContent() {
         return;
       }
       
-      const success = await login(email);
-      if (success) {
+      const res = await login(email, password);
+      if (res.success) {
         router.push(redirect ? `/${redirect}` : '/profile');
       } else {
-        setErrorMsg('Invalid email credentials.');
+        setErrorMsg(res.error || 'Invalid login credentials.');
       }
     } else {
       // Sign Up Registration
-      if (!email || !fullName || !phone) {
+      if (!email || !fullName || !phone || !password) {
         setErrorMsg('All fields are required');
         return;
       }
@@ -115,14 +115,19 @@ function AuthPortalContent() {
         return;
       }
 
-      const success = await signup(fullName, email, phone);
-      if (success) {
+      if (password.length < 6) {
+        setErrorMsg('Password must be at least 6 characters long.');
+        return;
+      }
+
+      const res = await signup(fullName, email, phone, password);
+      if (res.success) {
         setSuccessMsg('Warrior account registered! Redirecting...');
         setTimeout(() => {
           router.push(redirect ? `/${redirect}` : '/profile');
         }, 1500);
       } else {
-        setErrorMsg('An account with this email already exists.');
+        setErrorMsg(res.error || 'An account with this email already exists.');
       }
     }
   };
@@ -228,6 +233,21 @@ function AuthPortalContent() {
             </div>
           )}
 
+          {/* Password Field for Signup */}
+          {!isLoginTab && (
+            <div>
+              <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-2.5">PASSWORD</label>
+              <input 
+                type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="CREATE PASSWORD (MIN 6 CHARS)"
+                className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3.5 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/50"
+                required
+              />
+            </div>
+          )}
+
           {/* Password / OTP Input Fields for Login */}
           {isLoginTab && (
             <>
@@ -272,9 +292,11 @@ function AuthPortalContent() {
                   </div>
                   <input 
                     type="password" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="ENTER PASSWORD"
                     className="w-full bg-vortx-black border border-vortx-white/20 px-3.5 py-2.5 text-xs text-vortx-white focus:outline-none focus:border-vortx-white font-mono placeholder:text-vortx-gray/30"
-                    defaultValue="warriorpass1"
+                    required
                   />
                 </div>
               )}

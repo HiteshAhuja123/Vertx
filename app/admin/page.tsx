@@ -3,7 +3,19 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore, Order } from '@/components/StoreContext';
-import { mockDb, isSupabaseConfigured, supabase, fetchSupabaseProducts, createSupabaseProduct, deleteSupabaseProduct, toggleSupabaseProductVisibility } from '@/lib/supabase';
+import { 
+  mockDb, 
+  isSupabaseConfigured, 
+  supabase, 
+  fetchSupabaseProducts, 
+  createSupabaseProduct, 
+  deleteSupabaseProduct, 
+  toggleSupabaseProductVisibility,
+  fetchAllCouponsAdmin,
+  createSupabaseCoupon,
+  deleteSupabaseCoupon,
+  toggleSupabaseCouponStatus
+} from '@/lib/supabase';
 import { 
   ShieldAlert, LayoutDashboard, Plus, Trash2, Edit3, ClipboardList, 
   Tag, Download, ArrowLeftRight, Check, X, ShieldCheck, DollarSign,
@@ -15,11 +27,17 @@ import { logAutomation } from '@/lib/email';
 export default function AdminDashboard() {
   const router = useRouter();
   const { user, allOrders, updateOrderStatus } = useStore();
-  const [activeTab, setActiveTab] = useState<'stats' | 'products' | 'orders'>('stats');
+  const [activeTab, setActiveTab] = useState<'stats' | 'products' | 'orders' | 'coupons'>('stats');
 
   // DB States
   const [products, setProducts] = useState<any[]>([]);
   const [coupons, setCoupons] = useState<any[]>([]);
+
+  // Coupon Form States
+  const [cCode, setCCode] = useState('');
+  const [cDiscount, setCDiscount] = useState<number | string>(15);
+  const [cError, setCError] = useState('');
+  const [cSuccess, setCSuccess] = useState('');
 
   // Product Creator Form States
   const [pName, setPName] = useState('');
@@ -118,13 +136,68 @@ export default function AdminDashboard() {
     }
     
     const loadDatabaseData = async () => {
-      const prods = await fetchSupabaseProducts();
+      const [prods, couponList] = await Promise.all([
+        fetchSupabaseProducts(),
+        fetchAllCouponsAdmin()
+      ]);
       setProducts(prods);
+      setCoupons(couponList);
     };
 
     loadDatabaseData();
-    setCoupons(mockDb.getCoupons());
   }, [user, router]);
+
+  // --- COUPONS CRUD LOGIC ---
+  const handleCreateCoupon = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCError('');
+    setCSuccess('');
+
+    if (!cCode || !cCode.trim()) {
+      setCError('Coupon code is required.');
+      return;
+    }
+
+    const discountNum = Number(cDiscount);
+    if (isNaN(discountNum) || discountNum <= 0 || discountNum > 100) {
+      setCError('Discount percent must be between 1 and 100.');
+      return;
+    }
+
+    try {
+      await createSupabaseCoupon(cCode.trim(), discountNum);
+      const updatedCoupons = await fetchAllCouponsAdmin();
+      setCoupons(updatedCoupons);
+      setCCode('');
+      setCDiscount(15);
+      setCSuccess(`Coupon "${cCode.toUpperCase()}" created successfully!`);
+      logAutomation('SYSTEM', `🛡️ Coupon Created: "${cCode.toUpperCase()}" with ${discountNum}% discount.`);
+    } catch (err: any) {
+      setCError(err.message || 'Failed to create coupon.');
+    }
+  };
+
+  const handleDeleteCoupon = async (couponId: string, code: string) => {
+    if (!confirm(`Are you sure you want to delete coupon code "${code}"?`)) return;
+
+    try {
+      await deleteSupabaseCoupon(couponId);
+      setCoupons(prev => prev.filter(c => c.id !== couponId));
+      logAutomation('SYSTEM', `🛡️ Coupon Deleted: "${code}".`);
+    } catch (err: any) {
+      alert(`Delete failed: ${err.message || err}`);
+    }
+  };
+
+  const handleToggleCouponStatus = async (couponId: string, currentStatus: boolean, code: string) => {
+    try {
+      const newStatus = await toggleSupabaseCouponStatus(couponId, currentStatus);
+      setCoupons(prev => prev.map(c => c.id === couponId ? { ...c, is_active: newStatus } : c));
+      logAutomation('SYSTEM', `🛡️ Coupon "${code}" set to ${newStatus ? 'ACTIVE' : 'INACTIVE'}.`);
+    } catch (err: any) {
+      alert(`Toggle failed: ${err.message || err}`);
+    }
+  };
 
   if (!user) return null;
 
@@ -357,6 +430,14 @@ export default function AdminDashboard() {
             }`}
           >
             <span className="flex items-center gap-1.5"><ClipboardList className="w-3.5 h-3.5" /> MANAGE ORDERS</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('coupons')}
+            className={`pb-3 px-4 transition ${
+              activeTab === 'coupons' ? 'border-b-2 border-vortx-white text-vortx-white' : 'text-vortx-gray hover:text-vortx-white'
+            }`}
+          >
+            <span className="flex items-center gap-1.5"><Tag className="w-3.5 h-3.5" /> MANAGE COUPONS</span>
           </button>
         </div>
 
@@ -843,6 +924,128 @@ export default function AdminDashboard() {
                 ))}
               </div>
             )}
+
+          </div>
+        )}
+
+        {/* ==========================================
+            TAB 4: COUPON MANAGER (CRUD)
+            ========================================== */}
+        {activeTab === 'coupons' && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            {/* Left Column: Create Coupon Form (5/12) */}
+            <div className="lg:col-span-5">
+              <div className="p-6 border border-vortx-white/10 bg-vortx-dark/30 rounded glassmorphism space-y-4">
+                <h3 className="font-syne text-xs font-bold tracking-widest uppercase border-b border-vortx-white/10 pb-3">CREATE DISCOUNT CODE</h3>
+
+                {cError && (
+                  <div className="p-3 bg-red-500/10 border border-red-500/20 rounded text-red-400 text-xs font-medium">
+                    {cError}
+                  </div>
+                )}
+
+                {cSuccess && (
+                  <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded text-emerald-400 text-xs font-medium">
+                    {cSuccess}
+                  </div>
+                )}
+
+                <form onSubmit={handleCreateCoupon} className="space-y-4">
+                  <div>
+                    <label className="block text-[9px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">COUPON CODE (UPPERCASE)</label>
+                    <input 
+                      type="text" 
+                      value={cCode}
+                      onChange={(e) => setCCode(e.target.value.toUpperCase())}
+                      placeholder="e.g. SUMMER25, FESTIVE10"
+                      className="w-full bg-vortx-black/60 border border-vortx-white/15 px-3 py-2 text-xs font-mono text-vortx-white focus:outline-none focus:border-vortx-white rounded uppercase"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[9px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">DISCOUNT PERCENTAGE (%)</label>
+                    <input 
+                      type="number" 
+                      min="1"
+                      max="100"
+                      value={cDiscount}
+                      onChange={(e) => setCDiscount(e.target.value)}
+                      placeholder="e.g. 15"
+                      className="w-full bg-vortx-black/60 border border-vortx-white/15 px-3 py-2 text-xs text-vortx-white focus:outline-none focus:border-vortx-white rounded font-mono"
+                      required
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full py-3 bg-vortx-white text-vortx-black font-syne text-[10px] font-bold tracking-widest uppercase hover:bg-vortx-white/90 transition flex items-center justify-center gap-2 rounded mt-2"
+                  >
+                    <Tag className="w-4 h-4" /> CREATE COUPON CODE
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            {/* Right Column: Existing Coupons List (7/12) */}
+            <div className="lg:col-span-7">
+              <div className="p-6 border border-vortx-white/10 bg-vortx-dark/30 rounded glassmorphism space-y-4">
+                <div className="flex justify-between items-center border-b border-vortx-white/10 pb-3">
+                  <h3 className="font-syne text-xs font-bold tracking-widest uppercase">ACTIVE & EXPIRED COUPONS ({coupons.length})</h3>
+                </div>
+
+                {coupons.length === 0 ? (
+                  <p className="text-xs text-vortx-gray py-8 text-center">No coupon codes configured yet. Create one on the left.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {coupons.map((c: any) => (
+                      <div 
+                        key={c.id || c.code}
+                        className="p-4 border border-vortx-white/10 bg-vortx-black/40 rounded flex items-center justify-between gap-4"
+                      >
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-sm font-bold text-vortx-white tracking-wider">{c.code}</span>
+                            <span className={`text-[9px] font-syne font-bold px-2 py-0.5 rounded uppercase ${
+                              c.is_active ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                            }`}>
+                              {c.is_active ? 'ACTIVE' : 'INACTIVE'}
+                            </span>
+                          </div>
+                          <p className="text-xs text-vortx-gray font-mono">
+                            Discount: <span className="text-vortx-white font-bold">{c.discount_percent}% OFF</span>
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleToggleCouponStatus(c.id, c.is_active, c.code)}
+                            className={`p-2 border rounded transition text-xs font-syne font-bold text-[9px] uppercase tracking-wider flex items-center gap-1 ${
+                              c.is_active 
+                                ? 'border-amber-500/30 text-amber-400 hover:bg-amber-500/10' 
+                                : 'border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10'
+                            }`}
+                            title={c.is_active ? 'Deactivate Coupon' : 'Activate Coupon'}
+                          >
+                            {c.is_active ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                            {c.is_active ? 'DISABLE' : 'ENABLE'}
+                          </button>
+
+                          <button
+                            onClick={() => handleDeleteCoupon(c.id, c.code)}
+                            className="p-2 border border-red-500/30 text-red-400 hover:bg-red-500/10 rounded transition"
+                            title="Delete Coupon"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
 
           </div>
         )}

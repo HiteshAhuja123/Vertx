@@ -2,7 +2,27 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { mockDb } from '@/lib/supabase';
+import {
+  isSupabaseConfigured,
+  supabaseSignUp,
+  supabaseLogin,
+  supabaseLogout,
+  supabaseGetSession,
+  supabaseOnAuthStateChange,
+  fetchProfile,
+  fetchAddresses,
+  createAddress as createAddressInDb,
+  deleteAddressById,
+  fetchOrders,
+  fetchAllOrders,
+  createOrderInDb,
+  updateOrderStatusInDb,
+  fetchWishlist,
+  addToWishlist,
+  removeFromWishlist,
+  validateCoupon,
+  mockDb
+} from '@/lib/supabase';
 import { 
   logAutomation, 
   triggerWelcomeAutomation, 
@@ -69,26 +89,65 @@ export interface Order {
   };
 }
 
-export const mapDbOrders = (dbOrders: any[]): Order[] => {
-  const dbAddresses = mockDb.getAddresses();
+// Map database orders to frontend Order format
+// Handles both mock format (items embedded) and Supabase format (order_items + addresses joined)
+export const mapDbOrders = (dbOrders: any[], dbAddresses?: any[]): Order[] => {
   return dbOrders.map(o => {
-    const addr = dbAddresses.find(a => a.id === o.shipping_address_id) || {
-      id: o.shipping_address_id || 'addr_unknown',
-      type: 'shipping',
-      address_line1: 'Unknown Address',
-      address_line2: '',
-      city: '',
-      state: '',
-      postal_code: '',
-      country: '',
-      phone: ''
-    };
+    // Determine address - for Supabase, we pass addresses separately
+    let addr: any;
+    if (dbAddresses) {
+      addr = dbAddresses.find((a: any) => a.id === o.shipping_address_id);
+    }
+    if (!addr) {
+      addr = {
+        id: o.shipping_address_id || 'addr_unknown',
+        type: 'shipping',
+        address_line1: 'Unknown Address',
+        address_line2: '',
+        city: '',
+        state: '',
+        postal_code: '',
+        country: '',
+        phone: ''
+      };
+    }
+
+    // Map items - handle both mock format and Supabase joined format
+    const rawItems = o.items || o.order_items || [];
+    const mappedItems = rawItems.map((i: any) => ({
+      id: i.id,
+      productId: i.product_id || i.product_variant_id || '',
+      productName: i.product_name || '',
+      imageUrl: i.image_url || '',
+      size: i.size || '',
+      color: i.color || '',
+      quantity: i.quantity,
+      unitPrice: Number(i.unit_price)
+    }));
+
+    // Map payment - handle both mock format and Supabase joined format
+    let payment: Order['payment'] | undefined;
+    if (o.payment) {
+      payment = {
+        method: o.payment.method,
+        status: o.payment.status,
+        transactionId: o.payment.transaction_id || o.payment.transactionId || ''
+      };
+    } else if (o.payments && o.payments.length > 0) {
+      const p = o.payments[0];
+      payment = {
+        method: p.method,
+        status: p.status,
+        transactionId: p.transaction_id || ''
+      };
+    }
+
     return {
       id: o.id,
       userId: o.user_id,
       orderNumber: o.order_number,
       status: o.status,
-      totalAmount: o.total_amount,
+      totalAmount: Number(o.total_amount),
       couponCode: o.coupon_code,
       shippingAddress: {
         id: addr.id,
@@ -105,21 +164,8 @@ export const mapDbOrders = (dbOrders: any[]): Order[] => {
       courierName: o.courier_name,
       trackingStatus: o.tracking_status,
       createdAt: o.created_at,
-      items: (o.items || []).map((i: any) => ({
-        id: i.id,
-        productId: i.product_id,
-        productName: i.product_name,
-        imageUrl: i.image_url,
-        size: i.size,
-        color: i.color,
-        quantity: i.quantity,
-        unitPrice: i.unit_price
-      })),
-      payment: o.payment ? {
-        method: o.payment.method,
-        status: o.payment.status,
-        transactionId: o.payment.transaction_id || o.payment.transactionId
-      } : undefined
+      items: mappedItems,
+      payment
     };
   });
 };
@@ -141,6 +187,7 @@ interface StoreContextType {
   cart: CartItem[];
   wishlist: string[]; // List of product IDs
   preOrderMode: boolean; // Global Catalog toggle for testing (In Stock vs Pre-order)
+  authLoading: boolean; // Loading state during auth operations
   
   // Product Navigation Loader
   isProductLoading: boolean;
@@ -148,8 +195,8 @@ interface StoreContextType {
   stopProductLoading: () => void;
   
   // Auth Functions
-  signup: (fullName: string, email: string, phone: string) => Promise<boolean>;
-  login: (email: string) => Promise<boolean>;
+  signup: (fullName: string, email: string, phone: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   
   // Cart Functions
@@ -161,7 +208,7 @@ interface StoreContextType {
   // Coupon
   couponCode: string;
   discountPercent: number;
-  applyCoupon: (code: string) => boolean;
+  applyCoupon: (code: string) => Promise<boolean>;
   removeCoupon: () => void;
 
   // Wishlist Functions
@@ -169,12 +216,12 @@ interface StoreContextType {
   isInWishlist: (productId: string) => boolean;
 
   // Address Functions
-  addAddress: (address: Omit<Address, 'id'>) => void;
-  deleteAddress: (id: string) => void;
+  addAddress: (address: Omit<Address, 'id'>) => Promise<void>;
+  deleteAddress: (id: string) => Promise<void>;
 
   // Order Functions
   placeOrder: (method: Required<Order>['payment']['method'], addressId: string) => Promise<string>;
-  updateOrderStatus: (orderId: string, status: Order['status'], courierName?: string, trackingNumber?: string) => void;
+  updateOrderStatus: (orderId: string, status: Order['status'], courierName?: string, trackingNumber?: string) => Promise<void>;
   
   // Mode & Theme Toggles
   theme: 'dark' | 'light';
@@ -188,6 +235,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [isProductLoading, setIsProductLoading] = useState(false);
   const [user, setUser] = useState<UserProfile | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [allOrders, setAllOrders] = useState<Order[]>([]);
@@ -210,8 +258,46 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setIsProductLoading(false);
   };
 
-  // Load state & theme on mount
+  // Helper: Load user data (addresses, orders, wishlist) after authentication
+  const loadUserData = async (profile: UserProfile) => {
+    try {
+      // Load addresses
+      const rawAddresses = await fetchAddresses(profile.id);
+      setAddresses(rawAddresses.map((a: any) => ({
+        id: a.id,
+        type: a.type || 'shipping',
+        addressLine1: a.address_line1 || '',
+        addressLine2: a.address_line2 || '',
+        city: a.city || '',
+        state: a.state || '',
+        postalCode: a.postal_code || '',
+        country: a.country || '',
+        phone: a.phone || ''
+      })));
+
+      // Load user orders
+      const rawOrders = await fetchOrders(profile.id);
+      const rawAllAddresses = await fetchAddresses(profile.id);
+      const mappedOrders = mapDbOrders(rawOrders, rawAllAddresses);
+      setOrders(mappedOrders);
+
+      // Load all orders for admin
+      if (profile.role === 'admin') {
+        const rawAll = await fetchAllOrders();
+        setAllOrders(mapDbOrders(rawAll));
+      }
+
+      // Load wishlist
+      const wishlistIds = await fetchWishlist(profile.id);
+      setWishlist(wishlistIds);
+    } catch (err) {
+      console.error('Error loading user data:', err);
+    }
+  };
+
+  // Initialize: Load theme, check auth session, listen for auth changes
   useEffect(() => {
+    // Theme
     const savedTheme = (localStorage.getItem('vortx_theme') as 'dark' | 'light') || 'dark';
     setTheme(savedTheme);
     document.documentElement.setAttribute('data-theme', savedTheme);
@@ -221,44 +307,70 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       document.documentElement.classList.remove('light');
     }
 
-    const currUser = mockDb.getCurrentUser();
-    if (currUser) {
-      const mappedUser: UserProfile = {
-        id: currUser.id,
-        email: currUser.email,
-        fullName: currUser.full_name || (currUser as any).fullName || '',
-        phone: currUser.phone || '',
-        role: currUser.role,
-        createdAt: currUser.created_at || (currUser as any).createdAt || ''
-      };
-      setUser(mappedUser);
-
-      // Load user details
-      const allAddresses = mockDb.getAddresses().filter(a => a.user_id === currUser.id);
-      setAddresses(allAddresses.map(a => ({
-        id: a.id,
-        type: a.type,
-        addressLine1: a.address_line1,
-        addressLine2: a.address_line2,
-        city: a.city,
-        state: a.state,
-        postalCode: a.postal_code,
-        country: a.country,
-        phone: a.phone
-      })));
-
-      const allDbOrders = mockDb.getOrders();
-      const mappedOrders = mapDbOrders(allDbOrders);
-      const userOrders = mappedOrders.filter(o => o.userId === currUser.id);
-      setOrders(userOrders);
-    }
-    
-    // Load admin orders, wishlist, and cart
-    setAllOrders(mapDbOrders(mockDb.getOrders()));
-    setWishlist(mockDb.getWishlists().map(w => w.product_id));
-    
+    // Cart from localStorage (kept in localStorage — industry standard)
     const localCart = localStorage.getItem('vortx_cart');
     if (localCart) setCart(JSON.parse(localCart));
+
+    // Check existing session
+    const initAuth = async () => {
+      try {
+        const session = await supabaseGetSession();
+        if (session?.user) {
+          const userId = isSupabaseConfigured ? session.user.id : session.user.id;
+          const profile = await fetchProfile(userId);
+          if (profile) {
+            const userProfile: UserProfile = {
+              id: profile.id,
+              email: profile.email,
+              fullName: profile.full_name || '',
+              phone: profile.phone || '',
+              role: profile.role || 'customer',
+              createdAt: profile.created_at || ''
+            };
+            setUser(userProfile);
+            await loadUserData(userProfile);
+          }
+        }
+      } catch (err) {
+        console.error('Auth init error:', err);
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+
+    initAuth();
+
+    // Listen for auth state changes (handles token refresh, sign out from other tabs, etc.)
+    const { data: { subscription } } = supabaseOnAuthStateChange(async (event: string, session: any) => {
+      if (event === 'SIGNED_OUT') {
+        setUser(null);
+        setAddresses([]);
+        setOrders([]);
+        setAllOrders([]);
+        setWishlist([]);
+        setCouponCode('');
+        setDiscountPercent(0);
+      } else if (event === 'SIGNED_IN' && session?.user) {
+        const profile = await fetchProfile(session.user.id);
+        if (profile) {
+          const userProfile: UserProfile = {
+            id: profile.id,
+            email: profile.email,
+            fullName: profile.full_name || '',
+            phone: profile.phone || '',
+            role: profile.role || 'customer',
+            createdAt: profile.created_at || ''
+          };
+          setUser(userProfile);
+          await loadUserData(userProfile);
+        }
+      }
+    });
+
+    return () => {
+      subscription?.unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Save cart on change
@@ -267,112 +379,79 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, [cart]);
 
   // Auth Operations
-  const signup = async (fullName: string, email: string, phone: string): Promise<boolean> => {
-    const profiles = mockDb.getProfiles();
-    if (profiles.some(p => p.email === email)) {
-      logAutomation('SYSTEM', `❌ Signup Failed: Email ${email} already exists.`);
-      return false;
+  const signup = async (fullName: string, email: string, phone: string, password: string): Promise<{ success: boolean; error?: string }> => {
+    logAutomation('SYSTEM', `⚙️ Signup attempt for ${email}`);
+
+    const { user: newUser, error } = await supabaseSignUp(email, password, fullName, phone);
+    
+    if (error) {
+      logAutomation('SYSTEM', `❌ Signup Failed: ${error.message}`);
+      return { success: false, error: error.message };
     }
 
-    const newDbProfile = {
-      id: 'usr_' + Math.random().toString(36).substr(2, 9),
-      email,
-      full_name: fullName,
-      phone,
-      role: (email === 'admin@vortx.fit' ? 'admin' : 'customer') as 'admin' | 'customer',
-      created_at: new Date().toISOString()
-    };
+    if (newUser) {
+      // For mock mode, set user immediately
+      if (!isSupabaseConfigured) {
+        const userProfile: UserProfile = {
+          id: newUser.id,
+          email: newUser.email,
+          fullName: newUser.full_name || fullName,
+          phone: newUser.phone || phone,
+          role: newUser.role || 'customer',
+          createdAt: newUser.created_at || new Date().toISOString()
+        };
+        setUser(userProfile);
+        await loadUserData(userProfile);
+      }
+      // For Supabase, the onAuthStateChange listener handles setting user
 
-    profiles.push(newDbProfile);
-    mockDb.saveProfiles(profiles);
+      logAutomation('SYSTEM', `⚙️ Account Created for ${fullName} (${email})`);
+      await triggerWelcomeAutomation(email, fullName, phone);
+    }
 
-    const userProfile: UserProfile = {
-      id: newDbProfile.id,
-      email: newDbProfile.email,
-      fullName: newDbProfile.full_name,
-      phone: newDbProfile.phone,
-      role: newDbProfile.role,
-      createdAt: newDbProfile.created_at
-    };
-    
-    // Auto Login
-    setUser(userProfile);
-    mockDb.setCurrentUser(newDbProfile);
-    setAddresses([]);
-    setOrders([]);
-
-    logAutomation('SYSTEM', `⚙️ Account Created for ${fullName} (${email})`);
-    
-    // Trigger Signup Welcome Automations
-    await triggerWelcomeAutomation(email, fullName, phone);
-
-    return true;
+    return { success: true };
   };
 
-  const login = async (email: string): Promise<boolean> => {
-    const profiles = mockDb.getProfiles();
-    let found = profiles.find(p => p.email.toLowerCase() === email.toLowerCase());
+  const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
+    const { user: authUser, error } = await supabaseLogin(email, password);
 
-    // Auto-provision admin account if email is admin@vortx.fit or contains admin
-    if (!found && (email.toLowerCase() === 'admin@vortx.fit' || email.toLowerCase().includes('admin'))) {
-      found = {
-        id: 'usr_admin_' + Math.random().toString(36).substr(2, 6),
-        email,
-        full_name: 'VORTX Administrator',
-        phone: '+919999999999',
-        role: 'admin',
-        created_at: new Date().toISOString()
-      };
-      profiles.push(found);
-      mockDb.saveProfiles(profiles);
+    if (error) {
+      logAutomation('SYSTEM', `❌ Login Failed: ${error.message}`);
+      return { success: false, error: error.message };
     }
 
-    if (!found) {
-      logAutomation('SYSTEM', `❌ Login Failed: Email ${email} not registered.`);
-      return false;
+    if (authUser) {
+      // For mock mode, set user immediately
+      if (!isSupabaseConfigured) {
+        const userProfile: UserProfile = {
+          id: authUser.id,
+          email: authUser.email,
+          fullName: authUser.full_name || '',
+          phone: authUser.phone || '',
+          role: authUser.role || 'customer',
+          createdAt: authUser.created_at || ''
+        };
+        setUser(userProfile);
+        await loadUserData(userProfile);
+      }
+      // For Supabase, the onAuthStateChange listener handles setting user
+
+      logAutomation('SYSTEM', `⚙️ User Logged In: ${authUser.email}`);
+      logAutomation('WHATSAPP', `💬 OTP Verification Code sent to mobile: "Your VORTX login code is ${Math.floor(Math.random() * 900000 + 100000)}. Valid for 10 mins."`);
     }
 
-    const userProfile: UserProfile = {
-      id: found.id,
-      email: found.email,
-      fullName: found.full_name || (found as any).fullName || '',
-      phone: found.phone || '',
-      role: found.role as any,
-      createdAt: found.created_at || (found as any).createdAt || ''
-    };
-
-    setUser(userProfile);
-    mockDb.setCurrentUser(found);
-
-    // Load addresses & orders
-    const allAddresses = mockDb.getAddresses().filter(a => a.user_id === userProfile.id);
-    setAddresses(allAddresses.map(a => ({
-      id: a.id,
-      type: a.type as any,
-      addressLine1: a.address_line1,
-      addressLine2: a.address_line2,
-      city: a.city,
-      state: a.state,
-      postalCode: a.postal_code,
-      country: a.country,
-      phone: a.phone
-    })));
-
-    const userOrders = mapDbOrders(mockDb.getOrders()).filter(o => o.userId === userProfile.id);
-    setOrders(userOrders);
-
-    logAutomation('SYSTEM', `⚙️ User Logged In: ${userProfile.fullName} (${userProfile.email})`);
-    logAutomation('WHATSAPP', `💬 OTP Verification Code sent to ${userProfile.phone || 'mobile'}: "Your VORTX login code is ${Math.floor(Math.random() * 900000 + 100000)}. Valid for 10 mins."`);
-    return true;
+    return { success: true };
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await supabaseLogout();
     setUser(null);
     setAddresses([]);
     setOrders([]);
+    setAllOrders([]);
+    setWishlist([]);
     setCouponCode('');
     setDiscountPercent(0);
-    mockDb.setCurrentUser(null);
     logAutomation('SYSTEM', `⚙️ User logged out.`);
   };
 
@@ -408,14 +487,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setDiscountPercent(0);
   };
 
-  // Coupon
-  const applyCoupon = (code: string): boolean => {
-    const coupons = mockDb.getCoupons();
-    const found = coupons.find(c => c.code.toUpperCase() === code.toUpperCase() && c.is_active);
-    if (found) {
-      setCouponCode(found.code);
-      setDiscountPercent(found.discount_percent);
-      logAutomation('SYSTEM', `⚙️ Promo Applied: ${found.code} (${found.discount_percent}% OFF)`);
+  // Coupon — now async since it queries Supabase
+  const applyCoupon = async (code: string): Promise<boolean> => {
+    const result = await validateCoupon(code);
+    if (result.valid) {
+      setCouponCode(code.toUpperCase());
+      setDiscountPercent(result.discount_percent);
+      logAutomation('SYSTEM', `⚙️ Promo Applied: ${code.toUpperCase()} (${result.discount_percent}% OFF)`);
       return true;
     }
     logAutomation('SYSTEM', `❌ Invalid Coupon: "${code}" is expired or incorrect.`);
@@ -427,69 +505,79 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     setDiscountPercent(0);
   };
 
-  // Wishlist
-  const toggleWishlist = (productId: string) => {
+  // Wishlist — now async since it uses Supabase
+  const toggleWishlist = async (productId: string) => {
     if (!user) {
       logAutomation('SYSTEM', `⚠️ Wishlist action failed: User must log in first.`);
       return;
     }
     
-    let nextWishlist: string[] = [];
-    const list = mockDb.getWishlists();
-    const idx = list.findIndex(w => w.user_id === user.id && w.product_id === productId);
-
-    if (idx > -1) {
-      list.splice(idx, 1);
-      nextWishlist = wishlist.filter(id => id !== productId);
-      logAutomation('SYSTEM', `⚙️ Wishlist Item Removed: Product ${productId}`);
-    } else {
-      list.push({ id: 'w_' + Math.random(), user_id: user.id, product_id: productId });
-      nextWishlist = [...wishlist, productId];
-      logAutomation('SYSTEM', `⚙️ Wishlist Item Added: Product ${productId}`);
-    }
+    const isCurrentlyInWishlist = wishlist.includes(productId);
     
-    mockDb.saveWishlists(list);
-    setWishlist(nextWishlist);
+    try {
+      if (isCurrentlyInWishlist) {
+        await removeFromWishlist(user.id, productId);
+        setWishlist(prev => prev.filter(id => id !== productId));
+        logAutomation('SYSTEM', `⚙️ Wishlist Item Removed: Product ${productId}`);
+      } else {
+        await addToWishlist(user.id, productId);
+        setWishlist(prev => [...prev, productId]);
+        logAutomation('SYSTEM', `⚙️ Wishlist Item Added: Product ${productId}`);
+      }
+    } catch (err) {
+      console.error('Wishlist toggle error:', err);
+    }
   };
 
   const isInWishlist = (productId: string) => wishlist.includes(productId);
 
-  // Address Operations
-  const addAddress = (addr: Omit<Address, 'id'>) => {
+  // Address Operations — now async
+  const addAddress = async (addr: Omit<Address, 'id'>) => {
     if (!user) return;
-    const dbAddresses = mockDb.getAddresses();
-    const newAddr: Address = {
-      id: 'addr_' + Math.random().toString(36).substr(2, 9),
-      ...addr
-    };
-    
-    dbAddresses.push({
-      id: newAddr.id,
-      user_id: user.id,
-      type: newAddr.type,
-      address_line1: newAddr.addressLine1,
-      address_line2: newAddr.addressLine2,
-      city: newAddr.city,
-      state: newAddr.state,
-      postal_code: newAddr.postalCode,
-      country: newAddr.country,
-      phone: newAddr.phone,
-      created_at: new Date().toISOString()
-    });
-    
-    mockDb.saveAddresses(dbAddresses);
-    setAddresses(prev => [...prev, newAddr]);
-    logAutomation('SYSTEM', `⚙️ Address saved successfully under type: ${addr.type}`);
+
+    try {
+      const newAddr = await createAddressInDb(user.id, {
+        type: addr.type,
+        address_line1: addr.addressLine1,
+        address_line2: addr.addressLine2,
+        city: addr.city,
+        state: addr.state,
+        postal_code: addr.postalCode,
+        country: addr.country,
+        phone: addr.phone
+      });
+
+      const mappedAddr: Address = {
+        id: newAddr.id,
+        type: newAddr.type || addr.type,
+        addressLine1: newAddr.address_line1 || addr.addressLine1,
+        addressLine2: newAddr.address_line2 || addr.addressLine2,
+        city: newAddr.city || addr.city,
+        state: newAddr.state || addr.state,
+        postalCode: newAddr.postal_code || addr.postalCode,
+        country: newAddr.country || addr.country,
+        phone: newAddr.phone || addr.phone
+      };
+
+      setAddresses(prev => [...prev, mappedAddr]);
+      logAutomation('SYSTEM', `⚙️ Address saved successfully under type: ${addr.type}`);
+    } catch (err) {
+      console.error('Add address error:', err);
+    }
   };
 
-  const deleteAddress = (id: string) => {
+  const deleteAddress = async (id: string) => {
     if (!user) return;
-    const dbAddresses = mockDb.getAddresses().filter(a => a.id !== id);
-    mockDb.saveAddresses(dbAddresses);
-    setAddresses(prev => prev.filter(a => a.id !== id));
+    
+    try {
+      await deleteAddressById(id);
+      setAddresses(prev => prev.filter(a => a.id !== id));
+    } catch (err) {
+      console.error('Delete address error:', err);
+    }
   };
 
-  // Orders
+  // Orders — now async with Supabase
   const placeOrder = async (method: Required<Order>['payment']['method'], addressId: string): Promise<string> => {
     if (!user) throw new Error('Authentication required');
     const selectedAddress = addresses.find(a => a.id === addressId);
@@ -501,141 +589,130 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     const total = subtotal - discount + shipping;
 
     const orderNumber = 'VX-' + Math.floor(Math.random() * 900000 + 100000);
-    const newOrder: Order = {
-      id: 'ord_' + Math.random().toString(36).substr(2, 9),
-      userId: user.id,
-      orderNumber,
-      status: method === 'cod' ? 'pending' : 'paid',
-      totalAmount: total,
-      couponCode: couponCode || undefined,
-      shippingAddress: selectedAddress,
-      createdAt: new Date().toISOString(),
-      items: cart.map(c => ({
-        id: 'oi_' + Math.random(),
-        productId: c.id,
-        productName: c.name,
-        imageUrl: c.image,
-        size: c.size,
-        color: c.color,
-        quantity: c.quantity,
-        unitPrice: c.price
-      })),
-      payment: {
-        method,
-        status: method === 'cod' ? 'pending' : 'success',
-        transactionId: method === 'cod' ? '' : 'TXN-' + Math.floor(Math.random() * 900000 + 100000)
-      }
-    };
 
-    // Save in Database
-    const dbOrders = mockDb.getOrders();
-    dbOrders.push({
-      id: newOrder.id,
-      user_id: user.id,
-      order_number: newOrder.orderNumber,
-      status: newOrder.status,
-      total_amount: newOrder.totalAmount,
-      coupon_code: newOrder.couponCode,
-      shipping_address_id: selectedAddress.id,
-      tracking_number: '',
-      courier_name: '',
-      tracking_status: 'Order Placed',
-      created_at: newOrder.createdAt,
-      items: newOrder.items.map(i => ({
-        id: i.id,
-        product_id: i.productId,
-        product_name: i.productName,
-        image_url: i.imageUrl,
-        size: i.size,
-        color: i.color,
-        quantity: i.quantity,
-        unit_price: i.unitPrice
-      })) as any,
-      payment: newOrder.payment as any
-    });
-    mockDb.saveOrders(dbOrders);
-
-    // Sync state
-    setOrders(prev => [newOrder, ...prev]);
-    setAllOrders(mapDbOrders(dbOrders));
-    
-    // Log Automations
-    const preOrderCount = cart.filter(i => i.isPreOrder).length;
-    await triggerOrderCompletedAutomation(
-      user.email,
-      user.fullName,
-      orderNumber,
-      total,
-      selectedAddress.phone,
-      preOrderCount
-    );
-
-    // Update Product Stock Levels
-    const products = mockDb.getProducts();
-    cart.forEach(item => {
-      const p = products.find(p => p.id === item.id);
-      if (p) {
-        const v = p.variants.find(v => v.size === item.size && v.color === item.color);
-        if (v) {
-          v.stock = Math.max(0, v.stock - item.quantity);
+    try {
+      const orderResult = await createOrderInDb(
+        user.id,
+        {
+          order_number: orderNumber,
+          status: method === 'cod' ? 'pending' : 'paid',
+          total_amount: total,
+          coupon_code: couponCode || undefined,
+          shipping_address_id: addressId
+        },
+        cart.map(c => ({
+          product_name: c.name,
+          image_url: c.image,
+          size: c.size,
+          color: c.color,
+          quantity: c.quantity,
+          unit_price: c.price,
+          product_variant_id: c.variantId
+        })),
+        {
+          method,
+          status: method === 'cod' ? 'pending' : 'success',
+          amount: total,
+          transaction_id: method === 'cod' ? '' : 'TXN-' + Math.floor(Math.random() * 900000 + 100000)
         }
-      }
-    });
-    mockDb.saveProducts(products);
+      );
 
-    clearCart();
-    return orderNumber;
+      // Build local Order object for immediate UI update
+      const newOrder: Order = {
+        id: orderResult.id,
+        userId: user.id,
+        orderNumber,
+        status: method === 'cod' ? 'pending' : 'paid',
+        totalAmount: total,
+        couponCode: couponCode || undefined,
+        shippingAddress: selectedAddress,
+        createdAt: orderResult.created_at || new Date().toISOString(),
+        items: cart.map(c => ({
+          id: 'oi_' + Math.random(),
+          productId: c.id,
+          productName: c.name,
+          imageUrl: c.image,
+          size: c.size,
+          color: c.color,
+          quantity: c.quantity,
+          unitPrice: c.price
+        })),
+        payment: {
+          method,
+          status: method === 'cod' ? 'pending' : 'success',
+          transactionId: method === 'cod' ? '' : 'TXN-' + Math.floor(Math.random() * 900000 + 100000)
+        }
+      };
+
+      // Sync state
+      setOrders(prev => [newOrder, ...prev]);
+      setAllOrders(prev => [newOrder, ...prev]);
+
+      // Log Automations
+      const preOrderCount = cart.filter(i => i.isPreOrder).length;
+      await triggerOrderCompletedAutomation(
+        user.email,
+        user.fullName,
+        orderNumber,
+        total,
+        selectedAddress.phone,
+        preOrderCount
+      );
+
+      clearCart();
+      return orderNumber;
+    } catch (err) {
+      console.error('Place order error:', err);
+      throw err;
+    }
   };
 
-  const updateOrderStatus = (
+  const updateOrderStatus = async (
     orderId: string, 
     status: Order['status'], 
     courierName?: string, 
     trackingNumber?: string
   ) => {
-    const dbOrders = mockDb.getOrders();
-    const orderIndex = dbOrders.findIndex(o => o.id === orderId);
-    if (orderIndex === -1) return;
+    try {
+      await updateOrderStatusInDb(orderId, status, courierName, trackingNumber);
 
-    dbOrders[orderIndex].status = status;
-    
-    if (courierName) dbOrders[orderIndex].courier_name = courierName;
-    if (trackingNumber) dbOrders[orderIndex].tracking_number = trackingNumber;
+      // Reload orders from DB for accuracy
+      if (user) {
+        const rawUserOrders = await fetchOrders(user.id);
+        const rawAddresses = await fetchAddresses(user.id);
+        setOrders(mapDbOrders(rawUserOrders, rawAddresses));
 
-    if (status === 'shipped') {
-      dbOrders[orderIndex].tracking_status = 'In Transit';
-    } else if (status === 'delivered') {
-      dbOrders[orderIndex].tracking_status = 'Delivered';
-    }
+        if (user.role === 'admin') {
+          const rawAll = await fetchAllOrders();
+          const allMapped = mapDbOrders(rawAll);
+          setAllOrders(allMapped);
 
-    mockDb.saveOrders(dbOrders);
-    
-    // Sync state
-    const mappedOrders = mapDbOrders(dbOrders);
-    setAllOrders(mappedOrders);
-    if (user) {
-      setOrders(mappedOrders.filter(o => o.userId === user.id));
-      
-      const updatedOrder = dbOrders[orderIndex];
-      const profiles = mockDb.getProfiles();
-      const orderUser = profiles.find(p => p.id === updatedOrder.user_id);
-      const userEmail = orderUser?.email || user.email;
-      const userPhone = updatedOrder.payment ? user.phone : '+91XXXXXXXXXX';
-
-      if (status === 'shipped') {
-        triggerShippingAutomation(
-          userEmail,
-          userPhone,
-          updatedOrder.order_number,
-          courierName || 'Shiprocket',
-          trackingNumber || 'SR1029837'
-        );
-      } else if (status === 'delivered') {
-        triggerDeliveryAutomation(userEmail, userPhone, updatedOrder.order_number);
+          // Find updated order for automation triggers
+          const updatedOrder = allMapped.find(o => o.id === orderId);
+          if (updatedOrder) {
+            if (status === 'shipped') {
+              triggerShippingAutomation(
+                user.email,
+                updatedOrder.shippingAddress.phone || '+91XXXXXXXXXX',
+                updatedOrder.orderNumber,
+                courierName || 'Shiprocket',
+                trackingNumber || 'SR1029837'
+              );
+            } else if (status === 'delivered') {
+              triggerDeliveryAutomation(
+                user.email,
+                updatedOrder.shippingAddress.phone || '+91XXXXXXXXXX',
+                updatedOrder.orderNumber
+              );
+            }
+          }
+        }
       }
+
+      logAutomation('SYSTEM', `⚙️ Order Status Updated: Order marked as ${status.toUpperCase()}`);
+    } catch (err) {
+      console.error('Update order status error:', err);
     }
-    
-    logAutomation('SYSTEM', `⚙️ Order Status Updated: #${dbOrders[orderIndex].order_number} marked as ${status.toUpperCase()}`);
   };
 
   const toggleTheme = () => {
@@ -671,6 +748,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       wishlist,
       preOrderMode,
       theme,
+      authLoading,
       isProductLoading,
       navigateToProduct,
       stopProductLoading,

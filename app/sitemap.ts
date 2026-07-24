@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
-import { mockDb } from '@/lib/supabase';
+import { fetchSupabaseProducts } from '@/lib/supabase';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://vortx.fit';
   
   // Static pages
@@ -13,7 +13,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
   
   // Dynamic products list
-  const products = mockDb.getProducts().map(prod => ({
+  const dbProducts = await fetchSupabaseProducts();
+  const products = dbProducts.map(prod => ({
     url: `${baseUrl}/product/${prod.slug}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,

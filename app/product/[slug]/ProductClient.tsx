@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { mockDb } from '@/lib/supabase';
+import { fetchSupabaseProducts } from '@/lib/supabase';
 import { useStore } from '@/components/StoreContext';
 import { Star, ShieldCheck, Truck, Layers, Check, Ruler, Info, X } from 'lucide-react';
 import { formatPrice } from '@/products';
@@ -50,9 +50,12 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
     }
 
     // Load related items
-    const prods = mockDb.getProducts();
-    const related = prods.filter((p: any) => p.id !== initialProduct.id).slice(0, 3);
-    setRelatedItems(related);
+    const loadRelated = async () => {
+      const prods = await fetchSupabaseProducts();
+      const related = prods.filter((p: any) => p.id !== initialProduct.id).slice(0, 3);
+      setRelatedItems(related);
+    };
+    loadRelated();
   }, [initialProduct, params.slug]);
 
   if (!product) {

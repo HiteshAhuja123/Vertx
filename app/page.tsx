@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { mockDb, fetchSupabaseProducts } from '@/lib/supabase';
+import { fetchSupabaseProducts, fetchReviews } from '@/lib/supabase';
 import { useStore } from '@/components/StoreContext';
 import { ArrowRight, Play, Star, ChevronLeft, ChevronRight, X, Clock, ShoppingBag, Eye } from 'lucide-react';
 import { formatPrice } from '@/products';
@@ -35,14 +35,17 @@ export default function Home() {
   const [recentPurchase, setRecentPurchase] = useState<any | null>(null);
 
   useEffect(() => {
-    const loadHomeProducts = async () => {
+    const loadHomeData = async () => {
       setIsLoadingProducts(true);
-      const prods = await fetchSupabaseProducts();
+      const [prods, revs] = await Promise.all([
+        fetchSupabaseProducts(),
+        fetchReviews()
+      ]);
       setProducts(prods);
+      setReviews(revs);
       setIsLoadingProducts(false);
     };
-    loadHomeProducts();
-    setReviews(mockDb.getReviews());
+    loadHomeData();
 
     // Countdown target: August 15, 2026
     const target = new Date("2026-08-15T00:00:00Z").getTime();
