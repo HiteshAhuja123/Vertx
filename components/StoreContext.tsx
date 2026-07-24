@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { mockDb } from '@/lib/supabase';
 import { 
   logAutomation, 
@@ -141,6 +142,11 @@ interface StoreContextType {
   wishlist: string[]; // List of product IDs
   preOrderMode: boolean; // Global Catalog toggle for testing (In Stock vs Pre-order)
   
+  // Product Navigation Loader
+  isProductLoading: boolean;
+  navigateToProduct: (slug: string) => void;
+  stopProductLoading: () => void;
+  
   // Auth Functions
   signup: (fullName: string, email: string, phone: string) => Promise<boolean>;
   login: (email: string) => Promise<boolean>;
@@ -179,6 +185,8 @@ interface StoreContextType {
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const [isProductLoading, setIsProductLoading] = useState(false);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -189,6 +197,18 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [discountPercent, setDiscountPercent] = useState(0);
   const [preOrderMode, setPreOrderMode] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+
+  const navigateToProduct = (slug: string) => {
+    setIsProductLoading(true);
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
+    router.push(`/product/${slug}`);
+  };
+
+  const stopProductLoading = () => {
+    setIsProductLoading(false);
+  };
 
   // Load state & theme on mount
   useEffect(() => {
@@ -651,6 +671,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       wishlist,
       preOrderMode,
       theme,
+      isProductLoading,
+      navigateToProduct,
+      stopProductLoading,
       toggleTheme,
       signup,
       login,

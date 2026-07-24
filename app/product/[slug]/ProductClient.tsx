@@ -16,7 +16,7 @@ interface ProductClientProps {
 export default function ProductClient({ initialProduct }: ProductClientProps) {
   const params = useParams();
   const router = useRouter();
-  const { addToCart } = useStore();
+  const { addToCart, navigateToProduct, stopProductLoading } = useStore();
   
   const [product, setProduct] = useState<any>(initialProduct);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -35,6 +35,12 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
   const zoomImageRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
+    // Scroll page to top immediately when product changes or mounts
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
+    stopProductLoading();
+
     if (!initialProduct) return;
     
     // Set default variant selectors
@@ -47,7 +53,7 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
     const prods = mockDb.getProducts();
     const related = prods.filter((p: any) => p.id !== initialProduct.id).slice(0, 3);
     setRelatedItems(related);
-  }, [initialProduct]);
+  }, [initialProduct, params.slug]);
 
   if (!product) {
     return (
@@ -487,10 +493,10 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {relatedItems.map((rel: any) => (
-                  <Link 
+                  <div 
                     key={rel.id} 
-                    href={`/product/${rel.slug}`}
-                    className="group bg-vortx-dark border border-vortx-white/10 rounded overflow-hidden hover:border-vortx-white/30 transition p-3 flex flex-col"
+                    onClick={() => navigateToProduct(rel.slug)}
+                    className="group bg-vortx-dark border border-vortx-white/10 rounded overflow-hidden hover:border-vortx-white/30 transition p-3 flex flex-col cursor-pointer"
                   >
                     <div className="aspect-[4/5] bg-vortx-black rounded overflow-hidden mb-3">
                       <img 
@@ -505,7 +511,7 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
                     <span className="text-xs font-mono text-vortx-gray mt-1 font-bold">
                       {formatPrice(rel.price)}
                     </span>
-                  </Link>
+                  </div>
                 ))}
               </div>
             </div>

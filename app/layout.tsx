@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Outfit, Syne } from 'next/font/google';
 import './globals.css';
 import { StoreProvider } from '@/components/StoreContext';
+import { ProductLoaderOverlay } from '@/components/ProductLoaderOverlay';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import AutomationLogger from '@/components/AutomationLogger';
@@ -65,6 +66,7 @@ export default function RootLayout({
     <html lang="en" className={`h-full scroll-smooth ${outfit.variable} ${syne.variable}`}>
       <body className="min-h-screen bg-vortx-black text-vortx-white flex flex-col antialiased font-sans">
         <StoreProvider>
+          <ProductLoaderOverlay />
           <Suspense fallback={<div className="h-20 bg-vortx-black border-b border-vortx-white/10 w-full" />}>
             <Navbar />
           </Suspense>

@@ -133,6 +133,20 @@ export default function CheckoutPage() {
     setShowAddressModal(false);
   };
 
+  const loadRazorpayScript = (): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (typeof window !== 'undefined' && (window as any).Razorpay) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
   const handleOrderSubmission = async () => {
     if (!selectedAddressId) {
       setCheckoutError('Please select or add a shipping address.');
@@ -146,16 +160,94 @@ export default function CheckoutPage() {
       } catch (err: any) {
         setCheckoutError(err.message || 'Error processing order.');
       }
-    } else {
-      // Trigger Razorpay payment gateway simulation overlay
-      setShowRazorpayModal(true);
-      setRazorpayLoading(true);
-      setRazorpayError('');
-      
-      // Simulate Razorpay loading scripts & auth keys checks
-      setTimeout(() => {
+      return;
+    }
+
+    setCheckoutError('');
+    setRazorpayLoading(true);
+
+    try {
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        setCheckoutError('Failed to load Razorpay payment SDK. Please check your network connection.');
         setRazorpayLoading(false);
-      }, 1500);
+        return;
+      }
+
+      // 1. Create Razorpay order on backend
+      const res = await fetch('/api/razorpay/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: total }),
+      });
+
+      const orderData = await res.json();
+      if (!res.ok || orderData.error) {
+        throw new Error(orderData.error || 'Failed to initialize payment gateway.');
+      }
+
+      const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_key_id';
+
+      // Fallback to simulation modal if running with placeholder test key
+      if (keyId === 'rzp_test_key_id' || orderData.isSimulated) {
+        setShowRazorpayModal(true);
+        setRazorpayLoading(false);
+        return;
+      }
+
+      // 2. Launch Razorpay SDK Popup Modal
+      const options = {
+        key: keyId,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: 'VORTX Activewear',
+        description: 'Payment for order',
+        order_id: orderData.id,
+        prefill: {
+          name: user?.fullName || '',
+          email: user?.email || '',
+          contact: addresses.find(a => a.id === selectedAddressId)?.phone || user?.phone || '',
+        },
+        theme: {
+          color: '#000000',
+        },
+        handler: async function (response: any) {
+          try {
+            // 3. Verify Payment Signature on server
+            const verifyRes = await fetch('/api/razorpay/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+
+            const verifyData = await verifyRes.json();
+            if (verifyData.success) {
+              const orderNum = await placeOrder(paymentMethod, selectedAddressId);
+              router.push(`/profile?success=true&order=${orderNum}`);
+            } else {
+              setCheckoutError(verifyData.error || 'Payment signature verification failed.');
+            }
+          } catch (err: any) {
+            setCheckoutError(err.message || 'Payment verification error.');
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            setRazorpayLoading(false);
+          },
+        },
+      };
+
+      const razorpayInstance = new (window as any).Razorpay(options);
+      razorpayInstance.open();
+      setRazorpayLoading(false);
+    } catch (err: any) {
+      setCheckoutError(err.message || 'Error processing payment request.');
+      setRazorpayLoading(false);
     }
   };
 

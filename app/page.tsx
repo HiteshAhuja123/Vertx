@@ -20,7 +20,7 @@ const RANDOM_PURCHASES = [
 
 export default function Home() {
   const router = useRouter();
-  const { addToCart, preOrderMode } = useStore();
+  const { addToCart, preOrderMode, navigateToProduct } = useStore();
   const [products, setProducts] = useState<any[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [reviews, setReviews] = useState<any[]>([]);
@@ -270,7 +270,7 @@ export default function Home() {
               return (
                 <div 
                   key={prod.id} 
-                  onClick={() => router.push(`/product/${prod.slug}`)}
+                  onClick={() => navigateToProduct(prod.slug)}
                   className="group flex flex-col border border-vortx-white/15 bg-vortx-dark/40 overflow-hidden relative card-tilt-hover cursor-pointer"
                 >
                   {/* Image wrapper */}
@@ -291,15 +291,17 @@ export default function Home() {
                     
                     {/* Hover controls overlay */}
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-3 transition-opacity duration-300">
-                      <Link 
-                        href={`/product/${prod.slug}`}
-                        onClick={(e) => e.stopPropagation()}
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigateToProduct(prod.slug);
+                        }}
                         aria-label={`View details for ${prod.name}`}
                         className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-110 active:scale-95 transition btn-lift"
                         title="View Details"
                       >
                         <Eye className="w-4 h-4" />
-                      </Link>
+                      </button>
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();
@@ -346,11 +348,11 @@ export default function Home() {
                       <span className="text-[8px] text-vortx-gray font-mono uppercase tracking-widest">
                         {prod.category}
                       </span>
-                      <Link href={`/product/${prod.slug}`} onClick={(e) => e.stopPropagation()}>
-                        <h3 className="font-syne text-xs font-bold tracking-wider text-vortx-white mt-1 hover:underline">
+                      <div onClick={(e) => { e.stopPropagation(); navigateToProduct(prod.slug); }}>
+                        <h3 className="font-syne text-xs font-bold tracking-wider text-vortx-white mt-1 hover:underline cursor-pointer">
                           {prod.name.toUpperCase()}
                         </h3>
-                      </Link>
+                      </div>
                     </div>
                     <div className="flex items-center gap-2.5 mt-3 font-mono">
                       <span className="text-xs font-bold text-vortx-white">{formatPrice(prod.price)}</span>

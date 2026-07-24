@@ -12,7 +12,7 @@ import { ProductGridSkeleton } from '@/components/ProductSkeleton';
 function ShopContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { addToCart, preOrderMode, togglePreOrderMode } = useStore();
+  const { addToCart, preOrderMode, togglePreOrderMode, navigateToProduct } = useStore();
   const [dbProducts, setDbProducts] = useState<any[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -233,7 +233,7 @@ function ShopContent() {
                   return (
                     <div
                       key={prod.id}
-                      onClick={() => router.push(`/product/${prod.slug}`)}
+                      onClick={() => navigateToProduct(prod.slug)}
                       className="group flex flex-col border border-vortx-white/15 bg-vortx-dark/30 rounded overflow-hidden card-tilt-hover cursor-pointer"
                     >
                       {/* Image cover */}
@@ -254,14 +254,16 @@ function ShopContent() {
 
                         {/* Interactive overlay shortcuts */}
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-3 transition-opacity duration-300">
-                          <Link
-                            href={`/product/${prod.slug}`}
-                            onClick={(e) => e.stopPropagation()}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigateToProduct(prod.slug);
+                            }}
                             aria-label={`View details for ${prod.name}`}
                             className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-110 active:scale-95 transition btn-lift"
                           >
                             <Eye className="w-4 h-4" />
-                          </Link>
+                          </button>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -323,11 +325,11 @@ function ShopContent() {
                             )}
                           </div>
 
-                          <Link href={`/product/${prod.slug}`} onClick={(e) => e.stopPropagation()}>
-                            <h3 className="font-sans text-sm font-bold tracking-wide text-vortx-white mt-1 hover:underline truncate">
+                          <div onClick={(e) => { e.stopPropagation(); navigateToProduct(prod.slug); }}>
+                            <h3 className="font-sans text-sm font-bold tracking-wide text-vortx-white mt-1 hover:underline truncate cursor-pointer">
                               {prod.name.toUpperCase()}
                             </h3>
-                          </Link>
+                          </div>
                         </div>
 
                         {/* Pricing details */}
