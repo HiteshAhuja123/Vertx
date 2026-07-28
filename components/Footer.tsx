@@ -76,8 +76,8 @@ export default function Footer() {
 
           {/* Quick links columns */}
           <div>
-            <h4 className="font-syne text-base font-bold tracking-widest text-vortx-white mb-8 uppercase">CATALOG</h4>
-            <ul className="space-y-5 text-base">
+            <h4 className="font-syne text-xs font-extrabold tracking-[0.2em] text-vortx-white mb-6 uppercase">CATALOG</h4>
+            <ul className="space-y-3.5 text-xs font-medium">
               {footerLinks.shop.map((link, i) => (
                 <li key={i}>
                   <Link href={link.href} className="text-vortx-gray hover:text-vortx-white transition duration-300">
@@ -89,8 +89,8 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-syne text-base font-bold tracking-widest text-vortx-white mb-8 uppercase">HELP</h4>
-            <ul className="space-y-5 text-base">
+            <h4 className="font-syne text-xs font-extrabold tracking-[0.2em] text-vortx-white mb-6 uppercase">HELP</h4>
+            <ul className="space-y-3.5 text-xs font-medium">
               {footerLinks.support.map((link, i) => (
                 <li key={i}>
                   <Link href={link.href} className="text-vortx-gray hover:text-vortx-white transition duration-300">
@@ -103,13 +103,13 @@ export default function Footer() {
 
           {/* Newsletter Subscribe */}
           <div>
-            <h4 className="font-syne text-base font-bold tracking-widest text-vortx-white mb-8 uppercase">NEWSLETTER</h4>
+            <h4 className="font-syne text-xs font-extrabold tracking-[0.2em] text-vortx-white mb-6 uppercase">NEWSLETTER</h4>
             <div className="space-y-4">
-              <p className="text-base text-vortx-gray leading-relaxed">
+              <p className="text-xs text-vortx-gray leading-relaxed font-medium">
                 Join the clan. Receive 10% off your first drop.
               </p>
               {isSubscribed ? (
-                <div className="border border-vortx-white/20 p-3 bg-vortx-white/5 rounded">
+                <div className="border border-vortx-white/20 p-3 bg-vortx-white/5">
                   <p className="text-[10px] font-mono text-vortx-white uppercase font-bold tracking-wider">
                     SUCCESS. Code WELCOME10 activated.
                   </p>
@@ -121,7 +121,7 @@ export default function Footer() {
                     value={emailInput}
                     onChange={(e) => setEmailInput(e.target.value)}
                     placeholder="ENTER YOUR EMAIL" 
-                    className="w-full bg-transparent border-none text-base text-vortx-white focus:outline-none placeholder:text-vortx-gray/50 py-2"
+                    className="w-full bg-transparent border-none text-xs text-vortx-white focus:outline-none placeholder:text-vortx-gray/50 py-2 font-mono"
                     required
                   />
                   <button type="submit" className="text-vortx-gray hover:text-vortx-white transition pl-2">
@@ -135,14 +135,14 @@ export default function Footer() {
         </div>
 
         {/* Brand statement / Hours info / Copyright */}
-        <div className="border-t border-vortx-white/10 pt-10 sm:pt-16 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-          <div className="flex flex-wrap gap-x-5 sm:gap-x-8 gap-y-3 text-xs sm:text-sm text-vortx-gray font-medium">
-            <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> SUPPORT: MON-SAT, 9AM-6PM</span>
-            <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5" /> +91 99999 99999</span>
-            <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5" /> GEAR@VORTX.FIT</span>
+        <div className="border-t border-vortx-white/10 pt-8 sm:pt-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+          <div className="flex flex-wrap gap-x-5 sm:gap-x-8 gap-y-3 text-xs text-vortx-gray font-mono font-medium">
+            <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-vortx-white" /> SUPPORT: MON-SAT, 9AM-6PM</span>
+            <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-vortx-white" /> +91 99999 99999</span>
+            <span className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5 text-vortx-white" /> GEAR@VORTX.FIT</span>
           </div>
 
-          <div className="flex flex-col md:items-end gap-3 text-xs sm:text-sm text-vortx-gray font-medium w-full md:w-auto">
+          <div className="flex flex-col md:items-end gap-3 text-xs text-vortx-gray font-medium w-full md:w-auto">
             <div className="flex flex-wrap gap-x-4 sm:gap-x-6 gap-y-2 mb-1">
               {footerLinks.legal.map((link, i) => (
                 <Link key={i} href={link.href} className="hover:text-vortx-white transition">
@@ -150,7 +150,7 @@ export default function Footer() {
                 </Link>
               ))}
             </div>
-            <p>© {new Date().getFullYear()} VORTX ACTIVEWEAR CO. ALL RIGHTS RESERVED.</p>
+            <p className="text-[11px] font-mono">© {new Date().getFullYear()} VORTX ACTIVEWEAR CO. ALL RIGHTS RESERVED.</p>
           </div>
         </div>
 

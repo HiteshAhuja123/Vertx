@@ -176,12 +176,17 @@ function AuthPortalContent() {
         {/* Form Container */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {errorMsg && (
-            <div className="p-3 border border-red-500/20 bg-red-500/5 text-red-400 text-[10px] font-medium rounded">
-              {errorMsg}
+            <div className="p-3.5 border border-red-500/30 bg-red-500/10 text-red-400 text-xs font-sans font-medium rounded space-y-1">
+              <p className="font-bold">{errorMsg}</p>
+              {errorMsg.toLowerCase().includes('email not confirmed') && (
+                <p className="text-[11px] text-vortx-gray leading-normal">
+                  Supabase requires email confirmation. Click the link sent to your email, or disable "Confirm email" in your Supabase Dashboard under Auth Settings.
+                </p>
+              )}
             </div>
           )}
           {successMsg && (
-            <div className="p-3 border border-emerald-500/20 bg-emerald-500/5 text-emerald-400 text-[10px] font-medium rounded">
+            <div className="p-3.5 border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-sans font-medium rounded">
               {successMsg}
             </div>
           )}

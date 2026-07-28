@@ -6,7 +6,6 @@ import { StoreProvider } from '@/components/StoreContext';
 import { ProductLoaderOverlay } from '@/components/ProductLoaderOverlay';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import AutomationLogger from '@/components/AutomationLogger';
 
 const outfit = Outfit({
   subsets: ['latin'],
@@ -74,7 +73,6 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
-          <AutomationLogger />
         </StoreProvider>
       </body>
     </html>

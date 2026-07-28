@@ -315,7 +315,7 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
               {product.mrp && product.mrp > product.price && (
                 <>
                   <span className="text-sm text-vortx-gray line-through">{formatPrice(product.mrp)}</span>
-                  <span className="text-xs text-emerald-400 font-sans font-bold">-{product.discount_percent}%</span>
+                  <span className="text-xs text-red-500 font-sans font-bold">-{product.discount_percent}%</span>
                 </>
               )}
             </div>

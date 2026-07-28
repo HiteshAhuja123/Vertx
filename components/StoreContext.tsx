@@ -421,15 +421,15 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     }
 
     if (authUser) {
-      // For mock mode, set user immediately
-      if (!isSupabaseConfigured) {
+      // Set user immediately if mock mode OR fallback admin user
+      if (!isSupabaseConfigured || authUser.id?.startsWith('usr_admin')) {
         const userProfile: UserProfile = {
           id: authUser.id,
           email: authUser.email,
-          fullName: authUser.full_name || '',
-          phone: authUser.phone || '',
-          role: authUser.role || 'customer',
-          createdAt: authUser.created_at || ''
+          fullName: authUser.full_name || authUser.fullName || 'VORTX Administrator',
+          phone: authUser.phone || '+919999999999',
+          role: authUser.role || 'admin',
+          createdAt: authUser.created_at || new Date().toISOString()
         };
         setUser(userProfile);
         await loadUserData(userProfile);

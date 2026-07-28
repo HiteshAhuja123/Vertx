@@ -116,7 +116,7 @@ export default function Home() {
       
       {/* 1. HERO BANNER SCREEN */}
       <section className="relative h-[78svh] sm:h-[90vh] md:h-screen w-full flex items-center justify-center overflow-hidden">
-        {/* Background Visual (Atmospheric premium graphic) */}
+        {/* Background Visual */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-60 scale-105 transition-transform duration-[10000ms]"
           style={{ backgroundImage: `url('https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=1600&q=80')` }}
@@ -124,15 +124,14 @@ export default function Home() {
         {/* Deep overlay vignette */}
         <div className="absolute inset-0 bg-gradient-to-t from-vortx-black via-vortx-black/40 to-vortx-black/80" />
         
-        {/* Grid Background Line Overlay & Laser Scanner Sweep */}
+        {/* Grid Background Line Overlay */}
         <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none" />
-        <div className="scanner-sweep" />
 
         {/* Content */}
         <div className="relative z-10 text-center px-5 max-w-5xl mx-auto space-y-5 sm:space-y-6 md:space-y-8">
-          <div className="inline-flex items-center gap-2 border border-vortx-white/20 px-3.5 py-1.5 bg-vortx-white/5 backdrop-blur-md rounded-full">
-            <span className="h-1.5 w-1.5 bg-vortx-white rounded-full animate-ping" />
-            <span className="font-sans text-[10px] sm:text-xs font-bold tracking-[0.16em] text-vortx-white uppercase">HYBRID ATHLETE LINE INITIATED</span>
+          <div className="inline-flex items-center gap-2 border border-vortx-white/20 px-4 py-1.5 bg-vortx-white/5 backdrop-blur-md rounded-full">
+            <span className="h-1.5 w-1.5 bg-red-600 rounded-full" />
+            <span className="font-sans text-[10px] sm:text-xs font-bold tracking-[0.18em] text-vortx-white uppercase">HYBRID ATHLETE LINE INITIATED</span>
           </div>
 
           <h1 className="font-sans text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight leading-none text-vortx-white select-none uppercase">
@@ -140,7 +139,7 @@ export default function Home() {
           </h1>
 
           <p className="font-sans text-xs sm:text-sm tracking-[0.25em] text-vortx-gray uppercase font-bold max-w-xl mx-auto">
-            Premium Gym Wear Built For Lifters.
+            Ultra-Premium Activewear Engineered For Hybrid Athletes.
           </p>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 pt-5 sm:pt-6 w-full max-w-sm sm:max-w-none mx-auto">
@@ -160,34 +159,79 @@ export default function Home() {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-2 opacity-50">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-2 opacity-40">
           <span className="text-[8px] font-sans font-bold tracking-widest text-vortx-gray">SCROLL</span>
-          <div className="w-1 h-12 border border-vortx-white/20 rounded-full relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1/2 bg-vortx-white rounded-full animate-bounce" />
+          <div className="w-1 h-10 border border-vortx-white/20 rounded-full relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1/2 bg-vortx-white rounded-full" />
           </div>
         </div>
       </section>
 
       {/* 2. INFINITE TICKER MARQUEE */}
-      <section className="bg-vortx-white text-vortx-black py-4 overflow-hidden border-y border-vortx-white select-none">
+      <section className="bg-vortx-white text-vortx-black py-3.5 overflow-hidden border-y border-vortx-white select-none">
         <div className="flex whitespace-nowrap animate-marquee">
-          {Array(10).fill("FOR WARRIORS, NOT WATCHERS. // VORTX ACTIVEWEAR // ").map((text, i) => (
-            <span key={i} className="font-sans text-xs font-black tracking-widest mx-10">
+          {Array(10).fill("FOR WARRIORS, NOT WATCHERS // VORTX ACTIVEWEAR // ").map((text, i) => (
+            <span key={i} className="font-sans text-xs font-extrabold tracking-[0.2em] mx-8">
               {text}
             </span>
           ))}
         </div>
       </section>
 
-      {/* 3. LIMITED DROP COUNTDOWN */}
+      {/* 3. TRUST & STATS ROW (Clean 4-column restrained stats bar) */}
+      <section className="bg-vortx-dark/80 border-b border-vortx-white/10 py-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 divide-y md:divide-y-0 md:divide-x divide-vortx-white/10 text-center">
+            
+            <div className="space-y-1 pt-4 md:pt-0">
+              <span className="block font-syne text-2xl sm:text-3xl font-extrabold text-vortx-white tracking-wider">
+                50,000+
+              </span>
+              <span className="block text-[10px] sm:text-xs font-mono font-bold tracking-widest text-vortx-gray uppercase">
+                UNITS SHIPPED
+              </span>
+            </div>
+
+            <div className="space-y-1 pt-4 md:pt-0">
+              <span className="block font-syne text-2xl sm:text-3xl font-extrabold text-vortx-white tracking-wider">
+                15,000+
+              </span>
+              <span className="block text-[10px] sm:text-xs font-mono font-bold tracking-widest text-vortx-gray uppercase">
+                HYBRID ATHLETES
+              </span>
+            </div>
+
+            <div className="space-y-1 pt-4 md:pt-0">
+              <span className="block font-syne text-2xl sm:text-3xl font-extrabold text-vortx-white tracking-wider">
+                100%
+              </span>
+              <span className="block text-[10px] sm:text-xs font-mono font-bold tracking-widest text-vortx-gray uppercase">
+                LAB-TESTED TECH WEAVE
+              </span>
+            </div>
+
+            <div className="space-y-1 pt-4 md:pt-0">
+              <span className="block font-syne text-2xl sm:text-3xl font-extrabold text-vortx-white tracking-wider">
+                4.9★
+              </span>
+              <span className="block text-[10px] sm:text-xs font-mono font-bold tracking-widest text-vortx-gray uppercase">
+                COMMUNITY RATING
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* 4. LIMITED DROP COUNTDOWN */}
       <section className="py-20 border-b border-vortx-white/10 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 border border-vortx-white/25 px-3 py-1 rounded">
-                <Clock className="w-3.5 h-3.5" />
-                <span className="font-mono text-[9px] font-bold tracking-widest text-vortx-white">LIMITED DROP COUNTDOWN</span>
+              <div className="inline-flex items-center gap-2 border border-vortx-white/20 px-3 py-1 bg-vortx-white/5">
+                <Clock className="w-3.5 h-3.5 text-vortx-white" />
+                <span className="font-mono text-[9px] font-bold tracking-widest text-vortx-white uppercase">LIMITED DROP COUNTDOWN</span>
               </div>
               <h2 className="font-sans text-4xl sm:text-5xl font-extrabold tracking-wide text-vortx-white">
                 NEW RELEASES
@@ -196,23 +240,23 @@ export default function Home() {
                 The next iteration of warrior performance drops on August 15, 2026. Pre-orders are open exclusively to clan members. Stocks are capped at 50 units globally.
               </p>
               
-              {/* Countdown Ticker boxes */}
+              {/* Countdown Ticker boxes - Clean dark boxes */}
               <div className="grid grid-cols-4 gap-4 max-w-sm pt-4 font-mono text-center">
-                <div className="bg-vortx-white/5 border border-vortx-white/10 p-3 rounded countdown-pulse">
+                <div className="bg-vortx-dark border border-vortx-white/15 p-3.5 countdown-pulse">
                   <span className="block text-2xl font-bold text-vortx-white">{timeLeft.days}</span>
-                  <span className="text-[8px] text-vortx-gray uppercase">Days</span>
+                  <span className="text-[8px] text-vortx-gray uppercase font-bold tracking-wider">Days</span>
                 </div>
-                <div className="bg-vortx-white/5 border border-vortx-white/10 p-3 rounded countdown-pulse">
+                <div className="bg-vortx-dark border border-vortx-white/15 p-3.5 countdown-pulse">
                   <span className="block text-2xl font-bold text-vortx-white">{timeLeft.hours}</span>
-                  <span className="text-[8px] text-vortx-gray uppercase">Hours</span>
+                  <span className="text-[8px] text-vortx-gray uppercase font-bold tracking-wider">Hours</span>
                 </div>
-                <div className="bg-vortx-white/5 border border-vortx-white/10 p-3 rounded countdown-pulse">
+                <div className="bg-vortx-dark border border-vortx-white/15 p-3.5 countdown-pulse">
                   <span className="block text-2xl font-bold text-vortx-white">{timeLeft.minutes}</span>
-                  <span className="text-[8px] text-vortx-gray uppercase">Mins</span>
+                  <span className="text-[8px] text-vortx-gray uppercase font-bold tracking-wider">Mins</span>
                 </div>
-                <div className="bg-vortx-white/5 border border-vortx-white/10 p-3 rounded countdown-pulse">
+                <div className="bg-vortx-dark border border-vortx-white/15 p-3.5 countdown-pulse">
                   <span className="block text-2xl font-bold text-vortx-white">{timeLeft.seconds}</span>
-                  <span className="text-[8px] text-vortx-gray uppercase">Secs</span>
+                  <span className="text-[8px] text-vortx-gray uppercase font-bold tracking-wider">Secs</span>
                 </div>
               </div>
               
@@ -244,7 +288,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. NEW DROPS & BEST SELLERS CATALOG */}
+      {/* 5. NEW DROPS & BEST SELLERS CATALOG */}
       <section className="py-24 border-b border-vortx-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
@@ -278,14 +322,6 @@ export default function Home() {
                 >
                   {/* Image wrapper */}
                   <div className="aspect-[4/5] bg-vortx-gray-dark relative overflow-hidden">
-                    {/* Warrior Target Lock Brackets overlay */}
-                    <div className="absolute inset-0 pointer-events-none z-10">
-                      <div className="card-target-bracket card-target-top-left" />
-                      <div className="card-target-bracket card-target-top-right" />
-                      <div className="card-target-bracket card-target-bottom-left" />
-                      <div className="card-target-bracket card-target-bottom-right" />
-                    </div>
-                    
                     <img 
                       src={prod.images?.[0]} 
                       alt={prod.name}
@@ -332,14 +368,14 @@ export default function Home() {
 
                     {/* Badge */}
                     {prod.badge && (
-                      <span className="absolute top-4 left-4 px-2 py-1 bg-vortx-white text-vortx-black font-syne text-[8px] font-extrabold tracking-wider badge-shimmer">
+                      <span className="absolute top-4 left-4 px-2.5 py-1 bg-vortx-white text-vortx-black font-syne text-[8px] font-extrabold tracking-wider">
                         {prod.badge}
                       </span>
                     )}
 
                     {/* Pre Order flag */}
                     {isPreOrder && (
-                      <span className="absolute bottom-4 right-4 border border-vortx-white bg-vortx-black text-vortx-white font-syne text-[7px] font-bold tracking-widest px-2 py-1 rounded">
+                      <span className="absolute bottom-4 right-4 border border-vortx-white/40 bg-vortx-black text-vortx-white font-syne text-[7px] font-bold tracking-widest px-2 py-1">
                         PRE-ORDER
                       </span>
                     )}
@@ -362,7 +398,7 @@ export default function Home() {
                       {prod.mrp && prod.mrp > prod.price && (
                         <>
                           <span className="text-[10px] text-vortx-gray line-through">{formatPrice(prod.mrp)}</span>
-                          <span className="text-[9px] text-emerald-400 font-sans font-bold">-{prod.discount_percent}%</span>
+                          <span className="text-[9px] text-red-500 font-sans font-bold">-{prod.discount_percent}%</span>
                         </>
                       )}
                     </div>

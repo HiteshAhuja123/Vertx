@@ -238,14 +238,6 @@ function ShopContent() {
                     >
                       {/* Image cover */}
                       <div className="aspect-[4/5] bg-vortx-gray-dark relative overflow-hidden">
-                        {/* Warrior Target Lock Brackets overlay */}
-                        <div className="absolute inset-0 pointer-events-none z-10">
-                          <div className="card-target-bracket card-target-top-left" />
-                          <div className="card-target-bracket card-target-top-right" />
-                          <div className="card-target-bracket card-target-bottom-left" />
-                          <div className="card-target-bracket card-target-bottom-right" />
-                        </div>
-
                         <img
                           src={prod.images?.[0]}
                           alt={prod.name}
@@ -291,14 +283,14 @@ function ShopContent() {
 
                         {/* Drop badge */}
                         {prod.badge && (
-                          <span className="absolute top-4 left-4 px-2 py-1 bg-vortx-white text-vortx-black font-sans text-[10px] font-bold tracking-wider badge-shimmer">
+                          <span className="absolute top-4 left-4 px-2 py-1 bg-vortx-white text-vortx-black font-sans text-[10px] font-bold tracking-wider">
                             {prod.badge}
                           </span>
                         )}
 
                         {/* Pre-order drop labels */}
                         {isPreOrder && (
-                          <span className="absolute bottom-4 right-4 bg-vortx-black text-vortx-white border border-vortx-white/40 font-sans text-[10px] font-bold tracking-wider px-2 py-1 rounded">
+                          <span className="absolute bottom-4 right-4 bg-vortx-black text-vortx-white border border-vortx-white/40 font-sans text-[10px] font-bold tracking-wider px-2 py-1">
                             PRE-ORDER
                           </span>
                         )}
@@ -317,7 +309,7 @@ function ShopContent() {
                               <span className={`text-[8px] font-bold tracking-wider ${totalStock === 0
                                   ? 'text-red-500'
                                   : totalStock < 10
-                                    ? 'text-yellow-400'
+                                    ? 'text-vortx-white/80 font-mono'
                                     : 'text-vortx-gray'
                                 }`}>
                                 {totalStock === 0 ? 'OUT OF STOCK' : totalStock < 10 ? `ONLY ${totalStock} LEFT` : 'IN STOCK'}
@@ -338,7 +330,7 @@ function ShopContent() {
                           {prod.mrp && prod.mrp > prod.price && (
                             <>
                               <span className="text-[10px] text-vortx-gray line-through">{formatPrice(prod.mrp)}</span>
-                              <span className="text-[9px] text-emerald-400 font-sans font-bold">-{prod.discount_percent}%</span>
+                              <span className="text-[9px] text-red-500 font-sans font-bold">-{prod.discount_percent}%</span>
                             </>
                           )}
                         </div>
