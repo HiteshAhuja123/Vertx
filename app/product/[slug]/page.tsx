@@ -82,10 +82,11 @@ export default async function ProductDetailPage({ params }: Props) {
 
   return (
     <>
-      {/* Injected Rich Schema for Google Crawlers */}
+      {/* Injected Rich Schema for Google Crawlers. `<` is escaped so a product name/description
+          containing "</script>" (writable via the products table) can't break out of this tag. */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchemaJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchemaJsonLd).replace(/</g, '\\u003c') }}
       />
       
       <ProductClient initialProduct={product} />

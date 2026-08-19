@@ -15,7 +15,7 @@ import {
   deleteAddressById,
   fetchOrders,
   fetchAllOrders,
-  createOrderInDb,
+  placeOrderSecure,
   updateOrderStatusInDb,
   fetchWishlist,
   addToWishlist,
@@ -583,49 +583,28 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     if (!user) throw new Error('Authentication required');
     const selectedAddress = addresses.find(a => a.id === addressId);
     if (!selectedAddress) throw new Error('Address not found');
-
-    const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-    const discount = Math.round(subtotal * (discountPercent / 100));
-    const shipping = subtotal > 3000 ? 0 : 250;
-    const total = subtotal - discount + shipping;
-
-    const orderNumber = 'VX-' + Math.floor(Math.random() * 900000 + 100000);
+    if (cart.length === 0) throw new Error('Cart is empty');
 
     try {
-      const orderResult = await createOrderInDb(
+      // Price, stock, and coupon are all re-derived server-side inside placeOrderSecure —
+      // the client only sends variant IDs + quantities, never a total to trust.
+      const orderResult = await placeOrderSecure(
         user.id,
-        {
-          order_number: orderNumber,
-          status: method === 'cod' ? 'pending' : 'paid',
-          total_amount: total,
-          coupon_code: couponCode || undefined,
-          shipping_address_id: addressId
-        },
-        cart.map(c => ({
-          product_name: c.name,
-          image_url: c.image,
-          size: c.size,
-          color: c.color,
-          quantity: c.quantity,
-          unit_price: c.price,
-          product_variant_id: c.variantId
-        })),
-        {
-          method,
-          status: method === 'cod' ? 'pending' : 'success',
-          amount: total,
-          transaction_id: method === 'cod' ? '' : 'TXN-' + Math.floor(Math.random() * 900000 + 100000)
-        }
+        addressId,
+        couponCode || undefined,
+        method,
+        cart.map(c => ({ productVariantId: c.variantId, quantity: c.quantity }))
       );
 
-      // Build local Order object for immediate UI update
+      // Build local Order object for immediate UI update, using the server-computed
+      // total/status rather than anything calculated client-side.
       const newOrder: Order = {
         id: orderResult.id,
         userId: user.id,
-        orderNumber,
-        status: method === 'cod' ? 'pending' : 'paid',
-        totalAmount: total,
-        couponCode: couponCode || undefined,
+        orderNumber: orderResult.order_number,
+        status: orderResult.status,
+        totalAmount: orderResult.total_amount,
+        couponCode: orderResult.coupon_code || undefined,
         shippingAddress: selectedAddress,
         createdAt: orderResult.created_at || new Date().toISOString(),
         items: cart.map(c => ({
@@ -640,8 +619,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         })),
         payment: {
           method,
-          status: method === 'cod' ? 'pending' : 'success',
-          transactionId: method === 'cod' ? '' : 'TXN-' + Math.floor(Math.random() * 900000 + 100000)
+          status: 'pending',
+          transactionId: ''
         }
       };
 
@@ -654,14 +633,14 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       await triggerOrderCompletedAutomation(
         user.email,
         user.fullName,
-        orderNumber,
-        total,
+        newOrder.orderNumber,
+        newOrder.totalAmount,
         selectedAddress.phone,
         preOrderCount
       );
 
       clearCart();
-      return orderNumber;
+      return newOrder.orderNumber;
     } catch (err) {
       console.error('Place order error:', err);
       throw err;

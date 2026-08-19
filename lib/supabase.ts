@@ -627,55 +627,93 @@ export async function fetchAllOrders(): Promise<any[]> {
   return data || [];
 }
 
-export async function createOrderInDb(
+/**
+ * Places an order with price, stock, and coupon all re-derived server-side —
+ * never trusts a client-supplied total. Live mode calls the `place_order`
+ * Postgres RPC (see supabase/migrations/0002_place_order_rpc.sql), which runs
+ * as the authenticated caller and does the same validation/locking inside
+ * Postgres. Mock mode mirrors that logic against the local mockDb so demo
+ * behavior doesn't silently diverge from the real security boundary.
+ *
+ * Payment status is always written as 'pending', including for Razorpay —
+ * this function has no trustworthy way to know a payment actually succeeded
+ * (see the migration file for why), so it never accepts one from the caller.
+ */
+export async function placeOrderSecure(
   userId: string,
-  orderData: {
-    order_number: string;
-    status: string;
-    total_amount: number;
-    coupon_code?: string;
-    shipping_address_id: string;
-  },
-  items: {
-    product_name: string;
-    image_url: string;
-    size: string;
-    color: string;
-    quantity: number;
-    unit_price: number;
-    product_variant_id?: string;
-  }[],
-  paymentData: {
-    method: string;
-    status: string;
-    amount: number;
-    transaction_id?: string;
-  }
+  shippingAddressId: string,
+  couponCode: string | undefined,
+  paymentMethod: 'razorpay' | 'cod' | 'upi' | 'card' | 'netbanking',
+  items: { productVariantId: string; quantity: number }[]
 ): Promise<any> {
   if (!isSupabaseConfigured) {
+    const address = mockDb.getAddresses().find(a => a.id === shippingAddressId && a.user_id === userId);
+    if (!address) throw new Error('Invalid shipping address');
+
+    const products = mockDb.getProducts();
+    let subtotal = 0;
+    const resolvedItems: { variantId: string; productName: string; imageUrl: string; size: string; color: string; quantity: number; unitPrice: number }[] = [];
+
+    for (const item of items) {
+      if (item.quantity <= 0) throw new Error('Invalid quantity');
+      const product = products.find(p => p.variants.some(v => v.id === item.productVariantId));
+      const variant = product?.variants.find(v => v.id === item.productVariantId);
+      if (!product || !variant) throw new Error('Product variant not found');
+      if (!product.is_in_stock && !product.pre_order_available) throw new Error(`Product is unavailable: ${product.name}`);
+      if (product.is_in_stock) {
+        if (variant.stock < item.quantity) throw new Error(`Insufficient stock for ${variant.sku}`);
+        variant.stock -= item.quantity;
+      }
+      subtotal += product.price * item.quantity;
+      resolvedItems.push({
+        variantId: variant.id,
+        productName: product.name,
+        imageUrl: product.images?.[0] || '',
+        size: variant.size,
+        color: variant.color,
+        quantity: item.quantity,
+        unitPrice: product.price,
+      });
+    }
+    mockDb.saveProducts(products);
+
+    let discountPercent = 0;
+    if (couponCode && couponCode.trim()) {
+      const coupon = mockDb.getCoupons().find(c => c.code.toUpperCase() === couponCode.toUpperCase() && c.is_active);
+      if (!coupon) throw new Error('Invalid or expired coupon');
+      discountPercent = coupon.discount_percent;
+    }
+    const discount = Math.round(subtotal * discountPercent / 100);
+    const shipping = (subtotal - discount) > 3000 ? 0 : 250;
+    const total = subtotal - discount + shipping;
+
     const orders = mockDb.getOrders();
     const newOrder = {
       id: 'ord_' + Math.random().toString(36).substr(2, 9),
       user_id: userId,
-      ...orderData,
+      order_number: 'VX-' + Math.floor(Math.random() * 900000 + 100000),
+      status: 'pending' as const,
+      total_amount: total,
+      coupon_code: couponCode || undefined,
+      shipping_address_id: shippingAddressId,
       tracking_number: '',
       courier_name: '',
       tracking_status: 'Order Placed',
       created_at: new Date().toISOString(),
-      items: items.map(i => ({
+      items: resolvedItems.map(i => ({
         id: 'oi_' + Math.random(),
-        product_id: i.product_variant_id || '',
-        product_name: i.product_name,
-        image_url: i.image_url,
+        product_id: i.variantId,
+        product_name: i.productName,
+        image_url: i.imageUrl,
         size: i.size,
         color: i.color,
         quantity: i.quantity,
-        unit_price: i.unit_price
+        unit_price: i.unitPrice
       })),
       payment: {
-        method: paymentData.method,
-        status: paymentData.status,
-        transaction_id: paymentData.transaction_id || ''
+        method: paymentMethod,
+        status: 'pending',
+        transaction_id: ''
       }
     };
     orders.push(newOrder as any);
@@ -683,57 +721,14 @@ export async function createOrderInDb(
     return newOrder;
   }
 
-  // 1. Insert order
-  const { data: order, error: orderError } = await supabase
-    .from('orders')
-    .insert({
-      user_id: userId,
-      order_number: orderData.order_number,
-      status: orderData.status,
-      total_amount: orderData.total_amount,
-      coupon_code: orderData.coupon_code || null,
-      shipping_address_id: orderData.shipping_address_id
-    })
-    .select()
-    .single();
+  const { data: order, error } = await supabase.rpc('place_order', {
+    p_shipping_address_id: shippingAddressId,
+    p_coupon_code: couponCode || null,
+    p_payment_method: paymentMethod,
+    p_items: items.map(i => ({ product_variant_id: i.productVariantId, quantity: i.quantity })),
+  });
 
-  if (orderError) throw orderError;
-
-  // 2. Insert order items with denormalized product info
-  const orderItems = items.map(i => ({
-    order_id: order.id,
-    product_variant_id: i.product_variant_id || null,
-    product_name: i.product_name,
-    image_url: i.image_url,
-    size: i.size,
-    color: i.color,
-    quantity: i.quantity,
-    unit_price: i.unit_price
-  }));
-
-  const { error: itemsError } = await supabase
-    .from('order_items')
-    .insert(orderItems);
-
-  if (itemsError) {
-    console.error('Order items insert error:', itemsError);
-  }
-
-  // 3. Insert payment
-  const { error: paymentError } = await supabase
-    .from('payments')
-    .insert({
-      order_id: order.id,
-      method: paymentData.method,
-      status: paymentData.status,
-      amount: paymentData.amount,
-      transaction_id: paymentData.transaction_id || null
-    });
-
-  if (paymentError) {
-    console.error('Payment insert error:', paymentError);
-  }
-
+  if (error) throw error;
   return order;
 }
 

@@ -140,13 +140,15 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
       </Link>
 
       {/* Quick actions overlay — a sibling of the Link (not nested inside it) so the
-          buttons stay real, independently clickable controls instead of an <a> inside an <a>. */}
-      <div className="absolute inset-x-0 top-0 aspect-[4/5] flex items-center justify-center gap-3 bg-black/40 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-300">
+          buttons stay real, independently clickable controls instead of an <a> inside an <a>.
+          The container itself stays pointer-events-none permanently so it never dead-zones
+          clicks on the rest of the image; only the two buttons opt back into pointer-events-auto. */}
+      <div className="absolute inset-x-0 top-0 aspect-[4/5] flex items-center justify-center gap-3 bg-black/40 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-300">
         <Link
           href={href}
           aria-label={`View details for ${product.name}`}
           title="View details"
-          className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-110 active:scale-95 transition btn-lift"
+          className="pointer-events-auto p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-110 active:scale-95 transition btn-lift"
         >
           <Eye className="w-4 h-4" />
         </Link>
@@ -155,7 +157,7 @@ export function ProductCard({ product, variant = 'default' }: ProductCardProps) 
           onClick={handleAddToCart}
           aria-label={`Add ${product.name} to cart`}
           title={isPreOrder ? 'Pre-order item' : 'Add to cart'}
-          className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-110 active:scale-95 transition btn-lift"
+          className="pointer-events-auto p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-110 active:scale-95 transition btn-lift"
         >
           <ShoppingBag className="w-4 h-4" />
         </button>

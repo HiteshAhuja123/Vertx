@@ -13,8 +13,8 @@ import { Modal } from '@/components/ui/Modal';
 function ProfilePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const successOrderNum = searchParams?.get('order') || '';
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successOrderNum, setSuccessOrderNum] = useState('');
 
   const { 
     user, 
@@ -41,12 +41,17 @@ function ProfilePageContent() {
   }, [user, router]);
 
   useEffect(() => {
-    if (successOrderNum) {
+    const orderNumFromUrl = searchParams?.get('order') || '';
+    if (orderNumFromUrl) {
+      // Captured into state once, before the URL is cleaned up — reading straight
+      // from searchParams for display would go blank once replaceState fires below.
+      setSuccessOrderNum(orderNumFromUrl);
       setShowSuccessModal(true);
       // Clean query parameters from URL
       window.history.replaceState({}, '', '/profile');
     }
-  }, [successOrderNum]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   if (!user) return null;
 
