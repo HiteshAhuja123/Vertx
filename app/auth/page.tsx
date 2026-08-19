@@ -167,7 +167,7 @@ function AuthPortalContent() {
 
         {/* Brand Slogan */}
         <div className="text-center mb-10">
-          <span className="font-sans text-[11px] font-bold tracking-[0.2em] text-vortx-gray uppercase">VORTX SECURITY</span>
+          <span className="font-sans text-2xs font-bold tracking-[0.2em] text-vortx-gray uppercase">VORTX SECURITY</span>
           <h2 className="font-syne text-2xl font-bold tracking-wider text-vortx-white mt-3 uppercase">
             {isLoginTab ? 'CHOOSE PERFORMANCE' : 'JOIN THE WARRIOR CLAN'}
           </h2>
@@ -179,7 +179,7 @@ function AuthPortalContent() {
             <div className="p-3.5 border border-red-500/30 bg-red-500/10 text-red-400 text-xs font-sans font-medium rounded space-y-1">
               <p className="font-bold">{errorMsg}</p>
               {errorMsg.toLowerCase().includes('email not confirmed') && (
-                <p className="text-[11px] text-vortx-gray leading-normal">
+                <p className="text-2xs text-vortx-gray leading-normal">
                   Supabase requires email confirmation. Click the link sent to your email, or disable "Confirm email" in your Supabase Dashboard under Auth Settings.
                 </p>
               )}
@@ -195,9 +195,10 @@ function AuthPortalContent() {
           {!isLoginTab && (
             <>
                <div>
-                <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-2.5">FULL NAME</label>
-                <input 
-                  type="text" 
+                <label htmlFor="auth-fullname" className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-2.5">FULL NAME</label>
+                <input
+                  id="auth-fullname"
+                  type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="ENTER FULL NAME"
@@ -206,10 +207,11 @@ function AuthPortalContent() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-2.5">MOBILE NUMBER</label>
+                <label htmlFor="auth-signup-phone" className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-2.5">MOBILE NUMBER</label>
                 <div className="relative">
-                  <input 
-                    type="tel" 
+                  <input
+                    id="auth-signup-phone"
+                    type="tel"
                     value={phone}
                     maxLength={10}
                     onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
@@ -226,9 +228,10 @@ function AuthPortalContent() {
           {/* Email Address Field */}
           {(!useOtpMode || !isLoginTab) && (
              <div>
-              <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-2.5">EMAIL ADDRESS</label>
-              <input 
-                type="email" 
+              <label htmlFor="auth-email" className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-2.5">EMAIL ADDRESS</label>
+              <input
+                id="auth-email"
+                type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="ENTER EMAIL ADDRESS"
@@ -241,9 +244,10 @@ function AuthPortalContent() {
           {/* Password Field for Signup */}
           {!isLoginTab && (
             <div>
-              <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-2.5">PASSWORD</label>
-              <input 
-                type="password" 
+              <label htmlFor="auth-signup-password" className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-2.5">PASSWORD</label>
+              <input
+                id="auth-signup-password"
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="CREATE PASSWORD (MIN 6 CHARS)"
@@ -261,10 +265,11 @@ function AuthPortalContent() {
                 <div className="space-y-4">
                   {!otpSent ? (
                     <div>
-                      <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">MOBILE NUMBER</label>
+                      <label htmlFor="auth-otp-phone" className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">MOBILE NUMBER</label>
                       <div className="relative">
-                        <input 
-                          type="tel" 
+                        <input
+                          id="auth-otp-phone"
+                          type="tel"
                           value={phone}
                           maxLength={10}
                           onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
@@ -276,9 +281,10 @@ function AuthPortalContent() {
                     </div>
                   ) : (
                     <div>
-                      <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">VERIFICATION CODE</label>
-                      <input 
-                        type="text" 
+                      <label htmlFor="auth-otp-code" className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">VERIFICATION CODE</label>
+                      <input
+                        id="auth-otp-code"
+                        type="text"
                         maxLength={6}
                         value={otpVal}
                         onChange={(e) => setOtpVal(e.target.value.replace(/\D/g, ''))}
@@ -292,11 +298,12 @@ function AuthPortalContent() {
                 /* Standard Password input */
                 <div>
                   <div className="flex justify-between items-center mb-1.5">
-                    <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase">PASSWORD</label>
-                    <button type="button" className="text-[9px] text-vortx-gray hover:text-vortx-white font-medium underline">Forgot?</button>
+                    <label htmlFor="auth-login-password" className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase">PASSWORD</label>
+                    <button type="button" className="text-2xs text-vortx-gray hover:text-vortx-white font-medium underline">Forgot?</button>
                   </div>
-                  <input 
-                    type="password" 
+                  <input
+                    id="auth-login-password"
+                    type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="ENTER PASSWORD"

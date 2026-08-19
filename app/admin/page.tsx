@@ -213,7 +213,7 @@ export default function AdminDashboard() {
           </p>
           <button 
             onClick={() => router.push('/')}
-            className="px-6 py-2.5 bg-vortx-white text-vortx-black font-syne text-[10px] font-bold tracking-widest hover:bg-vortx-white/95 transition"
+            className="px-6 py-2.5 bg-vortx-white text-vortx-black font-syne text-2xs font-bold tracking-widest hover:bg-vortx-white/95 transition"
           >
             RETURN HOME
           </button>
@@ -401,7 +401,7 @@ export default function AdminDashboard() {
           <ShieldCheck className="w-8 h-8 text-vortx-white" />
           <div>
             <h1 className="font-syne text-3xl font-extrabold tracking-wide uppercase">ADMIN CONTROL PANEL</h1>
-            <p className="text-[10px] text-vortx-gray uppercase font-semibold font-mono tracking-widest mt-1">SECURED DEMO INTERFACE</p>
+            <p className="text-2xs text-vortx-gray uppercase font-semibold font-mono tracking-widest mt-1">SECURED DEMO INTERFACE</p>
           </div>
         </div>
 
@@ -450,21 +450,21 @@ export default function AdminDashboard() {
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="p-6 border border-vortx-white/10 bg-vortx-dark/30 rounded glassmorphism flex flex-col justify-between">
-                <div className="flex justify-between items-center text-vortx-gray text-[10px] uppercase font-bold">
+                <div className="flex justify-between items-center text-vortx-gray text-2xs uppercase font-bold">
                   <span>TOTAL SALES</span>
                   <DollarSign className="w-4 h-4 text-vortx-white" />
                 </div>
                 <span className="font-mono text-xl font-bold mt-4 text-vortx-white">{formatPrice(totalSales)}</span>
               </div>
               <div className="p-6 border border-vortx-white/10 bg-vortx-dark/30 rounded glassmorphism flex flex-col justify-between">
-                <div className="flex justify-between items-center text-vortx-gray text-[10px] uppercase font-bold">
+                <div className="flex justify-between items-center text-vortx-gray text-2xs uppercase font-bold">
                   <span>PENDING CASH ON DEL.</span>
                   <ArrowLeftRight className="w-4 h-4 text-vortx-white" />
                 </div>
                 <span className="font-mono text-xl font-bold mt-4 text-vortx-white">{formatPrice(pendingSales)}</span>
               </div>
               <div className="p-6 border border-vortx-white/10 bg-vortx-dark/30 rounded glassmorphism flex flex-col justify-between">
-                <div className="flex justify-between items-center text-vortx-gray text-[10px] uppercase font-bold">
+                <div className="flex justify-between items-center text-vortx-gray text-2xs uppercase font-bold">
                   <span>FULFILLED ORDERS</span>
                   <Check className="w-4 h-4 text-vortx-white" />
                 </div>
@@ -473,7 +473,7 @@ export default function AdminDashboard() {
                 </span>
               </div>
               <div className="p-6 border border-vortx-white/10 bg-vortx-dark/30 rounded glassmorphism flex flex-col justify-between">
-                <div className="flex justify-between items-center text-vortx-gray text-[10px] uppercase font-bold">
+                <div className="flex justify-between items-center text-vortx-gray text-2xs uppercase font-bold">
                   <span>ACTIVE DISCOUNT COUPONS</span>
                   <Tag className="w-4 h-4 text-vortx-white" />
                 </div>
@@ -505,7 +505,7 @@ export default function AdminDashboard() {
                 
                 <form onSubmit={handleCreateProduct} className="space-y-4">
                   <div>
-                    <label className="block text-[9px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">PRODUCT NAME</label>
+                    <label className="block text-2xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">PRODUCT NAME</label>
                     <input 
                       type="text" 
                       value={pName}
@@ -520,7 +520,7 @@ export default function AdminDashboard() {
                   </div>
 
                   <div>
-                    <label className="block text-[9px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">DESCRIPTION</label>
+                    <label className="block text-2xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">DESCRIPTION</label>
                     <textarea 
                       rows={3}
                       value={pDescription}
@@ -536,7 +536,7 @@ export default function AdminDashboard() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[9px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">PRICE (INR)</label>
+                      <label className="block text-2xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">PRICE (INR)</label>
                       <input 
                         type="number" 
                         value={pPrice}
@@ -546,7 +546,7 @@ export default function AdminDashboard() {
                       />
                     </div>
                     <div>
-                      <label className="block text-[9px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">MRP (INR)</label>
+                      <label className="block text-2xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">MRP (INR)</label>
                       <input 
                         type="number" 
                         value={pMrp}
@@ -559,7 +559,7 @@ export default function AdminDashboard() {
 
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-[9px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">CATEGORY</label>
+                      <label className="block text-2xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">CATEGORY</label>
                       <select
                         value={pCategory}
                         onChange={(e) => setPCategory(e.target.value)}
@@ -571,7 +571,7 @@ export default function AdminDashboard() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-[9px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">GENDER</label>
+                      <label className="block text-2xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">GENDER</label>
                       <select
                         value={pGender}
                         onChange={(e) => setPGender(e.target.value)}
@@ -583,7 +583,7 @@ export default function AdminDashboard() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-[9px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">DROP BADGE</label>
+                      <label className="block text-2xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">DROP BADGE</label>
                       <select
                         value={pBadge}
                         onChange={(e) => setPBadge(e.target.value)}
@@ -598,7 +598,7 @@ export default function AdminDashboard() {
                   </div>
 
                   <div>
-                    <label className="block text-[9px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1 font-mono">VARIANT STOCK PER COMBINATION</label>
+                    <label className="block text-2xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1 font-mono">VARIANT STOCK PER COMBINATION</label>
                     <input 
                       type="number" 
                       value={pStock}
@@ -610,7 +610,7 @@ export default function AdminDashboard() {
 
                   {/* Drag-and-drop Image Upload Zone */}
                   <div className="space-y-2">
-                    <label className="block text-[9px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1 font-mono">
+                    <label className="block text-2xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1 font-mono">
                       PRODUCT IMAGE
                     </label>
                     
@@ -659,30 +659,31 @@ export default function AdminDashboard() {
                               <X className="w-3 h-3" />
                             </button>
                           </div>
-                          <span className="text-[10px] text-vortx-gray font-mono text-center uppercase tracking-wider">
+                          <span className="text-2xs text-vortx-gray font-mono text-center uppercase tracking-wider">
                             IMAGE LOADED SUCCESSFULLY
                           </span>
                           <button
                             type="button"
                             onClick={() => document.getElementById('image-file-input')?.click()}
-                            className="px-3 py-1.5 border border-vortx-white/20 hover:border-vortx-white text-[9px] font-syne font-bold tracking-widest text-vortx-white uppercase transition"
+                            className="px-3 py-1.5 border border-vortx-white/20 hover:border-vortx-white text-2xs font-syne font-bold tracking-widest text-vortx-white uppercase transition"
                           >
                             CHANGE IMAGE
                           </button>
                         </div>
                       ) : (
-                        <div 
+                        <button
+                          type="button"
                           onClick={() => document.getElementById('image-file-input')?.click()}
                           className="flex flex-col items-center gap-2 text-center text-vortx-gray hover:text-vortx-white transition w-full h-full py-4"
                         >
                           <UploadCloud className="w-8 h-8 mb-1" />
-                          <p className="font-syne font-bold text-[10px] tracking-wider uppercase">
+                          <p className="font-syne font-bold text-2xs tracking-wider uppercase">
                             DRAG & DROP IMAGE HERE
                           </p>
-                          <p className="text-[8px] font-mono uppercase tracking-widest text-vortx-gray/60">
+                          <p className="text-3xs font-mono uppercase tracking-widest text-vortx-gray/60">
                             OR CLICK TO BROWSE FILE
                           </p>
-                        </div>
+                        </button>
                       )}
                     </div>
                   </div>
@@ -693,7 +694,7 @@ export default function AdminDashboard() {
                       <button
                         type="button"
                         onClick={() => setShowManualUrl(!showManualUrl)}
-                        className="text-[9px] font-syne font-bold tracking-widest text-vortx-gray hover:text-vortx-white uppercase transition"
+                        className="text-2xs font-syne font-bold tracking-widest text-vortx-gray hover:text-vortx-white uppercase transition"
                       >
                         {showManualUrl ? '[-] HIDE DIRECT URL OPTION' : '[+] PASTE DIRECT IMAGE URL'}
                       </button>
@@ -701,7 +702,7 @@ export default function AdminDashboard() {
 
                     {showManualUrl && (
                       <div className="mt-1 transition-all">
-                        <label className="block text-[8px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1 font-mono">SUPABASE STORAGE IMAGE LINK / URL</label>
+                        <label className="block text-3xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1 font-mono">SUPABASE STORAGE IMAGE LINK / URL</label>
                         <input 
                           type="text" 
                           value={pImageInput}
@@ -714,14 +715,14 @@ export default function AdminDashboard() {
                   </div>
 
                   {formError && (
-                    <p className="text-[10px] font-bold text-red-500 bg-red-500/10 border border-red-500/20 p-2.5 rounded text-center">
+                    <p className="text-2xs font-bold text-red-500 bg-red-500/10 border border-red-500/20 p-2.5 rounded text-center">
                       {formError}
                     </p>
                   )}
 
                   <button
                     type="submit"
-                    className="w-full py-3.5 bg-vortx-white text-vortx-black font-syne text-[10px] font-bold tracking-widest hover:bg-vortx-white/95 transition uppercase"
+                    className="w-full py-3.5 bg-vortx-white text-vortx-black font-syne text-2xs font-bold tracking-widest hover:bg-vortx-white/95 transition uppercase"
                   >
                     CREATE PRODUCT RECORD
                   </button>
@@ -748,16 +749,16 @@ export default function AdminDashboard() {
                             <div className="flex items-center gap-2">
                               <h4 className="font-syne font-bold text-vortx-white uppercase">{p.name}</h4>
                               {p.is_in_stock ? (
-                                <span className="px-1.5 py-0.5 text-[8px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded uppercase">
+                                <span className="px-1.5 py-0.5 text-3xs font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded uppercase">
                                   VISIBLE ON STORE
                                 </span>
                               ) : (
-                                <span className="px-1.5 py-0.5 text-[8px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded uppercase">
+                                <span className="px-1.5 py-0.5 text-3xs font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded uppercase">
                                   HIDDEN (DRAFT)
                                 </span>
                               )}
                             </div>
-                            <p className="text-[10px] text-vortx-gray mt-0.5 font-mono uppercase">
+                            <p className="text-2xs text-vortx-gray mt-0.5 font-mono uppercase">
                               CAT: {p.category || 'Tops'} | PRICE: {formatPrice(p.price)} | STOCK: {totalStk} UNITS
                             </p>
                           </div>
@@ -768,7 +769,7 @@ export default function AdminDashboard() {
                           <button
                             type="button"
                             onClick={() => handleToggleVisibility(p)}
-                            className={`p-2 border rounded transition flex items-center gap-1 text-[10px] font-mono font-bold ${
+                            className={`p-2 border rounded transition flex items-center gap-1 text-2xs font-mono font-bold ${
                               p.is_in_stock 
                                 ? 'border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10' 
                                 : 'border-amber-500/30 text-amber-400 hover:bg-amber-500/10'
@@ -809,7 +810,7 @@ export default function AdminDashboard() {
               <h3 className="font-syne text-xs font-bold tracking-widest uppercase">CUSTOMER FULFILLMENT BOARD ({allOrders.length})</h3>
               <button
                 onClick={handleExportOrdersToCSV}
-                className="flex items-center gap-1.5 px-4 py-2 border border-vortx-white text-vortx-white font-syne text-[10px] font-bold tracking-widest hover:bg-vortx-white hover:text-vortx-black transition uppercase"
+                className="flex items-center gap-1.5 px-4 py-2 border border-vortx-white text-vortx-white font-syne text-2xs font-bold tracking-widest hover:bg-vortx-white hover:text-vortx-black transition uppercase"
               >
                 <Download className="w-3.5 h-3.5" /> EXPORT TO CSV
               </button>
@@ -826,15 +827,15 @@ export default function AdminDashboard() {
                     <div className="space-y-2">
                       <div className="flex items-center gap-3">
                         <span className="font-mono font-bold text-vortx-white text-sm">{ord.orderNumber}</span>
-                        <span className="font-mono text-vortx-gray text-[10px]">{new Date(ord.createdAt).toLocaleDateString()}</span>
+                        <span className="font-mono text-vortx-gray text-2xs">{new Date(ord.createdAt).toLocaleDateString()}</span>
                       </div>
-                      <p className="text-vortx-gray text-[11px] font-mono">
+                      <p className="text-vortx-gray text-2xs font-mono">
                         DELIVERY: {ord.shippingAddress.addressLine1}, {ord.shippingAddress.city} - {ord.shippingAddress.postalCode}
                       </p>
-                      <p className="text-vortx-gray text-[11px] font-mono">
+                      <p className="text-vortx-gray text-2xs font-mono">
                         ITEMS: {ord.items.map(i => `${i.productName} (${i.size}/${i.color}) x${i.quantity}`).join(', ')}
                       </p>
-                      <div className="flex items-center gap-3 font-mono text-[10px]">
+                      <div className="flex items-center gap-3 font-mono text-2xs">
                         <span className="text-vortx-white font-bold">TOTAL: {formatPrice(ord.totalAmount)}</span>
                         <span>|</span>
                         <span className="text-vortx-gray">METHOD: {ord.payment?.method.toUpperCase()}</span>
@@ -846,11 +847,11 @@ export default function AdminDashboard() {
                       
                       {/* Status selectors */}
                       <div className="flex items-center gap-2">
-                        <span className="text-[9px] text-vortx-gray font-bold uppercase">STATUS:</span>
+                        <span className="text-2xs text-vortx-gray font-bold uppercase">STATUS:</span>
                         <select
                           value={ord.status}
                           onChange={(e) => updateOrderStatus(ord.id, e.target.value as any)}
-                          className="bg-vortx-black border border-vortx-white/20 px-2 py-1 text-[10px] font-bold text-vortx-white focus:outline-none focus:border-vortx-white font-syne"
+                          className="bg-vortx-black border border-vortx-white/20 px-2 py-1 text-2xs font-bold text-vortx-white focus:outline-none focus:border-vortx-white font-syne"
                         >
                           <option value="pending">PENDING</option>
                           <option value="paid">PAID</option>
@@ -862,9 +863,9 @@ export default function AdminDashboard() {
 
                       {/* Shiprocket details modifier */}
                       {editingOrderId === ord.id ? (
-                        <div className="p-3 bg-vortx-black border border-vortx-white/10 rounded space-y-2 text-[10px] w-full">
+                        <div className="p-3 bg-vortx-black border border-vortx-white/10 rounded space-y-2 text-2xs w-full">
                           <div>
-                            <label className="block text-[8px] text-vortx-gray uppercase mb-0.5">Courier Name</label>
+                            <label className="block text-3xs text-vortx-gray uppercase mb-0.5">Courier Name</label>
                             <input 
                               type="text" 
                               value={courierName}
@@ -873,7 +874,7 @@ export default function AdminDashboard() {
                             />
                           </div>
                           <div>
-                            <label className="block text-[8px] text-vortx-gray uppercase mb-0.5">Tracking Number</label>
+                            <label className="block text-3xs text-vortx-gray uppercase mb-0.5">Tracking Number</label>
                             <input 
                               type="text" 
                               value={trackingNumber}
@@ -884,7 +885,7 @@ export default function AdminDashboard() {
                           <div className="flex gap-2">
                             <button
                               onClick={() => handleUpdateShipping(ord.id)}
-                              className="flex-1 py-1 bg-vortx-white text-vortx-black font-bold uppercase font-syne text-[8px]"
+                              className="flex-1 py-1 bg-vortx-white text-vortx-black font-bold uppercase font-syne text-3xs"
                             >
                               SAVE
                             </button>
@@ -899,7 +900,7 @@ export default function AdminDashboard() {
                       ) : (
                         <div className="text-right">
                           {ord.status === 'shipped' || ord.status === 'delivered' ? (
-                            <div className="text-[10px] font-mono text-vortx-gray">
+                            <div className="text-2xs font-mono text-vortx-gray">
                               <p className="uppercase">Courier: {ord.courierName || 'Shiprocket'}</p>
                               <p>ID: {ord.trackingNumber}</p>
                             </div>
@@ -910,7 +911,7 @@ export default function AdminDashboard() {
                                 if (ord.courierName) setCourierName(ord.courierName);
                                 if (ord.trackingNumber) setTrackingNumber(ord.trackingNumber);
                               }}
-                              className="text-[9px] border border-vortx-white/30 text-vortx-white hover:bg-vortx-white hover:text-vortx-black px-2.5 py-1.5 transition font-syne font-bold tracking-widest uppercase"
+                              className="text-2xs border border-vortx-white/30 text-vortx-white hover:bg-vortx-white hover:text-vortx-black px-2.5 py-1.5 transition font-syne font-bold tracking-widest uppercase"
                             >
                               ASSIGN COURIER (SHIPROCKET)
                             </button>
@@ -953,7 +954,7 @@ export default function AdminDashboard() {
 
                 <form onSubmit={handleCreateCoupon} className="space-y-4">
                   <div>
-                    <label className="block text-[9px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">COUPON CODE (UPPERCASE)</label>
+                    <label className="block text-2xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">COUPON CODE (UPPERCASE)</label>
                     <input 
                       type="text" 
                       value={cCode}
@@ -965,7 +966,7 @@ export default function AdminDashboard() {
                   </div>
 
                   <div>
-                    <label className="block text-[9px] font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">DISCOUNT PERCENTAGE (%)</label>
+                    <label className="block text-2xs font-syne font-bold tracking-wider text-vortx-gray uppercase mb-1">DISCOUNT PERCENTAGE (%)</label>
                     <input 
                       type="number" 
                       min="1"
@@ -980,7 +981,7 @@ export default function AdminDashboard() {
 
                   <button
                     type="submit"
-                    className="w-full py-3 bg-vortx-white text-vortx-black font-syne text-[10px] font-bold tracking-widest uppercase hover:bg-vortx-white/90 transition flex items-center justify-center gap-2 rounded mt-2"
+                    className="w-full py-3 bg-vortx-white text-vortx-black font-syne text-2xs font-bold tracking-widest uppercase hover:bg-vortx-white/90 transition flex items-center justify-center gap-2 rounded mt-2"
                   >
                     <Tag className="w-4 h-4" /> CREATE COUPON CODE
                   </button>
@@ -1007,7 +1008,7 @@ export default function AdminDashboard() {
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
                             <span className="font-mono text-sm font-bold text-vortx-white tracking-wider">{c.code}</span>
-                            <span className={`text-[9px] font-syne font-bold px-2 py-0.5 rounded uppercase ${
+                            <span className={`text-2xs font-syne font-bold px-2 py-0.5 rounded uppercase ${
                               c.is_active ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'
                             }`}>
                               {c.is_active ? 'ACTIVE' : 'INACTIVE'}
@@ -1021,7 +1022,7 @@ export default function AdminDashboard() {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => handleToggleCouponStatus(c.id, c.is_active, c.code)}
-                            className={`p-2 border rounded transition text-xs font-syne font-bold text-[9px] uppercase tracking-wider flex items-center gap-1 ${
+                            className={`p-2 border rounded transition text-xs font-syne font-bold text-2xs uppercase tracking-wider flex items-center gap-1 ${
                               c.is_active 
                                 ? 'border-amber-500/30 text-amber-400 hover:bg-amber-500/10' 
                                 : 'border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10'

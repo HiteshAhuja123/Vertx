@@ -5,14 +5,14 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useStore } from '@/components/StoreContext';
 import { mockDb, fetchSupabaseProducts } from '@/lib/supabase';
-import { ShoppingBag, Eye, SlidersHorizontal, Search, RefreshCw, X } from 'lucide-react';
-import { formatPrice } from '@/products';
+import { SlidersHorizontal, Search, RefreshCw, X } from 'lucide-react';
+import { ProductCard } from '@/components/commerce/ProductCard';
 import { ProductGridSkeleton } from '@/components/ProductSkeleton';
 
 function ShopContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { addToCart, preOrderMode, togglePreOrderMode, navigateToProduct } = useStore();
+  const { preOrderMode, togglePreOrderMode } = useStore();
   const [dbProducts, setDbProducts] = useState<any[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -225,119 +225,9 @@ function ShopContent() {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredProducts.map((prod) => {
-                  const isPreOrder = prod.pre_order_available;
-                  const firstVariant = prod.variants?.[0] || { id: prod.id, size: 'M', color: 'Black', stock: 0, sku: '' };
-                  const totalStock = prod.variants?.reduce((acc: number, v: any) => acc + v.stock, 0) || 0;
-
-                  return (
-                    <div
-                      key={prod.id}
-                      onClick={() => navigateToProduct(prod.slug)}
-                      className="group flex flex-col border border-vortx-white/15 bg-vortx-dark/30 rounded overflow-hidden card-tilt-hover cursor-pointer"
-                    >
-                      {/* Image cover */}
-                      <div className="aspect-[4/5] bg-vortx-gray-dark relative overflow-hidden">
-                        <img
-                          src={prod.images?.[0]}
-                          alt={prod.name}
-                          className="w-full h-full object-cover grayscale group-hover:scale-105 group-hover:grayscale-0 transition duration-700"
-                        />
-
-                        {/* Interactive overlay shortcuts */}
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-3 transition-opacity duration-300">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigateToProduct(prod.slug);
-                            }}
-                            aria-label={`View details for ${prod.name}`}
-                            className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-110 active:scale-95 transition btn-lift"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              addToCart({
-                                id: prod.id,
-                                variantId: firstVariant.id,
-                                name: prod.name,
-                                price: prod.price,
-                                mrp: prod.mrp,
-                                size: firstVariant.size,
-                                color: firstVariant.color,
-                                image: prod.images?.[0] || '',
-                                sku: firstVariant.sku,
-                                isPreOrder: isPreOrder,
-                                preOrderDate: prod.pre_order_date
-                              }, 1);
-                            }}
-                            aria-label={`Add ${prod.name} to cart`}
-                            className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-110 active:scale-95 transition btn-lift"
-                            title={isPreOrder ? "Place Pre-Order" : "Add to Cart"}
-                          >
-                            <ShoppingBag className="w-4 h-4" />
-                          </button>
-                        </div>
-
-                        {/* Drop badge */}
-                        {prod.badge && (
-                          <span className="absolute top-4 left-4 px-2 py-1 bg-vortx-white text-vortx-black font-sans text-[10px] font-bold tracking-wider">
-                            {prod.badge}
-                          </span>
-                        )}
-
-                        {/* Pre-order drop labels */}
-                        {isPreOrder && (
-                          <span className="absolute bottom-4 right-4 bg-vortx-black text-vortx-white border border-vortx-white/40 font-sans text-[10px] font-bold tracking-wider px-2 py-1">
-                            PRE-ORDER
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Info Panel */}
-                      <div className="p-4 flex-grow flex flex-col justify-between border-t border-vortx-white/10 bg-vortx-black/70">
-                        <div>
-                          <div className="flex justify-between items-start">
-                            <span className="text-[8px] font-mono text-vortx-gray uppercase tracking-widest">
-                              {[prod.gender, prod.category].filter(Boolean).join(' | ')}
-                            </span>
-
-                            {/* Stock Indicator */}
-                            {!isPreOrder && (
-                              <span className={`text-[8px] font-bold tracking-wider ${totalStock === 0
-                                  ? 'text-red-500'
-                                  : totalStock < 10
-                                    ? 'text-vortx-white/80 font-mono'
-                                    : 'text-vortx-gray'
-                                }`}>
-                                {totalStock === 0 ? 'OUT OF STOCK' : totalStock < 10 ? `ONLY ${totalStock} LEFT` : 'IN STOCK'}
-                              </span>
-                            )}
-                          </div>
-
-                          <div onClick={(e) => { e.stopPropagation(); navigateToProduct(prod.slug); }}>
-                            <h3 className="font-sans text-sm font-bold tracking-wide text-vortx-white mt-1 hover:underline truncate cursor-pointer">
-                              {prod.name.toUpperCase()}
-                            </h3>
-                          </div>
-                        </div>
-
-                        {/* Pricing details */}
-                        <div className="flex items-center gap-2.5 mt-3 font-mono">
-                          <span className="text-xs font-bold text-vortx-white">{formatPrice(prod.price)}</span>
-                          {prod.mrp && prod.mrp > prod.price && (
-                            <>
-                              <span className="text-[10px] text-vortx-gray line-through">{formatPrice(prod.mrp)}</span>
-                              <span className="text-[9px] text-red-500 font-sans font-bold">-{prod.discount_percent}%</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                {filteredProducts.map((prod) => (
+                  <ProductCard key={prod.id} product={prod} />
+                ))}
               </div>
             )}
 

@@ -6,6 +6,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { useStore } from './StoreContext';
 import { ShoppingBag, User, LogOut, Menu, X, Trash2, ShieldAlert, Instagram, Facebook, Youtube, Mail, Truck, Copy, Check, Sun, Moon } from 'lucide-react';
 import { formatPrice } from '@/products';
+import { Logo } from '@/components/ui/Logo';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -140,7 +141,7 @@ export default function Navbar() {
             </div>
 
             {/* Center: Offer Promo Banner (Dead-centered) */}
-            <div className="flex items-center justify-center gap-2 text-[11px] sm:text-xs font-bold tracking-wider text-vortx-white uppercase text-center">
+            <div className="flex items-center justify-center gap-2 text-2xs sm:text-xs font-bold tracking-wider text-vortx-white uppercase text-center">
               <span>10% OFF ON FIRST PURCHASE</span>
               <span className="hidden sm:inline text-vortx-gray">|</span>
               <button 
@@ -158,7 +159,7 @@ export default function Navbar() {
             </div>
 
             {/* Right: Free shipping notice */}
-            <div className="hidden md:flex items-center justify-end gap-2 text-[11px] font-mono font-bold text-vortx-gray">
+            <div className="hidden md:flex items-center justify-end gap-2 text-2xs font-mono font-bold text-vortx-gray">
               <Truck className="w-3.5 h-3.5 text-vortx-white" />
               <span>FREE EXPRESS SHIPPING OVER ₹3,000</span>
             </div>
@@ -170,20 +171,7 @@ export default function Navbar() {
           
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="group flex items-center gap-2.5 sm:gap-3">
-              <svg className="w-8 h-8 sm:w-9 sm:h-9 transition-transform duration-300 group-hover:scale-105" viewBox="0 0 115 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M 10 18 L 95 18 L 82 38 L 38 25 Z" fill="#E60000" />
-                <path d="M 38 38 L 103 58 L 60 90 L 45 68 Z" fill="#E60000" />
-              </svg>
-              <div className="flex flex-col justify-center">
-                <span className="font-syne text-lg sm:text-xl md:text-2xl font-extrabold tracking-[0.22em] text-vortx-white transition group-hover:tracking-[0.25em]">
-                  VORTX
-                </span>
-                <span className="text-[10px] sm:text-xs font-bold tracking-[0.1em] text-vortx-gray/80 -mt-0.5 whitespace-nowrap">
-                  WARRIORS, NOT WATCHERS.
-                </span>
-              </div>
-            </Link>
+            <Logo />
           </div>
 
           {/* Nav Menu Desktop */}
@@ -254,7 +242,7 @@ export default function Navbar() {
             >
               <ShoppingBag className="w-5 h-5" />
               {totalItemsCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-vortx-white text-vortx-black text-[7px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-vortx-white text-vortx-black text-3xs font-bold rounded-full flex items-center justify-center">
                   {totalItemsCount}
                 </span>
               )}
@@ -321,7 +309,7 @@ export default function Navbar() {
               className="w-full flex items-center justify-between py-2 text-vortx-gray hover:text-vortx-white border-t border-vortx-white/10 pt-4 transition"
             >
               <span>THEME MODE</span>
-              <span className="flex items-center gap-1.5 text-[11px] uppercase font-mono font-bold text-vortx-white">
+              <span className="flex items-center gap-1.5 text-2xs uppercase font-mono font-bold text-vortx-white">
                 {theme === 'dark' ? (
                   <>
                     <Sun className="w-4 h-4 text-amber-400" /> DARK MODE
@@ -373,7 +361,7 @@ export default function Navbar() {
 
               {/* Dynamic Free Shipping Progress Bar */}
               <div className="px-6 py-3 bg-vortx-black/80 border-b border-vortx-white/10 space-y-1.5">
-                <div className="flex justify-between items-center text-[11px] font-bold tracking-wider uppercase">
+                <div className="flex justify-between items-center text-2xs font-bold tracking-wider uppercase">
                   {cartSubtotal >= shippingThreshold ? (
                     <span className="text-emerald-400 flex items-center gap-1">
                       <Truck className="w-3.5 h-3.5" /> 🎉 YOU&apos;VE UNLOCKED FREE EXPRESS SHIPPING!

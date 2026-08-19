@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useStore } from './StoreContext';
 import { logAutomation } from '@/lib/email';
 import { ArrowRight, Instagram, Phone, Mail, Clock } from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
 
 export default function Footer() {
   const [emailInput, setEmailInput] = useState('');
@@ -51,16 +52,7 @@ export default function Footer() {
           
           {/* Logo & Slogan info */}
           <div className="lg:col-span-2 space-y-6 sm:space-y-8">
-            <Link href="/" className="group flex items-center gap-2.5 sm:gap-3">
-              <svg className="w-9 h-9 sm:w-10 sm:h-10 transition-transform duration-300 group-hover:scale-105" viewBox="0 0 115 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M 10 18 L 95 18 L 82 38 L 38 25 Z" fill="#E60000" />
-                <path d="M 38 38 L 103 58 L 60 90 L 45 68 Z" fill="#E60000" />
-              </svg>
-              <div className="flex flex-col justify-center">
-                <span className="font-syne text-xl sm:text-2xl font-extrabold tracking-[0.25em] text-vortx-white">VORTX</span>
-                <span className="text-[10px] sm:text-xs font-bold tracking-[0.1em] sm:tracking-[0.14em] text-vortx-gray/80 -mt-0.5">FOR WARRIORS, NOT WATCHERS.</span>
-              </div>
-            </Link>
+            <Logo size="md" tagline="FOR WARRIORS, NOT WATCHERS." />
             <p className="text-base text-vortx-gray leading-relaxed max-w-lg">
               We design and engineer high-performance activewear for the hybrid athlete. VORTX is built on relentless drive, structural minimalism, and absolute performance. 
             </p>
@@ -110,7 +102,7 @@ export default function Footer() {
               </p>
               {isSubscribed ? (
                 <div className="border border-vortx-white/20 p-3 bg-vortx-white/5">
-                  <p className="text-[10px] font-mono text-vortx-white uppercase font-bold tracking-wider">
+                  <p className="text-2xs font-mono text-vortx-white uppercase font-bold tracking-wider">
                     SUCCESS. Code WELCOME10 activated.
                   </p>
                 </div>
@@ -150,7 +142,7 @@ export default function Footer() {
                 </Link>
               ))}
             </div>
-            <p className="text-[11px] font-mono">© {new Date().getFullYear()} VORTX ACTIVEWEAR CO. ALL RIGHTS RESERVED.</p>
+            <p className="text-2xs font-mono">© {new Date().getFullYear()} VORTX ACTIVEWEAR CO. ALL RIGHTS RESERVED.</p>
           </div>
         </div>
 

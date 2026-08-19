@@ -15,9 +15,17 @@ export async function POST(req: Request) {
 
     const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
+    const keysArePlaceholder = !keyId || !keySecret || keyId === 'rzp_test_key_id' || keySecret === 'rzp_test_key_secret';
 
-    // Simulated fallback for local testing when placeholder keys are configured
-    if (!keyId || !keySecret || keyId === 'rzp_test_key_id' || keySecret === 'rzp_test_key_secret') {
+    // Simulated fallback for local testing only — never allowed in production,
+    // where a missing/placeholder key must fail instead of silently faking success.
+    if (keysArePlaceholder) {
+      if (process.env.NODE_ENV === 'production') {
+        return NextResponse.json(
+          { error: 'Payment gateway is not configured' },
+          { status: 500 }
+        );
+      }
       console.warn('[Razorpay] Using simulated order response. Add your actual Razorpay keys to .env.local for live API calls.');
       return NextResponse.json({
         id: `order_simulated_${Date.now()}`,

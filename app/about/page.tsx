@@ -56,7 +56,7 @@ export default function AboutPage() {
       <section className="py-20 border-b border-vortx-white/10 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=1600&q=80')] bg-cover bg-center opacity-10 grayscale" />
         <div className="max-w-4xl mx-auto text-center relative z-10 px-4 space-y-4">
-          <span className="font-sans text-[11px] font-bold tracking-[0.2em] text-vortx-gray uppercase">THE CLAN GENESIS</span>
+          <span className="font-sans text-2xs font-bold tracking-[0.2em] text-vortx-gray uppercase">THE CLAN GENESIS</span>
           <h1 className="font-sans text-5xl sm:text-7xl font-extrabold tracking-wide uppercase leading-tight">
             FOR WARRIORS,<br />NOT WATCHERS.
           </h1>
@@ -71,7 +71,7 @@ export default function AboutPage() {
       <section id="faq" className="py-20 border-b border-vortx-white/10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 space-y-2">
-            <span className="font-sans text-[11px] font-bold tracking-[0.2em] text-vortx-gray uppercase">FAQ CORE</span>
+            <span className="font-sans text-2xs font-bold tracking-[0.2em] text-vortx-gray uppercase">FAQ CORE</span>
             <h2 className="font-sans text-3xl font-extrabold tracking-wider uppercase">CLAN SUPPORT</h2>
           </div>
 

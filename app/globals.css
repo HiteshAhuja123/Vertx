@@ -5,12 +5,20 @@
   --font-syne: var(--font-syne), 'Syne', sans-serif;
   --spacing: 4px;
 
+  /* Micro type scale — replaces ad hoc text-[10px]/[9px]/[8px]/[7px] usage.
+     2xs is for badges/tags/prices, 3xs is for eyebrow labels/meta. */
+  --text-2xs: 0.625rem;
+  --text-2xs--line-height: 1.4;
+  --text-3xs: 0.5rem;
+  --text-3xs--line-height: 1.4;
+
   --color-vortx-black: var(--vortx-black);
   --color-vortx-dark: var(--vortx-dark);
   --color-vortx-gray-dark: var(--vortx-gray-dark);
   --color-vortx-gray: var(--vortx-gray);
   --color-vortx-gray-light: var(--vortx-gray-light);
   --color-vortx-white: var(--vortx-white);
+  --color-vortx-red: var(--vortx-red);
 
   --animate-marquee: marquee 45s linear infinite;
   --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
@@ -33,6 +41,7 @@
   --vortx-gray: #94a3b8;
   --vortx-gray-light: #26292e;
   --vortx-white: #ffffff;
+  --vortx-red: #e60000;
   --background: #0a0b0d;
   --foreground: #ffffff;
   --glass-bg: rgba(18, 20, 23, 0.85);
@@ -47,6 +56,7 @@
   --vortx-gray: #475569;
   --vortx-gray-light: #cbd5e1;
   --vortx-white: #0f172a;
+  --vortx-red: #e60000;
   --background: #f1f5f9;
   --foreground: #0f172a;
   --glass-bg: rgba(255, 255, 255, 0.95);
@@ -115,7 +125,7 @@ body {
   top: 0;
   left: 0;
   height: 2px;
-  background: #E60000;
+  background: var(--vortx-red);
   z-index: 9999;
   animation: loading-pulse 2s ease-in-out infinite;
 }
@@ -237,38 +247,4 @@ body {
   box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 255, 255, 0.05);
 }
 
-/* Cyber Badge Pulsing Glow */
-.glow-red-pulse {
-  animation: red-glow 2.5s infinite ease-in-out;
-}
-
-@keyframes red-glow {
-  0%, 100% {
-    box-shadow: 0 0 4px rgba(230, 0, 0, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 14px rgba(230, 0, 0, 0.7);
-  }
-}
-
-/* Metallic Badge Shimmer Edge */
-.badge-shimmer {
-  position: relative;
-  overflow: hidden;
-}
-.badge-shimmer::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
-  transform: skewX(-25deg);
-  animation: badge-shine 4s infinite ease-in-out;
-}
-@keyframes badge-shine {
-  0%, 70% { left: -100%; }
-  100% { left: 200%; }
-}
 

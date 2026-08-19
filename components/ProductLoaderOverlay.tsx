@@ -23,7 +23,7 @@ export function ProductLoaderOverlay() {
         </div>
         <div className="space-y-1 font-mono">
           <p className="text-xs font-bold tracking-widest text-vortx-white uppercase">LOADING GEAR...</p>
-          <p className="text-[9px] text-vortx-gray uppercase tracking-widest animate-pulse">FOR WARRIORS, NOT WATCHERS</p>
+          <p className="text-2xs text-vortx-gray uppercase tracking-widest animate-pulse">FOR WARRIORS, NOT WATCHERS</p>
         </div>
       </div>
     </div>

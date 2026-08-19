@@ -8,6 +8,8 @@ import { useStore } from '@/components/StoreContext';
 import { Star, ShieldCheck, Truck, Layers, Check, Ruler, Info, X } from 'lucide-react';
 import { formatPrice } from '@/products';
 import { logAutomation } from '@/lib/email';
+import { ProductCard } from '@/components/commerce/ProductCard';
+import { Modal } from '@/components/ui/Modal';
 
 interface ProductClientProps {
   initialProduct: any;
@@ -16,7 +18,7 @@ interface ProductClientProps {
 export default function ProductClient({ initialProduct }: ProductClientProps) {
   const params = useParams();
   const router = useRouter();
-  const { addToCart, navigateToProduct, stopProductLoading } = useStore();
+  const { addToCart, stopProductLoading } = useStore();
   
   const [product, setProduct] = useState<any>(initialProduct);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -235,7 +237,7 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
 
               {/* Badge */}
               {product.badge && (
-                <span className="absolute top-4 left-4 px-2 py-1 bg-vortx-white text-vortx-black font-sans text-[10px] font-bold tracking-wider">
+                <span className="absolute top-4 left-4 px-2 py-1 bg-vortx-white text-vortx-black font-sans text-2xs font-bold tracking-wider">
                   {product.badge}
                 </span>
               )}
@@ -435,17 +437,17 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
             <div className="space-y-1 py-2 sm:py-0">
               <Truck className="w-5 h-5 mx-auto mb-1.5 text-vortx-white" />
               <span className="block text-vortx-white uppercase font-bold tracking-wide">EST. DELIVERY</span>
-              <span className="text-[11px] sm:text-xs text-vortx-gray">{isPreOrder ? 'Starts Aug 15' : getDeliveryDate()}</span>
+              <span className="text-2xs sm:text-xs text-vortx-gray">{isPreOrder ? 'Starts Aug 15' : getDeliveryDate()}</span>
             </div>
             <div className="space-y-1 py-2 sm:py-0 border-y sm:border-y-0 sm:border-x border-vortx-white/10">
               <ShieldCheck className="w-5 h-5 mx-auto mb-1.5 text-vortx-white" />
               <span className="block text-vortx-white uppercase font-bold tracking-wide">SECURED GATEWAY</span>
-              <span className="text-[11px] sm:text-xs text-vortx-gray">SSL Encrypted Checkout</span>
+              <span className="text-2xs sm:text-xs text-vortx-gray">SSL Encrypted Checkout</span>
             </div>
             <div className="space-y-1 py-2 sm:py-0">
               <Layers className="w-5 h-5 mx-auto mb-1.5 text-vortx-white" />
               <span className="block text-vortx-white uppercase font-bold tracking-wide">WARRIOR FIT</span>
-              <span className="text-[11px] sm:text-xs text-vortx-gray">Sweat-proof Tech Weave</span>
+              <span className="text-2xs sm:text-xs text-vortx-gray">Sweat-proof Tech Weave</span>
             </div>
           </div>
 
@@ -496,25 +498,7 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {relatedItems.map((rel: any) => (
-                  <div 
-                    key={rel.id} 
-                    onClick={() => navigateToProduct(rel.slug)}
-                    className="group bg-vortx-dark border border-vortx-white/10 rounded overflow-hidden hover:border-vortx-white/30 transition p-3 flex flex-col cursor-pointer"
-                  >
-                    <div className="aspect-[4/5] bg-vortx-black rounded overflow-hidden mb-3">
-                      <img 
-                        src={rel.images?.[0]} 
-                        alt={rel.name} 
-                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition duration-300" 
-                      />
-                    </div>
-                    <span className="text-xs font-sans font-bold text-vortx-white group-hover:underline uppercase truncate">
-                      {rel.name}
-                    </span>
-                    <span className="text-xs font-mono text-vortx-gray mt-1 font-bold">
-                      {formatPrice(rel.price)}
-                    </span>
-                  </div>
+                  <ProductCard key={rel.id} product={rel} variant="compact" />
                 ))}
               </div>
             </div>
@@ -523,9 +507,7 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
         </div>
 
         {/* SIZING GUIDE MODAL OVERLAY */}
-        {showSizeGuide && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowSizeGuide(false)} />
+        <Modal open={showSizeGuide} onClose={() => setShowSizeGuide(false)} backdropClassName="bg-black/70 backdrop-blur-sm">
             <div className="relative w-full max-w-lg bg-vortx-dark border border-vortx-white/20 p-6 glassmorphism rounded shadow-2xl animate-in zoom-in-95 duration-200">
               <div className="flex justify-between items-center border-b border-vortx-white/10 pb-4 mb-4">
                 <span className="font-sans text-sm sm:text-base font-bold tracking-wider text-vortx-white">VORTX WARRIOR SIZE CHART</span>
@@ -584,8 +566,7 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
                 </p>
               </div>
             </div>
-          </div>
-        )}
+        </Modal>
 
       </div>
     </div>

@@ -434,23 +434,10 @@ export async function supabaseLogin(
   password: string
 ): Promise<{ user: any; error: any }> {
   if (!isSupabaseConfigured) {
-    // Mock fallback
+    // Mock fallback — the seeded admin@vortx.fit profile already exists in
+    // mockDb.getProfiles(), so no other email should be auto-provisioned as admin.
     const profiles = mockDb.getProfiles();
-    let found = profiles.find(p => p.email.toLowerCase() === email.toLowerCase());
-
-    // Auto-provision admin account
-    if (!found && (email.toLowerCase() === 'admin@vortx.fit' || email.toLowerCase().includes('admin'))) {
-      found = {
-        id: 'usr_admin_demo',
-        email: email.toLowerCase(),
-        full_name: 'VORTX Administrator',
-        phone: '+919999999999',
-        role: 'admin',
-        created_at: new Date().toISOString()
-      };
-      profiles.push(found);
-      mockDb.saveProfiles(profiles);
-    }
+    const found = profiles.find(p => p.email.toLowerCase() === email.toLowerCase());
 
     if (!found) {
       return { user: null, error: { message: 'Invalid email credentials.' } };
@@ -460,7 +447,7 @@ export async function supabaseLogin(
     return { user: found, error: null };
   }
 
-  // Attempt real Supabase Login
+  // Real Supabase login only — no fallback that grants access on failure.
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password
@@ -468,20 +455,6 @@ export async function supabaseLogin(
 
   if (!error && data?.user) {
     return { user: data.user, error: null };
-  }
-
-  // Demo Fallback: Auto-provision admin@vortx.fit on production if account not created in Supabase Auth DB yet
-  if (email.toLowerCase() === 'admin@vortx.fit' || email.toLowerCase().includes('admin')) {
-    const adminUser = {
-      id: 'usr_admin_demo',
-      email: 'admin@vortx.fit',
-      full_name: 'VORTX Administrator',
-      phone: '+919999999999',
-      role: 'admin' as const,
-      created_at: new Date().toISOString()
-    };
-    mockDb.setCurrentUser(adminUser);
-    return { user: adminUser, error: null };
   }
 
   return { user: null, error };
@@ -520,17 +493,6 @@ export function supabaseOnAuthStateChange(callback: (event: string, session: any
 // ---- PROFILE FUNCTIONS ----
 
 export async function fetchProfile(userId: string): Promise<any | null> {
-  if (userId && userId.startsWith('usr_admin')) {
-    return {
-      id: userId,
-      email: 'admin@vortx.fit',
-      full_name: 'VORTX Administrator',
-      phone: '+919999999999',
-      role: 'admin',
-      created_at: new Date().toISOString()
-    };
-  }
-
   if (!isSupabaseConfigured) {
     const profiles = mockDb.getProfiles();
     return profiles.find(p => p.id === userId) || null;

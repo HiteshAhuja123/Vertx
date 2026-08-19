@@ -8,6 +8,7 @@ import { createReview } from '@/lib/supabase';
 import { ShoppingBag, MapPin, ClipboardList, CheckCircle, Package, Send, X, Star } from 'lucide-react';
 import { formatPrice } from '@/products';
 import { logAutomation } from '@/lib/email';
+import { Modal } from '@/components/ui/Modal';
 
 function ProfilePageContent() {
   const router = useRouter();
@@ -218,7 +219,7 @@ function ProfilePageContent() {
                         <div className="space-y-1">
                           <span className="text-xs sm:text-sm text-vortx-gray block uppercase font-bold">DELIVERY STATUS</span>
                           <div>
-                            <span className={`inline-block font-sans text-[10px] sm:text-xs font-bold tracking-widest px-2.5 py-1 rounded uppercase ${
+                            <span className={`inline-block font-sans text-2xs sm:text-xs font-bold tracking-widest px-2.5 py-1 rounded uppercase ${
                               ord.status === 'delivered' 
                                 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
                                 : ord.status === 'cancelled'
@@ -301,7 +302,7 @@ function ProfilePageContent() {
                                 <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-mono font-bold transition z-10 ${getStatusStepClass(ord.status, 'pending')}`}>
                                   {ord.status !== 'pending' && ord.status !== 'cancelled' ? '✓' : '1'}
                                 </div>
-                                <span className="text-[9px] sm:text-xs font-sans font-bold tracking-normal sm:tracking-wider text-vortx-white uppercase">ORDERED</span>
+                                <span className="text-2xs sm:text-xs font-sans font-bold tracking-normal sm:tracking-wider text-vortx-white uppercase">ORDERED</span>
                               </div>
 
                               {/* Step 2: Paid */}
@@ -309,7 +310,7 @@ function ProfilePageContent() {
                                 <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-mono font-bold transition z-10 ${getStatusStepClass(ord.status, 'paid')}`}>
                                   {ord.status === 'shipped' || ord.status === 'delivered' ? '✓' : '2'}
                                 </div>
-                                <span className="text-[9px] sm:text-xs font-sans font-bold tracking-normal sm:tracking-wider text-vortx-white uppercase">PACKED</span>
+                                <span className="text-2xs sm:text-xs font-sans font-bold tracking-normal sm:tracking-wider text-vortx-white uppercase">PACKED</span>
                               </div>
 
                               {/* Step 3: Shipped */}
@@ -317,7 +318,7 @@ function ProfilePageContent() {
                                 <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-mono font-bold transition z-10 ${getStatusStepClass(ord.status, 'shipped')}`}>
                                   {ord.status === 'delivered' ? '✓' : '3'}
                                 </div>
-                                <span className="text-[9px] sm:text-xs font-sans font-bold tracking-normal sm:tracking-wider text-vortx-white uppercase">SHIPPED</span>
+                                <span className="text-2xs sm:text-xs font-sans font-bold tracking-normal sm:tracking-wider text-vortx-white uppercase">SHIPPED</span>
                               </div>
 
                               {/* Step 4: Delivered */}
@@ -325,7 +326,7 @@ function ProfilePageContent() {
                                 <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-mono font-bold transition z-10 ${getStatusStepClass(ord.status, 'delivered')}`}>
                                   4
                                 </div>
-                                <span className="text-[9px] sm:text-xs font-sans font-bold tracking-normal sm:tracking-wider text-vortx-white uppercase">DELIVERED</span>
+                                <span className="text-2xs sm:text-xs font-sans font-bold tracking-normal sm:tracking-wider text-vortx-white uppercase">DELIVERED</span>
                               </div>
                             </div>
                           </div>
@@ -346,9 +347,7 @@ function ProfilePageContent() {
       </div>
 
       {/* DOCK ALERTS ORDER SUCCESS */}
-      {showSuccessModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={() => setShowSuccessModal(false)} />
+      <Modal open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
           <div className="relative w-full max-w-md bg-vortx-dark border border-vortx-white/20 p-8 text-center glassmorphism rounded shadow-2xl animate-in zoom-in-95 duration-300">
             <button 
               onClick={() => setShowSuccessModal(false)}
@@ -374,17 +373,14 @@ function ProfilePageContent() {
               GO TO ORDER TRACKING
             </button>
           </div>
-        </div>
-      )}
+      </Modal>
 
       {/* FEEDBACK SUBMIT MODAL */}
-      {reviewProductId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={() => setReviewProductId('')} />
+      <Modal open={!!reviewProductId} onClose={() => setReviewProductId('')}>
           <form onSubmit={handleReviewSubmission} className="relative w-full max-w-md bg-vortx-dark border border-vortx-white/20 p-6 glassmorphism rounded shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
             <div className="flex justify-between items-center border-b border-vortx-white/10 pb-3">
               <div className="flex flex-col">
-                <span className="font-sans text-[10px] font-bold tracking-widest text-vortx-gray uppercase">WARRIORS REVIEW</span>
+                <span className="font-sans text-2xs font-bold tracking-widest text-vortx-gray uppercase">WARRIORS REVIEW</span>
                 <span className="font-sans text-sm font-bold tracking-wider text-vortx-white uppercase truncate max-w-[280px]">
                   {reviewProductName}
                 </span>
@@ -404,12 +400,15 @@ function ProfilePageContent() {
               <>
                 {/* Rating selection */}
                 <div>
-                  <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">RATING</label>
-                  <div className="flex gap-2">
+                  <span id="review-rating-label" className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">RATING</span>
+                  <div role="radiogroup" aria-labelledby="review-rating-label" className="flex gap-2">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
                         type="button"
                         key={star}
+                        role="radio"
+                        aria-checked={star === reviewRating}
+                        aria-label={`${star} star${star > 1 ? 's' : ''}`}
                         onClick={() => setReviewRating(star)}
                         className="text-vortx-gray hover:text-vortx-white transition"
                       >
@@ -421,8 +420,9 @@ function ProfilePageContent() {
 
                 {/* Comment area */}
                 <div>
-                  <label className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">COMMENT</label>
+                  <label htmlFor="review-comment" className="block text-xs font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">COMMENT</label>
                   <textarea
+                    id="review-comment"
                     rows={4}
                     value={reviewComment}
                     onChange={(e) => {
@@ -450,8 +450,7 @@ function ProfilePageContent() {
               </>
             )}
           </form>
-        </div>
-      )}
+      </Modal>
 
     </div>
   );

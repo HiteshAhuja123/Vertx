@@ -197,15 +197,15 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Admin and public management write policies for catalog
-CREATE POLICY "Admins can manage categories" ON public.categories FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Admins can manage products" ON public.products FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Admins can manage product variants" ON public.product_variants FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Admins can manage product images" ON public.product_images FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Admins can manage coupons" ON public.coupons FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Admins can manage all orders" ON public.orders FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Admins can manage all order items" ON public.order_items FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Admins can manage all payments" ON public.payments FOR ALL USING (true) WITH CHECK (true);
+-- Admin management write policies for catalog (admin-only: is_admin() must be true)
+CREATE POLICY "Admins can manage categories" ON public.categories FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "Admins can manage products" ON public.products FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "Admins can manage product variants" ON public.product_variants FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "Admins can manage product images" ON public.product_images FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "Admins can manage coupons" ON public.coupons FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "Admins can manage all orders" ON public.orders FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "Admins can manage all order items" ON public.order_items FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "Admins can manage all payments" ON public.payments FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
 
 -- Profile Sync Trigger: Create a profile whenever a new user signs up in auth.users
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -323,17 +323,17 @@ CREATE POLICY "Public Read Access on product-images"
 ON storage.objects FOR SELECT 
 USING (bucket_id = 'product-images');
 
--- 3. Allow uploads into product-images bucket
-CREATE POLICY "Public Upload Access on product-images" 
-ON storage.objects FOR INSERT 
-WITH CHECK (bucket_id = 'product-images');
+-- 3. Only admins may upload into the product-images bucket
+CREATE POLICY "Admins can upload product-images"
+ON storage.objects FOR INSERT
+WITH CHECK (bucket_id = 'product-images' AND public.is_admin());
 
--- 4. Allow updates and deletes on product-images bucket
-CREATE POLICY "Public Update Access on product-images" 
-ON storage.objects FOR UPDATE 
-USING (bucket_id = 'product-images');
+-- 4. Only admins may update or delete objects in the product-images bucket
+CREATE POLICY "Admins can update product-images"
+ON storage.objects FOR UPDATE
+USING (bucket_id = 'product-images' AND public.is_admin());
 
-CREATE POLICY "Public Delete Access on product-images" 
-ON storage.objects FOR DELETE 
-USING (bucket_id = 'product-images');
+CREATE POLICY "Admins can delete product-images"
+ON storage.objects FOR DELETE
+USING (bucket_id = 'product-images' AND public.is_admin());
 

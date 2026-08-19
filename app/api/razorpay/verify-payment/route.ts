@@ -13,9 +13,11 @@ export async function POST(req: Request) {
     }
 
     const secret = process.env.RAZORPAY_KEY_SECRET || 'rzp_test_key_secret';
+    const isPlaceholderSecret = secret === 'rzp_test_key_secret';
 
-    // Allow simulated orders in development mode when placeholder keys are active
-    if (razorpay_order_id.startsWith('order_simulated_') || secret === 'rzp_test_key_secret') {
+    // Allow simulated orders in development only — never in production, where a
+    // placeholder/missing secret must fail verification instead of auto-succeeding.
+    if (process.env.NODE_ENV !== 'production' && (razorpay_order_id.startsWith('order_simulated_') || isPlaceholderSecret)) {
       return NextResponse.json({
         success: true,
         message: 'Simulated payment verified successfully',
@@ -23,6 +25,13 @@ export async function POST(req: Request) {
         orderId: razorpay_order_id,
         isSimulated: true,
       });
+    }
+
+    if (process.env.NODE_ENV === 'production' && isPlaceholderSecret) {
+      return NextResponse.json(
+        { success: false, error: 'Payment gateway is not configured' },
+        { status: 500 }
+      );
     }
 
     if (!razorpay_signature) {

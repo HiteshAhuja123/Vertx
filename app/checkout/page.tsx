@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useStore, Address } from '@/components/StoreContext';
 import { ShieldCheck, Plus, CreditCard, Landmark, Truck, Wallet, Check, AlertTriangle, X } from 'lucide-react';
 import { formatPrice } from '@/products';
+import { Modal } from '@/components/ui/Modal';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -295,19 +296,22 @@ export default function CheckoutPage() {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div role="radiogroup" aria-label="Saved delivery addresses" className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {addresses.map((addr) => (
-                    <div 
+                    <button
+                      type="button"
                       key={addr.id}
+                      role="radio"
+                      aria-checked={selectedAddressId === addr.id}
                       onClick={() => setSelectedAddressId(addr.id)}
-                      className={`p-4 border rounded cursor-pointer transition ${
-                        selectedAddressId === addr.id 
-                          ? 'border-vortx-white bg-vortx-white/5' 
+                      className={`w-full text-left p-4 border rounded transition ${
+                        selectedAddressId === addr.id
+                          ? 'border-vortx-white bg-vortx-white/5'
                           : 'border-vortx-white/10 bg-vortx-black/35 hover:border-vortx-white/35'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-sans text-[10px] font-bold tracking-widest text-vortx-white bg-vortx-white/10 px-2 py-0.5 rounded uppercase">
+                        <span className="font-sans text-2xs font-bold tracking-widest text-vortx-white bg-vortx-white/10 px-2 py-0.5 rounded uppercase">
                           {addr.type}
                         </span>
                         {selectedAddressId === addr.id && <Check className="w-4 h-4 text-vortx-white" />}
@@ -316,7 +320,7 @@ export default function CheckoutPage() {
                       {addr.addressLine2 && <p className="text-xs text-vortx-gray mt-0.5">{addr.addressLine2}</p>}
                       <p className="text-xs text-vortx-gray mt-1">{addr.city}, {addr.state} - {addr.postalCode}</p>
                       <p className="text-xs text-vortx-gray font-mono font-medium mt-2">PHONE: {addr.phone}</p>
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}
@@ -437,9 +441,7 @@ export default function CheckoutPage() {
       </div>
 
       {/* NEW ADDRESS MODAL POPUP */}
-      {showAddressModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowAddressModal(false)} />
+      <Modal open={showAddressModal} onClose={() => setShowAddressModal(false)} backdropClassName="bg-black/70 backdrop-blur-sm">
           <form onSubmit={handleAddNewAddress} className="relative w-full max-w-lg bg-vortx-dark border border-vortx-white/20 p-6 glassmorphism rounded shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
             <div className="flex justify-between items-center border-b border-vortx-white/10 pb-3">
               <span className="font-sans text-lg sm:text-xl font-bold tracking-wider text-vortx-white">ADD DELIVERY ADDRESS</span>
@@ -450,8 +452,9 @@ export default function CheckoutPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm sm:text-base font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">ADDRESS TYPE</label>
+                <label htmlFor="addr-type" className="block text-sm sm:text-base font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">ADDRESS TYPE</label>
                 <select
+                  id="addr-type"
                   value={type}
                   onChange={(e) => setType(e.target.value as any)}
                   className="w-full bg-vortx-black border border-vortx-white/20 px-4 py-3 text-base text-vortx-white focus:outline-none focus:border-vortx-white font-sans font-bold tracking-wider"
@@ -461,9 +464,10 @@ export default function CheckoutPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm sm:text-base font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5 font-mono">PHONE NUMBER</label>
-                <input 
-                  type="tel" 
+                <label htmlFor="addr-phone" className="block text-sm sm:text-base font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5 font-mono">PHONE NUMBER</label>
+                <input
+                  id="addr-phone"
+                  type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="DELIVERY CONTACT"
@@ -474,9 +478,10 @@ export default function CheckoutPage() {
             </div>
 
             <div>
-              <label className="block text-sm sm:text-base font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">ADDRESS LINE 1</label>
-              <input 
-                type="text" 
+              <label htmlFor="addr-line1" className="block text-sm sm:text-base font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">ADDRESS LINE 1</label>
+              <input
+                id="addr-line1"
+                type="text"
                 value={addressLine1}
                 onChange={(e) => setAddressLine1(e.target.value)}
                 placeholder="HOUSE NO, BUILDING, ROAD"
@@ -486,9 +491,10 @@ export default function CheckoutPage() {
             </div>
 
             <div>
-              <label className="block text-sm sm:text-base font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">ADDRESS LINE 2 (OPTIONAL)</label>
-              <input 
-                type="text" 
+              <label htmlFor="addr-line2" className="block text-sm sm:text-base font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">ADDRESS LINE 2 (OPTIONAL)</label>
+              <input
+                id="addr-line2"
+                type="text"
                 value={addressLine2}
                 onChange={(e) => setAddressLine2(e.target.value)}
                 placeholder="LOCALITY, AREA, LANDMARK"
@@ -498,9 +504,10 @@ export default function CheckoutPage() {
 
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm sm:text-base font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">CITY</label>
-                <input 
-                  type="text" 
+                <label htmlFor="addr-city" className="block text-sm sm:text-base font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">CITY</label>
+                <input
+                  id="addr-city"
+                  type="text"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   placeholder="CITY"
@@ -509,9 +516,10 @@ export default function CheckoutPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm sm:text-base font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">STATE</label>
-                <input 
-                  type="text" 
+                <label htmlFor="addr-state" className="block text-sm sm:text-base font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">STATE</label>
+                <input
+                  id="addr-state"
+                  type="text"
                   value={state}
                   onChange={(e) => setState(e.target.value)}
                   placeholder="STATE"
@@ -520,9 +528,10 @@ export default function CheckoutPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm sm:text-base font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">PINCODE</label>
-                <input 
-                  type="text" 
+                <label htmlFor="addr-postal" className="block text-sm sm:text-base font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">PINCODE</label>
+                <input
+                  id="addr-postal"
+                  type="text"
                   value={postalCode}
                   onChange={(e) => setPostalCode(e.target.value)}
                   placeholder="PINCODE"
@@ -545,13 +554,12 @@ export default function CheckoutPage() {
               SAVE ADDRESS
             </button>
           </form>
-        </div>
-      )}
+      </Modal>
 
-      {/* RAZORPAY PAYMENT GATEWAY DIALOG SIMULATOR */}
-      {showRazorpayModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/85" />
+      {/* RAZORPAY PAYMENT GATEWAY DIALOG SIMULATOR — intentionally styled to mimic Razorpay's
+          own checkout widget rather than VORTX's token palette, since it represents a foreign,
+          embedded surface. Only rendered when running against placeholder/dev payment keys. */}
+      <Modal open={showRazorpayModal} onClose={() => setShowRazorpayModal(false)} backdropClassName="bg-black/85" dismissible={false}>
           <div className="relative w-full max-w-md bg-[#1a1c24] border border-[#2f3242] p-6 text-white rounded-lg shadow-2xl flex flex-col animate-in zoom-in-95 duration-200">
             {/* Razorpay branding header */}
             <div className="flex justify-between items-center border-b border-[#2f3242] pb-4 mb-4">
@@ -617,8 +625,7 @@ export default function CheckoutPage() {
               </div>
             )}
           </div>
-        </div>
-      )}
+      </Modal>
 
     </div>
   );

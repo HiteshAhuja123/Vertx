@@ -5,9 +5,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { fetchSupabaseProducts, fetchReviews } from '@/lib/supabase';
 import { useStore } from '@/components/StoreContext';
-import { ArrowRight, Play, Star, ChevronLeft, ChevronRight, X, Clock, ShoppingBag, Eye } from 'lucide-react';
-import { formatPrice } from '@/products';
+import { ArrowRight, Play, Star, ChevronLeft, ChevronRight, X, Clock, ShoppingBag } from 'lucide-react';
 import { ProductGridSkeleton } from '@/components/ProductSkeleton';
+import { ProductCard } from '@/components/commerce/ProductCard';
+import { Modal } from '@/components/ui/Modal';
 
 // Mock notification list
 const RANDOM_PURCHASES = [
@@ -20,7 +21,7 @@ const RANDOM_PURCHASES = [
 
 export default function Home() {
   const router = useRouter();
-  const { addToCart, preOrderMode, navigateToProduct } = useStore();
+  const { preOrderMode } = useStore();
   const [products, setProducts] = useState<any[]>([]);
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [reviews, setReviews] = useState<any[]>([]);
@@ -131,7 +132,7 @@ export default function Home() {
         <div className="relative z-10 text-center px-5 max-w-5xl mx-auto space-y-5 sm:space-y-6 md:space-y-8">
           <div className="inline-flex items-center gap-2 border border-vortx-white/20 px-4 py-1.5 bg-vortx-white/5 backdrop-blur-md rounded-full">
             <span className="h-1.5 w-1.5 bg-red-600 rounded-full" />
-            <span className="font-sans text-[10px] sm:text-xs font-bold tracking-[0.18em] text-vortx-white uppercase">HYBRID ATHLETE LINE INITIATED</span>
+            <span className="font-sans text-2xs sm:text-xs font-bold tracking-[0.18em] text-vortx-white uppercase">HYBRID ATHLETE LINE INITIATED</span>
           </div>
 
           <h1 className="font-sans text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight leading-none text-vortx-white select-none uppercase">
@@ -160,7 +161,7 @@ export default function Home() {
 
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-2 opacity-40">
-          <span className="text-[8px] font-sans font-bold tracking-widest text-vortx-gray">SCROLL</span>
+          <span className="text-3xs font-sans font-bold tracking-widest text-vortx-gray">SCROLL</span>
           <div className="w-1 h-10 border border-vortx-white/20 rounded-full relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1/2 bg-vortx-white rounded-full" />
           </div>
@@ -187,7 +188,7 @@ export default function Home() {
               <span className="block font-syne text-2xl sm:text-3xl font-extrabold text-vortx-white tracking-wider">
                 50,000+
               </span>
-              <span className="block text-[10px] sm:text-xs font-mono font-bold tracking-widest text-vortx-gray uppercase">
+              <span className="block text-2xs sm:text-xs font-mono font-bold tracking-widest text-vortx-gray uppercase">
                 UNITS SHIPPED
               </span>
             </div>
@@ -196,7 +197,7 @@ export default function Home() {
               <span className="block font-syne text-2xl sm:text-3xl font-extrabold text-vortx-white tracking-wider">
                 15,000+
               </span>
-              <span className="block text-[10px] sm:text-xs font-mono font-bold tracking-widest text-vortx-gray uppercase">
+              <span className="block text-2xs sm:text-xs font-mono font-bold tracking-widest text-vortx-gray uppercase">
                 HYBRID ATHLETES
               </span>
             </div>
@@ -205,7 +206,7 @@ export default function Home() {
               <span className="block font-syne text-2xl sm:text-3xl font-extrabold text-vortx-white tracking-wider">
                 100%
               </span>
-              <span className="block text-[10px] sm:text-xs font-mono font-bold tracking-widest text-vortx-gray uppercase">
+              <span className="block text-2xs sm:text-xs font-mono font-bold tracking-widest text-vortx-gray uppercase">
                 LAB-TESTED TECH WEAVE
               </span>
             </div>
@@ -214,7 +215,7 @@ export default function Home() {
               <span className="block font-syne text-2xl sm:text-3xl font-extrabold text-vortx-white tracking-wider">
                 4.9★
               </span>
-              <span className="block text-[10px] sm:text-xs font-mono font-bold tracking-widest text-vortx-gray uppercase">
+              <span className="block text-2xs sm:text-xs font-mono font-bold tracking-widest text-vortx-gray uppercase">
                 COMMUNITY RATING
               </span>
             </div>
@@ -231,7 +232,7 @@ export default function Home() {
             <div className="space-y-6">
               <div className="inline-flex items-center gap-2 border border-vortx-white/20 px-3 py-1 bg-vortx-white/5">
                 <Clock className="w-3.5 h-3.5 text-vortx-white" />
-                <span className="font-mono text-[9px] font-bold tracking-widest text-vortx-white uppercase">LIMITED DROP COUNTDOWN</span>
+                <span className="font-mono text-2xs font-bold tracking-widest text-vortx-white uppercase">LIMITED DROP COUNTDOWN</span>
               </div>
               <h2 className="font-sans text-4xl sm:text-5xl font-extrabold tracking-wide text-vortx-white">
                 NEW RELEASES
@@ -244,19 +245,19 @@ export default function Home() {
               <div className="grid grid-cols-4 gap-4 max-w-sm pt-4 font-mono text-center">
                 <div className="bg-vortx-dark border border-vortx-white/15 p-3.5 countdown-pulse">
                   <span className="block text-2xl font-bold text-vortx-white">{timeLeft.days}</span>
-                  <span className="text-[8px] text-vortx-gray uppercase font-bold tracking-wider">Days</span>
+                  <span className="text-3xs text-vortx-gray uppercase font-bold tracking-wider">Days</span>
                 </div>
                 <div className="bg-vortx-dark border border-vortx-white/15 p-3.5 countdown-pulse">
                   <span className="block text-2xl font-bold text-vortx-white">{timeLeft.hours}</span>
-                  <span className="text-[8px] text-vortx-gray uppercase font-bold tracking-wider">Hours</span>
+                  <span className="text-3xs text-vortx-gray uppercase font-bold tracking-wider">Hours</span>
                 </div>
                 <div className="bg-vortx-dark border border-vortx-white/15 p-3.5 countdown-pulse">
                   <span className="block text-2xl font-bold text-vortx-white">{timeLeft.minutes}</span>
-                  <span className="text-[8px] text-vortx-gray uppercase font-bold tracking-wider">Mins</span>
+                  <span className="text-3xs text-vortx-gray uppercase font-bold tracking-wider">Mins</span>
                 </div>
                 <div className="bg-vortx-dark border border-vortx-white/15 p-3.5 countdown-pulse">
                   <span className="block text-2xl font-bold text-vortx-white">{timeLeft.seconds}</span>
-                  <span className="text-[8px] text-vortx-gray uppercase font-bold tracking-wider">Secs</span>
+                  <span className="text-3xs text-vortx-gray uppercase font-bold tracking-wider">Secs</span>
                 </div>
               </div>
               
@@ -279,8 +280,8 @@ export default function Home() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-vortx-black via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 flex items-center gap-3">
-                <span className="px-3 py-1 bg-vortx-white text-vortx-black font-syne text-[8px] font-bold tracking-wider">EXCLUSIVE DROP</span>
-                <span className="text-[10px] font-mono font-bold text-vortx-white">EST: ₹6,999</span>
+                <span className="px-3 py-1 bg-vortx-white text-vortx-black font-syne text-3xs font-bold tracking-wider">EXCLUSIVE DROP</span>
+                <span className="text-2xs font-mono font-bold text-vortx-white">EST: ₹6,999</span>
               </div>
             </div>
 
@@ -301,7 +302,7 @@ export default function Home() {
             </div>
             <Link 
               href="/shop"
-              className="inline-flex items-center gap-2 border border-vortx-white px-5 py-3 hover:bg-vortx-white hover:text-vortx-black font-syne text-[10px] font-bold tracking-widest transition duration-300"
+              className="inline-flex items-center gap-2 border border-vortx-white px-5 py-3 hover:bg-vortx-white hover:text-vortx-black font-syne text-2xs font-bold tracking-widest transition duration-300"
             >
               EXPLORE COLLECTION <ArrowRight className="w-3.5 h-3.5" />
             </Link>
@@ -312,101 +313,10 @@ export default function Home() {
             <ProductGridSkeleton count={3} />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredProducts.slice(0, 3).map((prod) => {
-              const isPreOrder = prod.pre_order_available;
-              return (
-                <div 
-                  key={prod.id} 
-                  onClick={() => navigateToProduct(prod.slug)}
-                  className="group flex flex-col border border-vortx-white/15 bg-vortx-dark/40 overflow-hidden relative card-tilt-hover cursor-pointer"
-                >
-                  {/* Image wrapper */}
-                  <div className="aspect-[4/5] bg-vortx-gray-dark relative overflow-hidden">
-                    <img 
-                      src={prod.images?.[0]} 
-                      alt={prod.name}
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition duration-700"
-                    />
-                    
-                    {/* Hover controls overlay */}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-3 transition-opacity duration-300">
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigateToProduct(prod.slug);
-                        }}
-                        aria-label={`View details for ${prod.name}`}
-                        className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-110 active:scale-95 transition btn-lift"
-                        title="View Details"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addToCart({
-                            id: prod.id,
-                            variantId: prod.variants?.[0]?.id || prod.id,
-                            name: prod.name,
-                            price: prod.price,
-                            mrp: prod.mrp,
-                            size: prod.variants?.[0]?.size || 'M',
-                            color: prod.variants?.[0]?.color || 'Black',
-                            image: prod.images?.[0] || '',
-                            sku: prod.variants?.[0]?.sku || '',
-                            isPreOrder: isPreOrder,
-                            preOrderDate: prod.pre_order_date
-                          }, 1);
-                        }}
-                        aria-label={`Add ${prod.name} to cart`}
-                        className="p-3 bg-vortx-white text-vortx-black rounded-full hover:scale-110 active:scale-95 transition btn-lift"
-                        title={isPreOrder ? "Pre-Order Item" : "Add to Cart"}
-                      >
-                        <ShoppingBag className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    {/* Badge */}
-                    {prod.badge && (
-                      <span className="absolute top-4 left-4 px-2.5 py-1 bg-vortx-white text-vortx-black font-syne text-[8px] font-extrabold tracking-wider">
-                        {prod.badge}
-                      </span>
-                    )}
-
-                    {/* Pre Order flag */}
-                    {isPreOrder && (
-                      <span className="absolute bottom-4 right-4 border border-vortx-white/40 bg-vortx-black text-vortx-white font-syne text-[7px] font-bold tracking-widest px-2 py-1">
-                        PRE-ORDER
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Details */}
-                  <div className="p-5 flex-1 flex flex-col justify-between border-t border-vortx-white/10 bg-vortx-black/85">
-                    <div>
-                      <span className="text-[8px] text-vortx-gray font-mono uppercase tracking-widest">
-                        {prod.category}
-                      </span>
-                      <div onClick={(e) => { e.stopPropagation(); navigateToProduct(prod.slug); }}>
-                        <h3 className="font-syne text-xs font-bold tracking-wider text-vortx-white mt-1 hover:underline cursor-pointer">
-                          {prod.name.toUpperCase()}
-                        </h3>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2.5 mt-3 font-mono">
-                      <span className="text-xs font-bold text-vortx-white">{formatPrice(prod.price)}</span>
-                      {prod.mrp && prod.mrp > prod.price && (
-                        <>
-                          <span className="text-[10px] text-vortx-gray line-through">{formatPrice(prod.mrp)}</span>
-                          <span className="text-[9px] text-red-500 font-sans font-bold">-{prod.discount_percent}%</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+              {filteredProducts.slice(0, 3).map((prod) => (
+                <ProductCard key={prod.id} product={prod} />
+              ))}
+            </div>
           )}
 
         </div>
@@ -424,7 +334,7 @@ export default function Home() {
               />
             </div>
             <div className="space-y-6">
-              <span className="font-sans text-[11px] font-bold tracking-[0.2em] text-vortx-gray uppercase">THE CLAN MANIFESTO</span>
+              <span className="font-sans text-2xs font-bold tracking-[0.2em] text-vortx-gray uppercase">THE CLAN MANIFESTO</span>
               <h2 className="font-sans text-4xl sm:text-5xl font-extrabold tracking-wide text-vortx-white">
                 DESIGNED FOR WARRIORS, NOT WATCHERS.
               </h2>
@@ -433,11 +343,11 @@ export default function Home() {
               </p>
               <div className="grid grid-cols-2 gap-6 pt-4 font-syne text-xs font-bold tracking-widest text-vortx-white">
                 <div className="border-l border-vortx-white/20 pl-4 py-2">
-                  <h4 className="text-[10px] text-vortx-gray mb-1">STRENGTH FIRST</h4>
+                  <h4 className="text-2xs text-vortx-gray mb-1">STRENGTH FIRST</h4>
                   <p>HYBRID SHELLS</p>
                 </div>
                 <div className="border-l border-vortx-white/20 pl-4 py-2">
-                  <h4 className="text-[10px] text-vortx-gray mb-1">ZERO EXCUSES</h4>
+                  <h4 className="text-2xs text-vortx-gray mb-1">ZERO EXCUSES</h4>
                   <p>PERFORMANCE TECH</p>
                 </div>
               </div>
@@ -450,7 +360,7 @@ export default function Home() {
       {reviews.length > 0 && (
         <section className="py-24 border-b border-vortx-white/10 text-center">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <span className="font-sans text-[11px] font-bold tracking-[0.2em] text-vortx-gray uppercase">COMMUNITY RATING</span>
+            <span className="font-sans text-2xs font-bold tracking-[0.2em] text-vortx-gray uppercase">COMMUNITY RATING</span>
             <h2 className="font-sans text-4xl font-bold tracking-wide text-vortx-white mt-2 mb-10">ATHLETE INSIGHTS</h2>
             
             {/* Reviews container */}
@@ -501,17 +411,15 @@ export default function Home() {
       )}
 
       {/* 7. EXIT INTENT POPUP MODAL */}
-      {showExitPopup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={() => setShowExitPopup(false)} />
+      <Modal open={showExitPopup} onClose={() => setShowExitPopup(false)}>
           <div className="relative w-full max-w-md bg-vortx-dark border border-vortx-white/20 p-8 text-center glassmorphism rounded shadow-2xl animate-in zoom-in-95 duration-300">
-            <button 
+            <button
               onClick={() => setShowExitPopup(false)}
               className="absolute top-4 right-4 text-vortx-gray hover:text-vortx-white transition"
             >
               <X className="w-4 h-4" />
             </button>
-            <span className="font-sans text-[11px] font-bold tracking-[0.2em] text-vortx-white/80 uppercase">WARRIORS EXCLUSIVE</span>
+            <span className="font-sans text-2xs font-bold tracking-[0.2em] text-vortx-white/80 uppercase">WARRIORS EXCLUSIVE</span>
             <h3 className="font-syne text-2xl font-bold tracking-wider text-vortx-white mt-3 mb-2">DON'T LEAVE EMPTY HANDED</h3>
             <p className="text-sm text-vortx-gray leading-relaxed mb-6">
               Sign up for the clan drops today and get 10% off your first checkout.
@@ -534,8 +442,7 @@ export default function Home() {
               </button>
             </div>
           </div>
-        </div>
-      )}
+      </Modal>
 
       {/* 8. RECENTLY PURCHASED FLOATING TOAST */}
       {recentPurchase && (
@@ -543,7 +450,7 @@ export default function Home() {
           <div className="w-8 h-8 rounded-full border border-vortx-white/20 flex items-center justify-center text-vortx-white flex-shrink-0 mt-0.5">
             <ShoppingBag className="w-3.5 h-3.5" />
           </div>
-          <div className="text-[10px]">
+          <div className="text-2xs">
             <p className="text-vortx-gray font-medium">Recently Purchased</p>
             <p className="font-syne font-bold text-vortx-white mt-0.5">
               Athlete in {recentPurchase.location}
@@ -551,7 +458,7 @@ export default function Home() {
             <p className="text-vortx-white/90 truncate max-w-[200px] mt-0.5">
               Purchased {recentPurchase.product}
             </p>
-            <span className="text-[8px] text-vortx-gray font-mono mt-1 block">
+            <span className="text-3xs text-vortx-gray font-mono mt-1 block">
               {recentPurchase.time}
             </span>
           </div>

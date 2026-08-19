@@ -421,14 +421,15 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     }
 
     if (authUser) {
-      // Set user immediately if mock mode OR fallback admin user
-      if (!isSupabaseConfigured || authUser.id?.startsWith('usr_admin')) {
+      // Mock mode resolves the session synchronously; live Supabase mode is
+      // handled by the onAuthStateChange listener below instead.
+      if (!isSupabaseConfigured) {
         const userProfile: UserProfile = {
           id: authUser.id,
           email: authUser.email,
-          fullName: authUser.full_name || authUser.fullName || 'VORTX Administrator',
-          phone: authUser.phone || '+919999999999',
-          role: authUser.role || 'admin',
+          fullName: authUser.full_name || authUser.fullName,
+          phone: authUser.phone,
+          role: authUser.role || 'customer',
           createdAt: authUser.created_at || new Date().toISOString()
         };
         setUser(userProfile);
