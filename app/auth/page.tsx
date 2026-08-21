@@ -18,7 +18,9 @@ function AuthPortalContent() {
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('warriorpass1');
+  // Prefilled only in non-production builds, to back the OTP demo path against the
+  // seeded sandbox admin account — a real customer's form never arrives pre-filled.
+  const [password, setPassword] = useState(process.env.NODE_ENV !== 'production' ? 'warriorpass1' : '');
   
   // OTP Verification
   const [otpSent, setOtpSent] = useState(false);
@@ -134,7 +136,7 @@ function AuthPortalContent() {
 
   return (
     <div className="flex-1 flex items-center justify-center py-20 px-5 sm:px-8 bg-vortx-black">
-      <div className="w-full max-w-lg bg-vortx-dark border border-vortx-white/20 p-8 sm:p-10 rounded shadow-2xl glassmorphism">
+      <div className="w-full max-w-lg bg-vortx-dark border border-vortx-white/20 p-8 sm:p-10">
         
         {/* Tab Headers */}
         <div className="flex border-b border-vortx-white/10 text-sm font-sans font-bold tracking-widest mb-10">
@@ -168,7 +170,7 @@ function AuthPortalContent() {
         {/* Brand Slogan */}
         <div className="text-center mb-10">
           <span className="font-sans text-2xs font-bold tracking-[0.2em] text-vortx-gray uppercase">VORTX SECURITY</span>
-          <h2 className="font-syne text-2xl font-bold tracking-wider text-vortx-white mt-3 uppercase">
+          <h2 className="font-display text-2xl font-bold tracking-wider text-vortx-white mt-3 uppercase">
             {isLoginTab ? 'CHOOSE PERFORMANCE' : 'JOIN THE WARRIOR CLAN'}
           </h2>
         </div>
@@ -176,7 +178,7 @@ function AuthPortalContent() {
         {/* Form Container */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {errorMsg && (
-            <div className="p-3.5 border border-red-500/30 bg-red-500/10 text-red-400 text-xs font-sans font-medium rounded space-y-1">
+            <div className="p-3.5 border border-vortx-red/30 bg-vortx-red/10 text-vortx-red text-xs font-sans font-medium space-y-1">
               <p className="font-bold">{errorMsg}</p>
               {errorMsg.toLowerCase().includes('email not confirmed') && (
                 <p className="text-2xs text-vortx-gray leading-normal">
@@ -344,12 +346,14 @@ function AuthPortalContent() {
           )}
         </form>
 
-        {/* Demo Details assistance panel */}
-        <div className="mt-10 pt-8 border-t border-vortx-white/10 text-center font-mono text-xs text-vortx-gray leading-relaxed space-y-3">
-          <p className="font-bold text-vortx-white">SANDBOX TESTING DETAILS:</p>
-          <p>Login with email: <span className="text-vortx-white font-bold select-all">admin@vortx.fit</span> to access the admin features.</p>
-          <p>Enter any email for customer logins; signup generates code WELCOME10 automatically.</p>
-        </div>
+        {/* Dev-only sandbox panel — never rendered in a production build */}
+        {process.env.NODE_ENV !== 'production' && (
+          <div className="mt-10 pt-8 border-t border-vortx-white/10 text-center font-mono text-xs text-vortx-gray leading-relaxed space-y-3">
+            <p className="font-bold text-vortx-white">SANDBOX TESTING DETAILS (DEV ONLY):</p>
+            <p>Login with email: <span className="text-vortx-white font-bold select-all">admin@vortx.fit</span> to access the admin features.</p>
+            <p>Enter any email for customer logins; signup generates code WELCOME10 automatically.</p>
+          </div>
+        )}
 
       </div>
     </div>

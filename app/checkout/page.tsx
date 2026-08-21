@@ -266,7 +266,7 @@ export default function CheckoutPage() {
     <div className="py-12 bg-vortx-black min-h-screen text-vortx-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <h1 className="font-sans text-4xl font-extrabold tracking-wide mb-10 text-vortx-white uppercase">CHECKOUT SECURED</h1>
+        <h1 className="font-display text-3xl sm:text-4xl font-extrabold tracking-wide mb-10 text-vortx-white">CHECKOUT</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
@@ -274,7 +274,7 @@ export default function CheckoutPage() {
           <div className="lg:col-span-8 space-y-8">
             
             {/* 1. SHIPPING ADDRESS */}
-            <div className="p-6 border border-vortx-white/10 bg-vortx-dark/30 rounded glassmorphism">
+            <div className="p-6 border border-vortx-white/10 bg-vortx-dark/30">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="font-sans text-sm font-bold tracking-wider text-vortx-white uppercase">1. DELIVERY DETAILS</h3>
                 <button
@@ -304,14 +304,14 @@ export default function CheckoutPage() {
                       role="radio"
                       aria-checked={selectedAddressId === addr.id}
                       onClick={() => setSelectedAddressId(addr.id)}
-                      className={`w-full text-left p-4 border rounded transition ${
+                      className={`w-full text-left p-4 border transition ${
                         selectedAddressId === addr.id
                           ? 'border-vortx-white bg-vortx-white/5'
                           : 'border-vortx-white/10 bg-vortx-black/35 hover:border-vortx-white/35'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-sans text-2xs font-bold tracking-widest text-vortx-white bg-vortx-white/10 px-2 py-0.5 rounded uppercase">
+                        <span className="font-sans text-2xs font-bold tracking-widest text-vortx-white bg-vortx-white/10 px-2 py-0.5 uppercase">
                           {addr.type}
                         </span>
                         {selectedAddressId === addr.id && <Check className="w-4 h-4 text-vortx-white" />}
@@ -327,53 +327,58 @@ export default function CheckoutPage() {
             </div>
 
             {/* 2. PAYMENT GATEWAYS */}
-            <div className="p-6 border border-vortx-white/10 bg-vortx-dark/30 rounded glassmorphism space-y-6">
+            <div className="p-6 border border-vortx-white/10 bg-vortx-dark/30 space-y-6">
               <h3 className="font-sans text-sm font-bold tracking-wider text-vortx-white uppercase">2. PAYMENT METHOD</h3>
-              
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+
+              {/* Primary path — Card and UPI cover the large majority of orders,
+                  so they lead at full visual weight. */}
+              <div className="grid grid-cols-2 gap-4">
                 <button
                   onClick={() => setPaymentMethod('card')}
-                  className={`p-4 border rounded flex flex-col items-center justify-center gap-2 font-sans text-xs font-bold tracking-wider transition ${
+                  className={`p-4 border flex flex-col items-center justify-center gap-2 font-sans text-xs font-bold tracking-wider transition ${
                     paymentMethod === 'card' ? 'border-vortx-white bg-vortx-white/5' : 'border-vortx-white/10 hover:border-vortx-white/30'
                   }`}
                 >
                   <CreditCard className="w-5 h-5 text-vortx-white" />
-                  <span>CREDIT/DEBIT</span>
+                  <span>CREDIT/DEBIT CARD</span>
                 </button>
-                
+
                 <button
                   onClick={() => setPaymentMethod('upi')}
-                  className={`p-4 border rounded flex flex-col items-center justify-center gap-2 font-sans text-xs font-bold tracking-wider transition ${
+                  className={`p-4 border flex flex-col items-center justify-center gap-2 font-sans text-xs font-bold tracking-wider transition ${
                     paymentMethod === 'upi' ? 'border-vortx-white bg-vortx-white/5' : 'border-vortx-white/10 hover:border-vortx-white/30'
                   }`}
                 >
                   <Wallet className="w-5 h-5 text-vortx-white" />
-                  <span>UPI PAY</span>
+                  <span>UPI</span>
                 </button>
-                
+              </div>
+
+              {/* Secondary path — recedes visually; still one tap away */}
+              <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => setPaymentMethod('netbanking')}
-                  className={`p-4 border rounded flex flex-col items-center justify-center gap-2 font-sans text-xs font-bold tracking-wider transition ${
-                    paymentMethod === 'netbanking' ? 'border-vortx-white bg-vortx-white/5' : 'border-vortx-white/10 hover:border-vortx-white/30'
+                  className={`px-3 py-2.5 border flex items-center justify-center gap-2 font-sans text-2xs font-semibold tracking-wide transition ${
+                    paymentMethod === 'netbanking' ? 'border-vortx-white text-vortx-white' : 'border-vortx-white/10 text-vortx-gray hover:border-vortx-white/30 hover:text-vortx-white'
                   }`}
                 >
-                  <Landmark className="w-5 h-5 text-vortx-white" />
+                  <Landmark className="w-3.5 h-3.5" />
                   <span>NET BANKING</span>
                 </button>
-                
+
                 <button
                   onClick={() => setPaymentMethod('cod')}
-                  className={`p-4 border rounded flex flex-col items-center justify-center gap-2 font-sans text-xs font-bold tracking-wider transition ${
-                    paymentMethod === 'cod' ? 'border-vortx-white bg-vortx-white/5' : 'border-vortx-white/10 hover:border-vortx-white/30'
+                  className={`px-3 py-2.5 border flex items-center justify-center gap-2 font-sans text-2xs font-semibold tracking-wide transition ${
+                    paymentMethod === 'cod' ? 'border-vortx-white text-vortx-white' : 'border-vortx-white/10 text-vortx-gray hover:border-vortx-white/30 hover:text-vortx-white'
                   }`}
                 >
-                  <Truck className="w-5 h-5 text-vortx-white" />
-                  <span>CASH ON DEL.</span>
+                  <Truck className="w-3.5 h-3.5" />
+                  <span>CASH ON DELIVERY</span>
                 </button>
               </div>
 
               {paymentMethod !== 'cod' && (
-                <div className="flex items-center gap-2 text-xs text-vortx-gray font-medium p-3 bg-vortx-white/5 rounded border border-vortx-white/5">
+                <div className="flex items-center gap-2 text-xs text-vortx-gray font-medium p-3 bg-vortx-white/5 border border-vortx-white/5">
                   <ShieldCheck className="w-4 h-4 text-vortx-white" />
                   <span>Payments are processed securely via Razorpay payment gateway interfaces.</span>
                 </div>
@@ -384,7 +389,7 @@ export default function CheckoutPage() {
 
           {/* Right Columns - Order list summaries */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="p-6 border border-vortx-white/10 bg-vortx-dark/30 rounded glassmorphism space-y-4">
+            <div className="p-6 border border-vortx-white/10 bg-vortx-dark/30 space-y-4">
               <h3 className="font-sans text-base font-bold tracking-wider text-vortx-white uppercase border-b border-vortx-white/10 pb-4 mb-2">ORDER SUMMARY</h3>
               
               {/* Product brief lists */}
@@ -423,14 +428,14 @@ export default function CheckoutPage() {
               </div>
 
               {checkoutError && (
-                <p className="text-sm font-bold text-red-500 bg-red-500/10 border border-red-500/20 p-3 rounded text-center">
+                <p className="text-sm font-bold text-vortx-red bg-vortx-red/10 border border-vortx-red/20 p-3 text-center">
                   {checkoutError}
                 </p>
               )}
 
               <button
                 onClick={handleOrderSubmission}
-                className="w-full py-4 bg-vortx-white text-vortx-black font-sans text-base font-bold tracking-widest hover:bg-vortx-white/90 transition shadow-lg"
+                className="w-full py-4 bg-vortx-white text-vortx-black font-sans text-base font-bold tracking-widest hover:bg-vortx-white/90 transition"
               >
                 {paymentMethod === 'cod' ? 'CONFIRM ORDER' : 'PAY & PLACE ORDER'}
               </button>
@@ -442,7 +447,7 @@ export default function CheckoutPage() {
 
       {/* NEW ADDRESS MODAL POPUP */}
       <Modal open={showAddressModal} onClose={() => setShowAddressModal(false)} backdropClassName="bg-black/70 backdrop-blur-sm">
-          <form onSubmit={handleAddNewAddress} className="relative w-full max-w-lg bg-vortx-dark border border-vortx-white/20 p-6 glassmorphism rounded shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
+          <form onSubmit={handleAddNewAddress} className="relative w-full max-w-lg bg-vortx-dark border border-vortx-white/20 p-6 elevated space-y-4">
             <div className="flex justify-between items-center border-b border-vortx-white/10 pb-3">
               <span className="font-sans text-lg sm:text-xl font-bold tracking-wider text-vortx-white">ADD DELIVERY ADDRESS</span>
               <button type="button" onClick={() => setShowAddressModal(false)} className="text-vortx-gray hover:text-vortx-white transition">
@@ -464,7 +469,7 @@ export default function CheckoutPage() {
                 </select>
               </div>
               <div>
-                <label htmlFor="addr-phone" className="block text-sm sm:text-base font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5 font-mono">PHONE NUMBER</label>
+                <label htmlFor="addr-phone" className="block text-sm sm:text-base font-sans font-bold tracking-wider text-vortx-gray uppercase mb-1.5">PHONE NUMBER</label>
                 <input
                   id="addr-phone"
                   type="tel"
@@ -542,7 +547,7 @@ export default function CheckoutPage() {
             </div>
 
             {addressError && (
-              <p className="text-sm font-bold text-red-500 bg-red-500/10 border border-red-500/20 p-3 rounded text-center">
+              <p className="text-sm font-bold text-vortx-red bg-vortx-red/10 border border-vortx-red/20 p-3 text-center">
                 {addressError}
               </p>
             )}
@@ -564,7 +569,7 @@ export default function CheckoutPage() {
             {/* Razorpay branding header */}
             <div className="flex justify-between items-center border-b border-[#2f3242] pb-4 mb-4">
               <div className="flex flex-col">
-                <span className="text-xs text-gray-400 uppercase tracking-wider font-bold font-mono">RAZORPAY CHECKOUT SECURED</span>
+                <span className="text-xs text-amber-400 uppercase tracking-wider font-bold font-mono">Test Mode — No live key configured</span>
                 <span className="text-lg font-extrabold font-sans text-white">VORTX ACTIVEWEAR</span>
               </div>
               <button 
@@ -600,8 +605,8 @@ export default function CheckoutPage() {
                     <span className="text-white font-bold uppercase">{paymentMethod}</span>
                   </div>
                   <div className="flex justify-between text-xs text-gray-500 border-t border-[#2f3242] pt-2">
-                    <span>Checkout SDK:</span>
-                    <span>v2.8.1-production</span>
+                    <span>Mode:</span>
+                    <span>Sandbox simulation — no real charge</span>
                   </div>
                 </div>
 

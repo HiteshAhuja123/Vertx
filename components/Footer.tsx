@@ -68,7 +68,7 @@ export default function Footer() {
 
           {/* Quick links columns */}
           <div>
-            <h4 className="font-syne text-xs font-extrabold tracking-[0.2em] text-vortx-white mb-6 uppercase">CATALOG</h4>
+            <h4 className="font-display text-xs font-extrabold tracking-[0.2em] text-vortx-white mb-6 uppercase">CATALOG</h4>
             <ul className="space-y-3.5 text-xs font-medium">
               {footerLinks.shop.map((link, i) => (
                 <li key={i}>
@@ -81,7 +81,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-syne text-xs font-extrabold tracking-[0.2em] text-vortx-white mb-6 uppercase">HELP</h4>
+            <h4 className="font-display text-xs font-extrabold tracking-[0.2em] text-vortx-white mb-6 uppercase">HELP</h4>
             <ul className="space-y-3.5 text-xs font-medium">
               {footerLinks.support.map((link, i) => (
                 <li key={i}>
@@ -95,7 +95,7 @@ export default function Footer() {
 
           {/* Newsletter Subscribe */}
           <div>
-            <h4 className="font-syne text-xs font-extrabold tracking-[0.2em] text-vortx-white mb-6 uppercase">NEWSLETTER</h4>
+            <h4 className="font-display text-xs font-extrabold tracking-[0.2em] text-vortx-white mb-6 uppercase">NEWSLETTER</h4>
             <div className="space-y-4">
               <p className="text-xs text-vortx-gray leading-relaxed font-medium">
                 Join the clan. Receive 10% off your first drop.

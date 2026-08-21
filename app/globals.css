@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-outfit), 'Outfit', sans-serif;
-  --font-syne: var(--font-syne), 'Syne', sans-serif;
+  --font-sans: var(--font-worksans), 'Work Sans', sans-serif;
+  --font-display: var(--font-archivo), 'Archivo Expanded', sans-serif;
+  --font-mono: var(--font-plexmono), 'IBM Plex Mono', ui-monospace, monospace;
   --spacing: 4px;
 
   /* Micro type scale — replaces ad hoc text-[10px]/[9px]/[8px]/[7px] usage.
@@ -19,48 +20,33 @@
   --color-vortx-gray-light: var(--vortx-gray-light);
   --color-vortx-white: var(--vortx-white);
   --color-vortx-red: var(--vortx-red);
-
-  --animate-marquee: marquee 45s linear infinite;
-  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  --animate-scanline: scanline 6s linear infinite;
-
-  @keyframes marquee {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-50%); }
-  }
-  @keyframes scanline {
-    0% { transform: translateY(-100%); }
-    100% { transform: translateY(100%); }
-  }
 }
 
 :root {
-  --vortx-black: #0a0b0d;
-  --vortx-dark: #121417;
-  --vortx-gray-dark: #1b1e22;
-  --vortx-gray: #94a3b8;
-  --vortx-gray-light: #26292e;
-  --vortx-white: #ffffff;
-  --vortx-red: #e60000;
-  --background: #0a0b0d;
-  --foreground: #ffffff;
-  --glass-bg: rgba(18, 20, 23, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.12);
+  /* Ink foundation — warm near-black, not pure #000, dark by default. */
+  --vortx-black: #0d0c0a;
+  --vortx-dark: #17150f;
+  --vortx-gray-dark: #201d16;
+  --vortx-gray: #8f8878;
+  --vortx-gray-light: #34301f;
+  --vortx-white: #faf8f2;
+  /* Signal — reserved for sale price, active/wishlist state, and errors only. Never decorative. */
+  --vortx-red: #c1663a;
+  --background: #0d0c0a;
+  --foreground: #faf8f2;
   color-scheme: dark;
 }
 
 [data-theme="light"], .light {
-  --vortx-black: #ffffff;
-  --vortx-dark: #f8fafc;
-  --vortx-gray-dark: #f1f5f9;
-  --vortx-gray: #475569;
-  --vortx-gray-light: #cbd5e1;
-  --vortx-white: #0f172a;
-  --vortx-red: #e60000;
-  --background: #f1f5f9;
-  --foreground: #0f172a;
-  --glass-bg: rgba(255, 255, 255, 0.95);
-  --glass-border: rgba(15, 23, 42, 0.12);
+  --vortx-black: #faf8f2;
+  --vortx-dark: #ffffff;
+  --vortx-gray-dark: #f1eee3;
+  --vortx-gray: #6b6455;
+  --vortx-gray-light: #ddd6c7;
+  --vortx-white: #17140f;
+  --vortx-red: #a3512e;
+  --background: #faf8f2;
+  --foreground: #17140f;
   color-scheme: light;
 }
 
@@ -78,7 +64,7 @@ a, button, select, input[type="submit"], [role="button"], label {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-sans);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -119,89 +105,8 @@ body {
   background: var(--vortx-gray);
 }
 
-/* Sleek loading animation bar */
-.loader-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 2px;
-  background: var(--vortx-red);
-  z-index: 9999;
-  animation: loading-pulse 2s ease-in-out infinite;
-}
-
-@keyframes loading-pulse {
-  0% { width: 0%; left: 0; }
-  50% { width: 100%; left: 0; }
-  100% { width: 0%; left: 100%; }
-}
-
-/* Premium styling helpers */
-.glassmorphism {
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-}
-
-.text-stroke {
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
-  color: transparent;
-}
-
-.text-stroke-active {
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 1);
-  color: transparent;
-}
-
-/* Hover Sweep Animation */
-.btn-sweep {
-  position: relative;
-  overflow: hidden;
-  transition: color 0.4s ease;
-  z-index: 1;
-}
-
-.btn-sweep::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #ffffff;
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform 0.4s ease;
-  z-index: -1;
-}
-
-.btn-sweep:hover {
-  color: #000000;
-}
-
-.btn-sweep:hover::before {
-  transform: scaleX(1);
-  transform-origin: left;
-}
-
-/* Grid overlay background */
-.grid-bg {
-  background-size: 40px 40px;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-}
-
-/* Warrior Countdown Box Clean Border Accent */
-.countdown-pulse {
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-.countdown-pulse:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-/* Premium Shimmer Skeleton Loader */
+/* Premium Shimmer Skeleton Loader — the one animation that communicates
+   something real (a loading state), so it's the one that stays. */
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
@@ -215,36 +120,28 @@ body {
   background: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0.03) 0%,
-    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.12) 50%,
     rgba(255, 255, 255, 0.03) 100%
   );
   background-size: 200% 100%;
   animation: shimmer 1.6s infinite ease-in-out;
 }
 
-/* --- HIGH-PERFORMANCE BRAND ANIMATIONS --- */
-
-/* Interactive Spring Button Physics */
-.btn-lift {
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, background-color 0.25s ease;
-}
-.btn-lift:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 10px 25px -5px rgba(255, 255, 255, 0.12);
-}
-.btn-lift:active {
-  transform: translateY(1px) scale(0.98);
+/* Restrained hover: image crossfades from grayscale to color. No scale, no tilt. */
+.img-hover {
+  transition: filter 0.4s ease;
 }
 
-/* Card Subtle 3D Depth & Border Glow */
-.card-tilt-hover {
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.5s ease;
-  will-change: transform;
-}
-.card-tilt-hover:hover {
-  transform: translateY(-4px) scale(1.01);
-  border-color: rgba(255, 255, 255, 0.35);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 255, 255, 0.05);
+/* Retained for /admin only (internal tool, out of scope for this design pass) —
+   not used anywhere in the customer-facing surfaces. */
+.glassmorphism {
+  background: color-mix(in srgb, var(--vortx-dark) 85%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in srgb, var(--vortx-white) 12%, transparent);
 }
 
-
+/* Drawers & modals: the only surfaces allowed a shadow, at one elevation. */
+.elevated {
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.5);
+}

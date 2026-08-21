@@ -1,23 +1,30 @@
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
-import { Outfit, Syne } from 'next/font/google';
+import { Work_Sans, Archivo, IBM_Plex_Mono } from 'next/font/google';
 import './globals.css';
 import { StoreProvider } from '@/components/StoreContext';
 import { ProductLoaderOverlay } from '@/components/ProductLoaderOverlay';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
-const outfit = Outfit({
+const workSans = Work_Sans({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
-  variable: '--font-outfit',
+  weight: ['400', '500', '600'],
+  variable: '--font-worksans',
   display: 'swap',
 });
 
-const syne = Syne({
+const archivo = Archivo({
   subsets: ['latin'],
-  weight: ['700', '800'],
-  variable: '--font-syne',
+  weight: ['700', '800', '900'],
+  variable: '--font-archivo',
+  display: 'swap',
+});
+
+const plexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-plexmono',
   display: 'swap',
 });
 
@@ -62,7 +69,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`h-full scroll-smooth ${outfit.variable} ${syne.variable}`}>
+    <html lang="en" className={`h-full scroll-smooth ${workSans.variable} ${archivo.variable} ${plexMono.variable}`}>
       <body className="min-h-screen bg-vortx-black text-vortx-white flex flex-col antialiased font-sans">
         <StoreProvider>
           <ProductLoaderOverlay />

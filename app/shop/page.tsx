@@ -109,7 +109,7 @@ function ShopContent() {
 
         {/* Page Header */}
         <div className="border-b border-vortx-white/10 pb-8 mb-10">
-          <h1 className="font-sans text-4xl sm:text-5xl font-extrabold tracking-wide text-vortx-white uppercase">
+          <h1 className="font-display text-3xl sm:text-4xl font-extrabold tracking-wide text-vortx-white">
             {preOrderMode ? 'PRE-ORDERS CATALOG' : 'GEAR CATALOG'}
           </h1>
           <p className="text-xs text-vortx-gray mt-2 tracking-widest uppercase font-semibold">
@@ -133,7 +133,7 @@ function ShopContent() {
                       key={cat}
                       onClick={() => setSelectedCategory(cat)}
                       className={`block w-full text-xs font-medium tracking-wide text-left transition py-2 pl-3 border-l-2 ${selectedCategory === cat
-                          ? 'text-vortx-white font-bold border-red-600 bg-red-600/5'
+                          ? 'text-vortx-white font-bold border-vortx-white bg-vortx-white/5'
                           : 'text-vortx-gray hover:text-vortx-white border-transparent hover:bg-vortx-white/2'
                         }`}
                     >
@@ -152,7 +152,7 @@ function ShopContent() {
                       key={gen}
                       onClick={() => setSelectedGender(gen)}
                       className={`block w-full text-xs font-medium tracking-wide text-left transition py-2 pl-3 border-l-2 ${selectedGender === gen
-                          ? 'text-vortx-white font-bold border-red-600 bg-red-600/5'
+                          ? 'text-vortx-white font-bold border-vortx-white bg-vortx-white/5'
                           : 'text-vortx-gray hover:text-vortx-white border-transparent hover:bg-vortx-white/2'
                         }`}
                     >
@@ -224,7 +224,7 @@ function ShopContent() {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                 {filteredProducts.map((prod) => (
                   <ProductCard key={prod.id} product={prod} />
                 ))}
@@ -247,10 +247,10 @@ function ShopContent() {
           />
 
           {/* Slide-out Panel */}
-          <div className="relative w-80 max-w-full bg-vortx-dark border-l border-vortx-white/10 p-6 flex flex-col justify-between glassmorphism h-full">
+          <div className="relative w-80 max-w-full bg-vortx-dark border-l border-vortx-white/10 p-6 flex flex-col justify-between elevated h-full">
             <div className="space-y-8 overflow-y-auto pr-1">
               <div className="flex justify-between items-center border-b border-vortx-white/10 pb-4">
-                <span className="font-syne text-xs font-bold tracking-widest text-vortx-white uppercase">FILTERS & SORT</span>
+                <span className="font-display text-xs font-bold tracking-widest text-vortx-white uppercase">FILTERS & SORT</span>
                 <button
                   onClick={() => setIsMobileFiltersOpen(false)}
                   className="p-1 hover:bg-vortx-white/10 rounded transition text-vortx-gray hover:text-vortx-white"
@@ -271,7 +271,7 @@ function ShopContent() {
                         setIsMobileFiltersOpen(false);
                       }}
                       className={`block w-full text-xs font-medium tracking-wide text-left transition py-2.5 pl-3 border-l-2 ${selectedCategory === cat
-                          ? 'text-vortx-white font-bold border-red-600 bg-red-600/5'
+                          ? 'text-vortx-white font-bold border-vortx-white bg-vortx-white/5'
                           : 'text-vortx-gray hover:text-vortx-white border-transparent hover:bg-vortx-white/2'
                         }`}
                     >
@@ -293,7 +293,7 @@ function ShopContent() {
                         setIsMobileFiltersOpen(false);
                       }}
                       className={`block w-full text-xs font-medium tracking-wide text-left transition py-2.5 pl-3 border-l-2 ${selectedGender === gen
-                          ? 'text-vortx-white font-bold border-red-600 bg-red-600/5'
+                          ? 'text-vortx-white font-bold border-vortx-white bg-vortx-white/5'
                           : 'text-vortx-gray hover:text-vortx-white border-transparent hover:bg-vortx-white/2'
                         }`}
                     >
@@ -329,7 +329,7 @@ function ShopContent() {
                 setSearchQuery('');
                 setIsMobileFiltersOpen(false);
               }}
-              className="w-full py-3 mt-6 border border-red-600/20 text-red-500 hover:bg-red-600 hover:text-white text-xs font-sans font-bold tracking-widest transition uppercase"
+              className="w-full py-3 mt-6 border border-vortx-white/20 text-vortx-gray hover:border-vortx-white hover:text-vortx-white text-xs font-sans font-bold tracking-widest transition uppercase"
             >
               RESET FILTERS
             </button>
@@ -344,7 +344,7 @@ function ShopContent() {
 export default function Shop() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-vortx-black text-vortx-white flex items-center justify-center font-syne text-xs font-bold tracking-widest uppercase">
+      <div className="min-h-screen bg-vortx-black text-vortx-white flex items-center justify-center font-display text-xs font-bold tracking-widest uppercase">
         LOADING CATALOG...
       </div>
     }>

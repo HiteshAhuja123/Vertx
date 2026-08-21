@@ -21,11 +21,11 @@ export function Logo({ size = 'sm', tagline = 'WARRIORS, NOT WATCHERS.', classNa
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path d="M 10 18 L 95 18 L 82 38 L 38 25 Z" className="fill-vortx-red" />
-        <path d="M 38 38 L 103 58 L 60 90 L 45 68 Z" className="fill-vortx-red" />
+        <path d="M 10 18 L 95 18 L 82 38 L 38 25 Z" className="fill-vortx-white" />
+        <path d="M 38 38 L 103 58 L 60 90 L 45 68 Z" className="fill-vortx-white" />
       </svg>
       <div className="flex flex-col justify-center">
-        <span className={`font-syne font-extrabold text-vortx-white transition ${wordmark}`}>VORTX</span>
+        <span className={`font-display font-extrabold text-vortx-white transition ${wordmark}`}>VORTX</span>
         <span className="text-2xs sm:text-xs font-bold tracking-[0.1em] text-vortx-gray/80 -mt-0.5 whitespace-nowrap">
           {tagline}
         </span>

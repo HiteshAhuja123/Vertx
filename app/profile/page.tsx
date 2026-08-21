@@ -106,7 +106,7 @@ function ProfilePageContent() {
         {/* Header Block */}
         <div className="border-b border-vortx-white/10 pb-8 mb-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="font-sans text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-wide uppercase break-words">WARRIOR ACCOUNT</h1>
+            <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-wide break-words">WARRIOR ACCOUNT</h1>
             <p className="text-xs text-vortx-gray uppercase font-semibold font-mono tracking-wider mt-1">ID: {user.id}</p>
           </div>
           <button
@@ -124,7 +124,7 @@ function ProfilePageContent() {
           <div className="lg:col-span-4 space-y-8">
             
             {/* PROFILE INFO CARD */}
-            <div className="p-6 border border-vortx-white/10 bg-vortx-dark/30 rounded glassmorphism space-y-4">
+            <div className="p-6 border border-vortx-white/10 bg-vortx-dark/30 space-y-4">
               <h3 className="font-sans text-base font-bold tracking-wider text-vortx-white uppercase border-b border-vortx-white/10 pb-3">PROFILE DETAILS</h3>
               
               <div className="space-y-4 text-base">
@@ -148,7 +148,7 @@ function ProfilePageContent() {
             </div>
 
             {/* SAVED ADDRESSES */}
-            <div className="p-6 border border-vortx-white/10 bg-vortx-dark/30 rounded glassmorphism space-y-4">
+            <div className="p-6 border border-vortx-white/10 bg-vortx-dark/30 space-y-4">
               <h3 className="font-sans text-base font-bold tracking-wider text-vortx-white uppercase border-b border-vortx-white/10 pb-3">SAVED ADDRESSES ({addresses.length})</h3>
               
               {addresses.length === 0 ? (
@@ -182,7 +182,7 @@ function ProfilePageContent() {
           <div className="lg:col-span-8 space-y-8">
             
             {/* ORDERS TABLE */}
-            <div className="p-6 border border-vortx-white/10 bg-vortx-dark/30 rounded glassmorphism space-y-6">
+            <div className="p-6 border border-vortx-white/10 bg-vortx-dark/30 space-y-6">
               <h3 className="font-sans text-base font-bold tracking-wider text-vortx-white uppercase border-b border-vortx-white/10 pb-3">ORDER HISTORY ({orders.length})</h3>
               
               {orders.length === 0 ? (
@@ -353,14 +353,14 @@ function ProfilePageContent() {
 
       {/* DOCK ALERTS ORDER SUCCESS */}
       <Modal open={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
-          <div className="relative w-full max-w-md bg-vortx-dark border border-vortx-white/20 p-8 text-center glassmorphism rounded shadow-2xl animate-in zoom-in-95 duration-300">
+          <div className="relative w-full max-w-md bg-vortx-dark border border-vortx-white/20 p-8 text-center elevated">
             <button 
               onClick={() => setShowSuccessModal(false)}
               className="absolute top-4 right-4 text-vortx-gray hover:text-vortx-white transition"
             >
               <X className="w-5 h-5" />
             </button>
-            <div className="w-12 h-12 rounded-full border border-vortx-white flex items-center justify-center text-vortx-white mx-auto mb-4 animate-bounce">
+            <div className="w-12 h-12 rounded-full border border-vortx-white flex items-center justify-center text-vortx-white mx-auto mb-4">
               <CheckCircle className="w-6 h-6" />
             </div>
             <span className="font-sans text-xs font-bold tracking-[0.25em] text-vortx-gray uppercase">ORDER INITIATED</span>
@@ -382,7 +382,7 @@ function ProfilePageContent() {
 
       {/* FEEDBACK SUBMIT MODAL */}
       <Modal open={!!reviewProductId} onClose={() => setReviewProductId('')}>
-          <form onSubmit={handleReviewSubmission} className="relative w-full max-w-md bg-vortx-dark border border-vortx-white/20 p-6 glassmorphism rounded shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
+          <form onSubmit={handleReviewSubmission} className="relative w-full max-w-md bg-vortx-dark border border-vortx-white/20 p-6 elevated space-y-4">
             <div className="flex justify-between items-center border-b border-vortx-white/10 pb-3">
               <div className="flex flex-col">
                 <span className="font-sans text-2xs font-bold tracking-widest text-vortx-gray uppercase">WARRIORS REVIEW</span>
@@ -397,7 +397,7 @@ function ProfilePageContent() {
 
             {reviewSubmitted ? (
               <div className="h-40 flex flex-col items-center justify-center text-center space-y-2 text-xs">
-                <Package className="w-8 h-8 text-vortx-white animate-bounce" />
+                <Package className="w-8 h-8 text-vortx-white" />
                 <p className="font-sans font-bold tracking-widest uppercase text-vortx-white">REVIEW COMPILED</p>
                 <p className="text-vortx-gray text-sm">Thank you for adding your feedback lead.</p>
               </div>
@@ -439,7 +439,7 @@ function ProfilePageContent() {
                     required
                   />
                   {reviewError && (
-                    <p className="text-xs font-bold text-red-500 bg-red-500/10 border border-red-500/20 p-2 rounded mt-1">
+                    <p className="text-xs font-bold text-vortx-red bg-vortx-red/10 border border-vortx-red/20 p-2 mt-1">
                       {reviewError}
                     </p>
                   )}
@@ -465,7 +465,7 @@ export default function ProfilePage() {
   return (
     <Suspense fallback={
       <div className="py-12 bg-vortx-black min-h-screen text-vortx-white flex items-center justify-center">
-        <div className="text-center text-xs text-vortx-gray font-syne tracking-widest uppercase">
+        <div className="text-center text-xs text-vortx-gray font-display tracking-widest uppercase">
           LOADING PROFILE...
         </div>
       </div>

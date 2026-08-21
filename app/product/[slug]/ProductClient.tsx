@@ -317,7 +317,7 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
               {product.mrp && product.mrp > product.price && (
                 <>
                   <span className="text-sm text-vortx-gray line-through">{formatPrice(product.mrp)}</span>
-                  <span className="text-xs text-red-500 font-sans font-bold">-{product.discount_percent}%</span>
+                  <span className="text-xs text-vortx-red font-sans font-bold">-{product.discount_percent}%</span>
                 </>
               )}
             </div>
@@ -377,36 +377,23 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
                   </div>
                 </div>
               )}
-
-              {/* Stock notification labels */}
-              {!isPreOrder && (
-                <div className="text-xs text-vortx-gray mt-2 flex items-center gap-1.5 font-sans">
-                  <span className={`h-2.5 w-2.5 rounded-full inline-block ${
-                    stockAvailable === 0 ? 'bg-red-500' : stockAvailable < 5 ? 'bg-yellow-400 animate-pulse' : 'bg-green-500'
-                  }`} />
-                  {stockAvailable === 0 
-                    ? 'Current variant is out of stock. Toggle pre-order to book.' 
-                    : stockAvailable < 5 
-                    ? `Running low! Only ${stockAvailable} items remaining in this size.` 
-                    : `${stockAvailable} units in stock & ready to ship.`}
-                </div>
-              )}
             </div>
 
-            {/* Qty Selector and CTA Add Buttons */}
-            <div className="space-y-4 pt-4 border-t border-vortx-white/10">
-              <div className="flex flex-col sm:flex-row gap-4">
-                
+            {/* Qty Selector and CTA Add Buttons — hidden on mobile, where the sticky
+                bottom bar below takes over so the CTA never scrolls out of reach. */}
+            <div className="hidden sm:block space-y-3 pt-4 border-t border-vortx-white/10">
+              <div className="flex flex-row gap-4">
+
                 {/* Qty edit box */}
-                <div className="flex items-center justify-between border border-vortx-white/20 rounded h-12 w-full sm:w-auto">
-                  <button 
+                <div className="flex items-center justify-between border border-vortx-white/20 rounded h-12 w-auto">
+                  <button
                     onClick={() => setQty(prev => Math.max(1, prev - 1))}
                     className="w-12 h-full flex items-center justify-center text-sm font-bold hover:bg-vortx-white/10 transition"
                   >
                     -
                   </button>
                   <span className="font-mono font-bold text-xs">{qty}</span>
-                  <button 
+                  <button
                     onClick={() => setQty(prev => prev + 1)}
                     className="w-12 h-full flex items-center justify-center text-sm font-bold hover:bg-vortx-white/10 transition"
                   >
@@ -418,11 +405,22 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
                 <button
                   onClick={handleAddToCart}
                   disabled={!isPreOrder && stockAvailable === 0}
-                  className="w-full sm:flex-1 py-3.5 bg-vortx-white text-vortx-black font-sans text-xs sm:text-sm font-bold tracking-widest hover:bg-vortx-white/90 disabled:bg-vortx-white/25 disabled:text-vortx-gray active:scale-98 transition flex items-center justify-center min-h-[48px]"
+                  className="flex-1 py-3.5 bg-vortx-white text-vortx-black font-sans text-sm font-bold tracking-widest hover:bg-vortx-white/90 disabled:bg-vortx-white/25 disabled:text-vortx-gray transition flex items-center justify-center min-h-[48px]"
                 >
                   {isPreOrder ? 'PRE-ORDER NOW' : 'ADD TO CART'}
                 </button>
               </div>
+
+              {/* Stock notice — below the CTA, not competing with the size grid above it.
+                  Only fires under a real threshold; never claims a positive default. */}
+              {!isPreOrder && (stockAvailable === 0 || stockAvailable < 5) && (
+                <div className="text-xs text-vortx-gray flex items-center gap-1.5 font-sans">
+                  <span className={`h-1.5 w-1.5 rounded-full inline-block ${stockAvailable === 0 ? 'bg-vortx-red' : 'bg-vortx-white'}`} />
+                  {stockAvailable === 0
+                    ? 'Out of stock in this size. Toggle pre-order to book.'
+                    : `Only ${stockAvailable} left in this size.`}
+                </div>
+              )}
             </div>
 
           </div>
@@ -430,10 +428,10 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
         </div>
 
         {/* Full-Width Lower Content Section */}
-        <div className="space-y-8 mt-12">
-          
+        <div className="space-y-8 mt-12 pb-24 sm:pb-0">
+
           {/* Shipping / Support assurances */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center text-xs sm:text-sm font-sans font-medium text-vortx-gray bg-vortx-dark/60 border border-vortx-white/10 rounded-lg p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center text-xs sm:text-sm font-sans font-medium text-vortx-gray bg-vortx-dark/60 border border-vortx-white/10 p-6">
             <div className="space-y-1 py-2 sm:py-0">
               <Truck className="w-5 h-5 mx-auto mb-1.5 text-vortx-white" />
               <span className="block text-vortx-white uppercase font-bold tracking-wide">EST. DELIVERY</span>
@@ -452,7 +450,7 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
           </div>
 
           {/* Details tabs section */}
-          <div className="bg-vortx-dark/40 border border-vortx-white/10 rounded-lg p-6 sm:p-8 space-y-6">
+          <div className="bg-vortx-dark/40 border border-vortx-white/10 p-6 sm:p-8 space-y-6">
             <div className="flex gap-2 border-b border-vortx-white/10 text-xs sm:text-sm font-sans font-bold tracking-widest">
               {['details', 'specs', 'shipping'].map((tab) => (
                 <button
@@ -506,9 +504,26 @@ export default function ProductClient({ initialProduct }: ProductClientProps) {
 
         </div>
 
+        {/* STICKY MOBILE PURCHASE BAR — the CTA that never scrolls out of reach */}
+        <div className="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-vortx-black border-t border-vortx-white/10 elevated px-4 py-3 flex items-center gap-3">
+          <div className="flex flex-col leading-tight flex-shrink-0">
+            <span className="font-mono text-sm font-bold text-vortx-white">{formatPrice(product.price)}</span>
+            {!isPreOrder && stockAvailable === 0 && (
+              <span className="text-3xs text-vortx-red font-sans font-semibold uppercase">Out of stock</span>
+            )}
+          </div>
+          <button
+            onClick={handleAddToCart}
+            disabled={!isPreOrder && stockAvailable === 0}
+            className="flex-1 py-3.5 bg-vortx-white text-vortx-black font-sans text-xs font-bold tracking-widest hover:bg-vortx-white/90 disabled:bg-vortx-white/25 disabled:text-vortx-gray transition flex items-center justify-center min-h-[48px]"
+          >
+            {isPreOrder ? 'PRE-ORDER NOW' : 'ADD TO CART'}
+          </button>
+        </div>
+
         {/* SIZING GUIDE MODAL OVERLAY */}
         <Modal open={showSizeGuide} onClose={() => setShowSizeGuide(false)} backdropClassName="bg-black/70 backdrop-blur-sm">
-            <div className="relative w-full max-w-lg bg-vortx-dark border border-vortx-white/20 p-6 glassmorphism rounded shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="relative w-full max-w-lg bg-vortx-dark border border-vortx-white/20 p-6 elevated">
               <div className="flex justify-between items-center border-b border-vortx-white/10 pb-4 mb-4">
                 <span className="font-sans text-sm sm:text-base font-bold tracking-wider text-vortx-white">VORTX WARRIOR SIZE CHART</span>
                 <button onClick={() => setShowSizeGuide(false)} className="text-vortx-gray hover:text-vortx-white transition">

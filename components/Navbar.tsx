@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useStore } from './StoreContext';
-import { ShoppingBag, User, LogOut, Menu, X, Trash2, ShieldAlert, Instagram, Facebook, Youtube, Mail, Truck, Copy, Check, Sun, Moon } from 'lucide-react';
+import { ShoppingBag, User, LogOut, Menu, X, Trash2, ShieldAlert, Truck, Copy, Check, Sun, Moon } from 'lucide-react';
 import { formatPrice } from '@/products';
 import { Logo } from '@/components/ui/Logo';
 
@@ -16,6 +16,7 @@ export default function Navbar() {
   const [couponInput, setCouponInput] = useState('');
   const [couponError, setCouponError] = useState('');
   const [copiedCoupon, setCopiedCoupon] = useState(false);
+  const [announcementDismissed, setAnnouncementDismissed] = useState(false);
 
   // Lock body scrolling when drawer or mobile menu is open, and support Escape key
   React.useEffect(() => {
@@ -97,75 +98,36 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 w-full z-40 bg-vortx-black/90 backdrop-blur-md border-b border-vortx-white/10 transition duration-300">
-        {/* Announcement & Social Header Bar */}
-        <div className="bg-vortx-dark/95 border-b border-vortx-white/10 text-xs font-sans text-vortx-gray py-2 px-4 sm:px-8">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 items-center gap-2">
-            
-            {/* Left: Social Media Icons */}
-            <div className="flex items-center justify-center md:justify-start gap-3">
-              <a 
-                href="https://instagram.com" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                title="Instagram"
-                className="text-vortx-gray hover:text-vortx-white transition transform hover:scale-110"
-              >
-                <Instagram className="w-3.5 h-3.5" />
-              </a>
-              <a 
-                href="https://facebook.com" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                title="Facebook"
-                className="text-vortx-gray hover:text-vortx-white transition transform hover:scale-110"
-              >
-                <Facebook className="w-3.5 h-3.5" />
-              </a>
-              <a 
-                href="https://youtube.com" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                title="YouTube"
-                className="text-vortx-gray hover:text-vortx-white transition transform hover:scale-110"
-              >
-                <Youtube className="w-3.5 h-3.5" />
-              </a>
-              <a 
-                href="mailto:support@vortx.com" 
-                title="Email Support"
-                className="text-vortx-gray hover:text-vortx-white transition transform hover:scale-110"
-              >
-                <Mail className="w-3.5 h-3.5" />
-              </a>
-            </div>
-
-            {/* Center: Offer Promo Banner (Dead-centered) */}
-            <div className="flex items-center justify-center gap-2 text-2xs sm:text-xs font-bold tracking-wider text-vortx-white uppercase text-center">
-              <span>10% OFF ON FIRST PURCHASE</span>
-              <span className="hidden sm:inline text-vortx-gray">|</span>
-              <button 
+      <header className="sticky top-0 w-full z-40 bg-vortx-black/95 backdrop-blur-md border-b border-vortx-white/10 transition duration-300">
+        {/* Announcement Bar — one line, dismissible, no competing content */}
+        {!announcementDismissed && (
+          <div className="border-b border-vortx-white/10 text-vortx-gray py-2 px-4 sm:px-8 relative">
+            <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 text-2xs sm:text-xs font-medium tracking-wide uppercase text-center pr-6">
+              <span className="text-vortx-white font-semibold">10% off your first order</span>
+              <button
                 onClick={() => {
                   navigator.clipboard.writeText('GET10');
                   setCopiedCoupon(true);
                   setTimeout(() => setCopiedCoupon(false), 2000);
                 }}
-                className="inline-flex items-center gap-1.5 bg-vortx-white/10 hover:bg-vortx-white/20 text-vortx-white px-2 py-0.5 rounded border border-vortx-white/20 transition cursor-pointer font-mono font-bold"
+                className="inline-flex items-center gap-1.5 border border-vortx-white/20 hover:border-vortx-white/40 px-2 py-0.5 transition cursor-pointer font-mono"
                 title="Click to copy code GET10"
               >
-                <span>USE: GET10</span>
-                {copiedCoupon ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 text-vortx-gray" />}
+                <span>GET10</span>
+                {copiedCoupon ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3 text-vortx-gray" />}
               </button>
+              <span className="hidden sm:inline text-vortx-gray/50">·</span>
+              <span className="hidden sm:inline">Free shipping over ₹3,000</span>
             </div>
-
-            {/* Right: Free shipping notice */}
-            <div className="hidden md:flex items-center justify-end gap-2 text-2xs font-mono font-bold text-vortx-gray">
-              <Truck className="w-3.5 h-3.5 text-vortx-white" />
-              <span>FREE EXPRESS SHIPPING OVER ₹3,000</span>
-            </div>
-
+            <button
+              onClick={() => setAnnouncementDismissed(true)}
+              aria-label="Dismiss announcement"
+              className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 text-vortx-gray hover:text-vortx-white transition"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
           </div>
-        </div>
+        )}
 
         <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
           
@@ -180,14 +142,14 @@ export default function Navbar() {
               <Link 
                 key={link.href} 
                 href={link.href}
-                className={`font-syne text-xs md:text-sm font-bold tracking-widest transition duration-300 hover:text-vortx-white ${
+                className={`font-display text-xs md:text-sm font-bold tracking-widest transition duration-300 hover:text-vortx-white ${
                   isLinkActive(link.href) ? 'text-vortx-white' : 'text-vortx-gray'
                 }`}
               >
                 <span className="relative pb-1">
                   {link.label}
                   {isLinkActive(link.href) && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-red-600 rounded-full" />
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-vortx-white rounded-full" />
                   )}
                 </span>
               </Link>
@@ -196,7 +158,7 @@ export default function Navbar() {
             {user?.role === 'admin' && (
               <Link 
                 href="/admin"
-                className="flex items-center gap-1 font-syne text-xs font-bold tracking-widest text-vortx-white bg-vortx-white/10 px-3 py-1.5 border border-vortx-white/20 rounded hover:bg-vortx-white/20 transition"
+                className="flex items-center gap-1 font-display text-xs font-bold tracking-widest text-vortx-white bg-vortx-white/10 px-3 py-1.5 border border-vortx-white/20 rounded hover:bg-vortx-white/20 transition"
               >
                 <ShieldAlert className="w-3.5 h-3.5" />
                 ADMIN PORTAL
@@ -255,9 +217,9 @@ export default function Navbar() {
               className="p-1 rounded-full text-vortx-gray hover:text-vortx-white transition flex items-center justify-center"
             >
               {theme === 'dark' ? (
-                <Sun className="w-5 h-5 text-amber-400 hover:rotate-45 transition duration-300" />
+                <Sun className="w-5 h-5 text-vortx-white hover:rotate-45 transition duration-300" />
               ) : (
-                <Moon className="w-5 h-5 text-indigo-400 hover:-rotate-12 transition duration-300" />
+                <Moon className="w-5 h-5 text-vortx-white hover:-rotate-12 transition duration-300" />
               )}
             </button>
 
@@ -273,7 +235,7 @@ export default function Navbar() {
 
         {/* Mobile Dropdown Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-vortx-black border-b border-vortx-white/10 px-4 py-6 space-y-4 font-syne text-xs font-bold tracking-widest">
+          <div className="md:hidden bg-vortx-black border-b border-vortx-white/10 px-4 py-6 space-y-4 font-display text-xs font-bold tracking-widest">
             {navLinks.map((link) => (
               <Link 
                 key={link.href} 
@@ -286,7 +248,7 @@ export default function Navbar() {
                 <span className="relative pb-1">
                   {link.label}
                   {isLinkActive(link.href) && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-red-600 rounded-full" />
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-vortx-white rounded-full" />
                   )}
                 </span>
               </Link>
@@ -312,11 +274,11 @@ export default function Navbar() {
               <span className="flex items-center gap-1.5 text-2xs uppercase font-mono font-bold text-vortx-white">
                 {theme === 'dark' ? (
                   <>
-                    <Sun className="w-4 h-4 text-amber-400" /> DARK MODE
+                    <Sun className="w-4 h-4 text-vortx-white" /> DARK MODE
                   </>
                 ) : (
                   <>
-                    <Moon className="w-4 h-4 text-indigo-400" /> LIGHT MODE
+                    <Moon className="w-4 h-4 text-vortx-white" /> LIGHT MODE
                   </>
                 )}
               </span>
@@ -327,7 +289,7 @@ export default function Navbar() {
                   logout();
                   setIsMobileMenuOpen(false);
                 }}
-                className="w-full py-2.5 border border-red-600/30 text-red-500 rounded text-center hover:bg-red-600 hover:text-white transition"
+                className="w-full py-2.5 border border-vortx-white/20 text-vortx-gray text-center hover:border-vortx-white hover:text-vortx-white transition"
               >
                 LOG OUT
               </button>
@@ -346,7 +308,7 @@ export default function Navbar() {
           />
 
           <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-md bg-vortx-dark border-l border-vortx-white/20 flex flex-col glassmorphism">
+            <div className="w-screen max-w-md bg-vortx-dark border-l border-vortx-white/20 flex flex-col elevated">
               {/* Cart Header */}
               <div className="px-6 py-5 bg-vortx-gray-dark border-b border-vortx-white/10 flex items-center justify-between">
                 <span className="font-sans text-base font-bold tracking-widest text-vortx-white">YOUR GEAR ({totalItemsCount})</span>
@@ -375,7 +337,7 @@ export default function Navbar() {
                 </div>
                 <div className="w-full h-1.5 bg-vortx-white/10 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-gradient-to-r from-red-600 via-amber-500 to-emerald-400 transition-all duration-500 rounded-full" 
+                    className="h-full bg-vortx-white transition-all duration-500 rounded-full" 
                     style={{ width: `${freeShippingProgress}%` }}
                   />
                 </div>
@@ -515,7 +477,7 @@ export default function Navbar() {
                   <Link 
                     href={user ? "/checkout" : "/auth?redirect=checkout"}
                     onClick={() => setIsCartOpen(false)}
-                    className="block w-full py-3.5 bg-vortx-white text-vortx-black font-sans text-xs sm:text-sm font-bold tracking-widest hover:bg-vortx-white/90 active:scale-95 transition text-center shadow-lg hover:shadow-vortx-white/10"
+                    className="block w-full py-3.5 bg-vortx-white text-vortx-black font-sans text-xs sm:text-sm font-bold tracking-widest hover:bg-vortx-white/90 transition text-center"
                   >
                     PROCEED TO CHECKOUT
                   </Link>
