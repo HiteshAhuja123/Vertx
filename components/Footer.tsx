@@ -6,6 +6,7 @@ import { useStore } from './StoreContext';
 import { logAutomation } from '@/lib/email';
 import { ArrowRight, Instagram, Phone, Mail, Clock } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
+import { CreatorCredit } from '@/components/ui/CreatorCredit';
 
 export default function Footer() {
   const [emailInput, setEmailInput] = useState('');
@@ -142,7 +143,11 @@ export default function Footer() {
                 </Link>
               ))}
             </div>
-            <p className="text-2xs font-mono">© {new Date().getFullYear()} VORTX ACTIVEWEAR CO. ALL RIGHTS RESERVED.</p>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <p className="text-2xs font-mono">© {new Date().getFullYear()} VORTX ACTIVEWEAR CO. ALL RIGHTS RESERVED.</p>
+              <span className="hidden sm:inline text-vortx-gray/30">·</span>
+              <CreatorCredit />
+            </div>
           </div>
         </div>
 

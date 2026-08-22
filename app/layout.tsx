@@ -61,6 +61,8 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  authors: [{ name: 'Hitesh Ahuja', url: 'https://hitesh-portfolio-website.vercel.app/' }],
+  creator: 'Hitesh Ahuja',
 };
 
 export default function RootLayout({
